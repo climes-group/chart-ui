@@ -11,9 +11,35 @@ import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
 import { jumpToStep } from "../../state/slices/flowReducer";
 import ApplicableSystemsCard from "./Flow/Cards/ApplicableSystemsCard";
 import SiteLocationCard from "./Flow/Cards/SiteLocationCard";
+
+const StepHeading = styled.h2`
+  margin-top: 0px;
+`;
+
+const InnerFrame = styled.div`
+  flex-grow: 1;
+  position: relative;
+`;
+
+const SampleCard = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    rgb(255, 255, 255),
+    rgb(255, 255, 255) 10px,
+    rgba(226, 176, 70, 0.5) 10px,
+    rgba(226, 176, 70, 0.5) 20px
+  );
+`;
+
 const steps = [
   {
     name: "intake",
@@ -37,10 +63,6 @@ const steps = [
   { name: "report", label: "Report" },
 ];
 
-function SampleCard() {
-  return <div>Lorem Ipsum</div>;
-}
-
 function renderInnerCard(currStep) {
   const { name } = currStep;
   switch (name) {
@@ -49,7 +71,7 @@ function renderInnerCard(currStep) {
     case "applicableSystems":
       return <ApplicableSystemsCard />;
     default:
-      return <SampleCard />;
+      return <SampleCard>Lorem</SampleCard>;
       break;
   }
 }
@@ -166,10 +188,9 @@ export default function StepperFlow() {
   const MobileStepperControls = (
     <MobileStepper
       variant="progress"
-      steps={6}
+      steps={steps.length}
       position="static"
       activeStep={activeStep}
-      sx={{ maxWidth: 400, flexGrow: 1 }}
       nextButton={
         <Button size="small" onClick={handleNext} disabled={activeStep === 5}>
           Next
@@ -200,11 +221,9 @@ export default function StepperFlow() {
         sx={{
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
           border: "0.5px solid",
           padding: "1rem",
-          marginTop: "2rem",
-          minHeight: "400px",
+          minHeight: "90vh",
         }}
       >
         {allStepsCompleted() ? (
@@ -219,12 +238,10 @@ export default function StepperFlow() {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <h2>
+            <StepHeading>
               Step {activeStep + 1} - {steps[activeStep]?.label}
-            </h2>
-            <Box sx={{ flexGrow: "10" }}>
-              {renderInnerCard(steps[activeStep])}
-            </Box>
+            </StepHeading>
+            <InnerFrame>{renderInnerCard(steps[activeStep])}</InnerFrame>
             <Typography textAlign={"left"}>{errorMsg}</Typography>
             {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
           </React.Fragment>
