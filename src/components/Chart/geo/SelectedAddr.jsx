@@ -1,23 +1,19 @@
 import { Container, Stack, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 const apiKey = import.meta.env.VITE_GEO_API_KEY;
 
 export default function SelectedAddr({ humanAddr, geoData }) {
   return (
     <Container sx={{ marginTop: "2rem", marginBottom: "2rem" }} maxWidth="xl">
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 6, md: 6 }}>
+      <Grid container spacing={2} sx={{ marginBottom: "2rem" }}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Typography>Address </Typography>
-        </Grid>
-        <Grid size={{ xs: 6, md: 6 }}>
-          <Typography>Geo Code</Typography>
-        </Grid>
-        <Grid size={{ xs: 6, md: 6 }}>
           <Typography>{humanAddr}</Typography>
         </Grid>
-        <Grid size={{ xs: 6, md: 6 }}>
+        <Grid size={{ xs: 12, md: 6 }}>
           {geoData && (
-            <Stack sx={{ textAlign: "right" }}>
+            <Stack sx={{ textAlign: "left" }}>
+              <Typography>Geo Code</Typography>
               <div>Lat:&nbsp; {geoData.lat}</div>
               <div>Long: {geoData.lng} </div>
             </Stack>

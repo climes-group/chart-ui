@@ -7,6 +7,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -41,43 +42,62 @@ export default function AddrSearchResults(props) {
 
   return (
     <Container sx={{ marginTop: "2rem", marginBottom: "2rem" }} maxWidth="xl">
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{
-          alignItems: "center",
-          paddingTop: "1em",
-          flexWrap: "Wrap",
-        }}
+      <Grid
+        container
+        spacing={1}
+        sx={{ marginBottom: "2rem" }}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
       >
-        <TextField
-          id="filled-basic"
-          label="Address"
-          variant="filled"
-          value={fieldAddress}
-          onChange={(e) => {
-            console.log(e.target.value);
-            setFieldAddress(e.target.value);
-          }}
-          sx={{ marginBottom: "2rem" }}
-        />
-        <Button
-          sx={{ my: "2red" }}
-          variant="contained"
-          startIcon={<Search />}
-          onClick={handleSearchClick}
+        <Grid
+          size={{ xs: 12, md: 7 }}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
         >
-          Search
-        </Button>
-        <Button
-          sx={{ my: "2red" }}
-          variant="outlined"
-          startIcon={<Clear />}
-          onClick={handleClearClick}
+          <TextField
+            id="filled-basic"
+            label="Address"
+            variant="filled"
+            fullWidth
+            value={fieldAddress}
+            onChange={(e) => {
+              console.log(e.target.value);
+              setFieldAddress(e.target.value);
+            }}
+            sx={{}}
+          />
+        </Grid>
+        <Grid
+          size={{ xs: 6, md: 3 }}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
         >
-          Clear
-        </Button>
-      </Stack>
+          <Button
+            variant="contained"
+            startIcon={<Search />}
+            onClick={handleSearchClick}
+          >
+            Search
+          </Button>
+        </Grid>
+        <Grid
+          size={{ xs: 6, md: 2 }}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Button
+            variant="outlined"
+            startIcon={<Clear />}
+            onClick={handleClearClick}
+          >
+            Clear
+          </Button>
+        </Grid>
+      </Grid>
       {searchResults?.length && (
         <TableContainer component={Paper} sx={{ marginTop: "2rem" }}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">

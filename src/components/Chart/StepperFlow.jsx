@@ -11,6 +11,12 @@ import ApplicableSystemsCard from "./Flow/Cards/ApplicableSystemsCard";
 import SiteLocationCard from "./Flow/Cards/SiteLocationCard";
 const steps = [
   {
+    name: "intake",
+    label: "Intake",
+    enterCond: [],
+    leaveCond: [(state) => state.geo.geoData],
+  },
+  {
     name: "siteLocation",
     label: "Site Location",
     enterCond: [],
@@ -18,12 +24,12 @@ const steps = [
   },
   {
     name: "applicableSystems",
-    label: "Select Systems",
+    label: "System Inventory",
     enterCond: [(state) => state.geo.geoData],
     leaveCond: [],
   },
-  { name: "tbd", label: "TBD" },
-  { name: "tbd", label: "TBD" },
+  { name: "summary", label: "Summary" },
+  { name: "report", label: "Report" },
 ];
 
 function renderInnerCard(currStep) {
