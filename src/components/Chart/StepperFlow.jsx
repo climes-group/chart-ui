@@ -8,38 +8,60 @@ import StepButton from "@mui/material/StepButton";
 import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import { useMediaQuery } from "@uidotdev/usehooks";
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
+import useMedia from "../../hooks/useMedia";
 import { jumpToStep } from "../../state/slices/flowReducer";
 import ApplicableSystemsCard from "./Flow/Cards/ApplicableSystemsCard";
 import SiteLocationCard from "./Flow/Cards/SiteLocationCard";
+
+const StepHeading = styled.h2`
+  margin-top: 0px;
+`;
+
+const InnerFrame = styled.div`
+  flex-grow: 1;
+  position: relative;
+`;
+
+const SampleCard = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    rgb(255, 255, 255),
+    rgb(255, 255, 255) 10px,
+    rgba(226, 176, 70, 0.5) 10px,
+    rgba(226, 176, 70, 0.5) 20px
+  );
+`;
+
 const steps = [
   {
     name: "intake",
     label: "Intake",
     enterCond: [],
-    leaveCond: [(state) => state.geo.geoData],
+    leaveCond: [(state) => state],
   },
   {
     name: "siteLocation",
     label: "Site Location",
     enterCond: [],
-    leaveCond: [(state) => state.geo.geoData],
+    leaveCond: [(state) => state],
   },
   {
     name: "applicableSystems",
     label: "System Inventory",
-    enterCond: [(state) => state.geo.geoData],
+    enterCond: [(state) => state],
     leaveCond: [],
   },
   { name: "summary", label: "Summary" },
   { name: "report", label: "Report" },
 ];
-
-function SampleCard() {
-  return <div>Lorem Ipsum</div>;
-}
 
 function renderInnerCard(currStep) {
   const { name } = currStep;
@@ -49,8 +71,7 @@ function renderInnerCard(currStep) {
     case "applicableSystems":
       return <ApplicableSystemsCard />;
     default:
-      return <SampleCard />;
-      break;
+      return <SampleCard>Lorem</SampleCard>;
   }
 }
 
@@ -62,16 +83,7 @@ export default function StepperFlow() {
   const [completed, setCompleted] = React.useState({});
   const [errorMsg, setErrorMsg] = React.useState("");
 
-  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
-  const isMediumDevice = useMediaQuery(
-    "only screen and (min-width : 769px) and (max-width : 992px)",
-  );
-  const isLargeDevice = useMediaQuery(
-    "only screen and (min-width : 993px) and (max-width : 1200px)",
-  );
-  const isExtraLargeDevice = useMediaQuery(
-    "only screen and (min-width : 1201px)",
-  );
+  const [isSmallDevice] = useMedia();
 
   const theme = useTheme();
 
@@ -85,7 +97,12 @@ export default function StepperFlow() {
           // find the first step that has been completed
           steps.findIndex((step, i) => !(i in completed))
         : activeStep + 1;
-    dispatch(jumpToStep(newActiveStep));
+
+    if (!leaveCond?.(true)) {
+      setErrorMsg("Condition not met");
+    } else {
+      dispatch(jumpToStep(newActiveStep));
+    }
   };
 
   const totalSteps = () => {
@@ -166,10 +183,9 @@ export default function StepperFlow() {
   const MobileStepperControls = (
     <MobileStepper
       variant="progress"
-      steps={6}
+      steps={steps.length}
       position="static"
       activeStep={activeStep}
-      sx={{ maxWidth: 400, flexGrow: 1 }}
       nextButton={
         <Button size="small" onClick={handleNext} disabled={activeStep === 5}>
           Next
@@ -200,11 +216,9 @@ export default function StepperFlow() {
         sx={{
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
           border: "0.5px solid",
           padding: "1rem",
-          marginTop: "2rem",
-          minHeight: "400px",
+          minHeight: "90vh",
         }}
       >
         {allStepsCompleted() ? (
@@ -219,12 +233,10 @@ export default function StepperFlow() {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <h2>
+            <StepHeading>
               Step {activeStep + 1} - {steps[activeStep]?.label}
-            </h2>
-            <Box sx={{ flexGrow: "10" }}>
-              {renderInnerCard(steps[activeStep])}
-            </Box>
+            </StepHeading>
+            <InnerFrame>{renderInnerCard(steps[activeStep])}</InnerFrame>
             <Typography textAlign={"left"}>{errorMsg}</Typography>
             {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
           </React.Fragment>

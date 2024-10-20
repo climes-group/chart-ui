@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import Chart from "./Chart.jsx";
-import MainPanel from "./MainPanel.jsx";
 import Header from "./components/Header/index.jsx";
 import "./index.css";
 
@@ -20,9 +19,7 @@ const router = createBrowserRouter([
         element: (
           <>
             <Header />
-            <MainPanel>
-              <Chart />
-            </MainPanel>
+            <Chart />
           </>
         ),
       },

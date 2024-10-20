@@ -3,7 +3,6 @@ import styled from "styled-components";
 import climesBannerUrl from "../../assets/logos/climes_group_engineering_high.jpg";
 import climesTreeTransUrl from "../../assets/logos/climes_logo_trim.png"; //Shortened logo
 import { THEME } from "../../utils";
-import MobileNav from "./MobileNav";
 
 const Root = styled.div`
   position: relative;
@@ -101,7 +100,6 @@ const Header = ({}) => {
               <img src={climesTreeTransUrl} alt="Climes Banner Image" />
             </Link>
           </ClimesLogoMobile>
-          <MobileNav />
         </MobileHeader>
       </Root>
     </>
