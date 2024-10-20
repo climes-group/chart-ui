@@ -8,7 +8,7 @@ const initialState = {
 };
 
 export const flowSlice = createSlice({
-  name: "counter",
+  name: "flow",
   initialState,
   reducers: {
     setInitial: (state, action) => {

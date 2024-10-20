@@ -1,12 +1,25 @@
-import { Divider, Typography } from "@mui/material";
+import { useEffect, useRef } from "react";
 import StepperFlow from "./components/Chart/StepperFlow";
+
 function Chart() {
+  const targetElement = useRef();
+  const scrollingTop = () => {
+    targetElement.current.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "start",
+    });
+  };
+
+  useEffect(() => {
+    scrollingTop();
+  }, []);
+
   return (
     <>
-      <Typography variant="h4">CHART</Typography>
-
-      <Divider sx={{ margin: "2rem" }} />
-      <StepperFlow />
+      <div ref={targetElement}>
+        <StepperFlow />
+      </div>
     </>
   );
 }
