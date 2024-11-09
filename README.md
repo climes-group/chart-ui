@@ -1,5 +1,11 @@
 # Climes Group Site
 
+## Code Quality
+
+[Snyk](https://app.snyk.io/org/michaelbieniek)
+
+[Sonar](https://sonarcloud.io/project/overview?id=climes-group_chart-ui)
+
 ## Get Started
 
 ### Pre-requisites
