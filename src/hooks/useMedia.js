@@ -1,3 +1,5 @@
+import { useMediaQuery } from "@mui/material";
+
 /**
  * Media query hook [s,m,l,xl]
  * @returns

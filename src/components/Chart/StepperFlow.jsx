@@ -40,18 +40,30 @@ const SampleCard = styled.div`
   );
 `;
 
+const CardWrapper = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  border: 1px solid;
+  padding: 1rem;
+  min-height: 90vh;
+  @media (max-width: 767px) {
+    border: 0px;
+    padding: 0.5rem;
+  }
+`;
+
 const steps = [
   {
     name: "intake",
     label: "Intake",
     enterCond: [],
-    leaveCond: [(state) => state],
+    leaveCond: (state) => state,
   },
   {
     name: "siteLocation",
     label: "Site Location",
     enterCond: [],
-    leaveCond: [(state) => state],
+    leaveCond: (state) => state,
   },
   {
     name: "applicableSystems",
@@ -142,7 +154,7 @@ export default function StepperFlow() {
   };
 
   const DesktopStepper = (
-    <Stepper nonLinear activeStep={activeStep}>
+    <Stepper nonLinear activeStep={activeStep} sx={{ padding: "2em 0" }}>
       {steps.map((stepObj, index) => (
         <Step key={stepObj.label} completed={completed[index]}>
           <StepButton color="inherit" onClick={handleStep(index)}>
@@ -212,15 +224,7 @@ export default function StepperFlow() {
   return (
     <Container sx={{ padding: "1rem" }}>
       {!isSmallDevice && DesktopStepper}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          border: "0.5px solid",
-          padding: "1rem",
-          minHeight: "90vh",
-        }}
-      >
+      <CardWrapper>
         {allStepsCompleted() ? (
           <React.Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
@@ -241,7 +245,7 @@ export default function StepperFlow() {
             {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
           </React.Fragment>
         )}
-      </Box>
+      </CardWrapper>
     </Container>
   );
 }
