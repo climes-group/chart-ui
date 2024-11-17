@@ -25,7 +25,7 @@ export default function AddrSearchResults(props) {
     console.log("searching", fieldAddress);
     const resp = await searchAddress(fieldAddress);
     console.log(resp);
-    setSearchResults(resp?.results);
+    setSearchResults(resp?.items);
   }
 
   async function handleClearClick() {
@@ -47,7 +47,7 @@ export default function AddrSearchResults(props) {
         spacing={1}
         sx={{ marginBottom: "2rem" }}
         display="flex"
-        justifyContent="center"
+        justifyContent="flex-start"
         alignItems="center"
       >
         <Grid
@@ -69,38 +69,26 @@ export default function AddrSearchResults(props) {
             sx={{}}
           />
         </Grid>
-        <Grid
-          size={{ xs: 6, md: 3 }}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
+
+        <Button
+          variant="contained"
+          startIcon={<Search />}
+          onClick={handleSearchClick}
         >
-          <Button
-            variant="contained"
-            startIcon={<Search />}
-            onClick={handleSearchClick}
-          >
-            Search
-          </Button>
-        </Grid>
-        <Grid
-          size={{ xs: 6, md: 2 }}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
+          Search
+        </Button>
+
+        <Button
+          variant="outlined"
+          startIcon={<Clear />}
+          onClick={handleClearClick}
         >
-          <Button
-            variant="outlined"
-            startIcon={<Clear />}
-            onClick={handleClearClick}
-          >
-            Clear
-          </Button>
-        </Grid>
+          Clear
+        </Button>
       </Grid>
       {searchResults?.length && (
         <TableContainer component={Paper} sx={{ marginTop: "2rem" }}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table sx={{ minWidth: 400 }} aria-label="simple table">
             <TableBody>
               {searchResults.slice(0, 10).map((row, ind) => {
                 return (
@@ -108,8 +96,15 @@ export default function AddrSearchResults(props) {
                     key={row.formatted_address}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
-                    <TableCell component="th" scope="row">
-                      {row.formatted_address}
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      title={row.address.label}
+                    >
+                      {
+                        // get first 10 characters of the address
+                        row.title.slice(0, 30)
+                      }
                     </TableCell>
                     <TableCell align="right">
                       <Button

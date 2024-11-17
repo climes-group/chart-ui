@@ -1,6 +1,6 @@
+import { Outlet } from "react-router";
 import "./App.css";
 import Footer from "./components/Footer";
-import { Outlet } from "react-router";
 
 function App() {
   return (

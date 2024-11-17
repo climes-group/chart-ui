@@ -14,6 +14,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "18"
+      - name: Create env file
+        run: |
+          touch .env
+          echo VITE_GEO_API_KEY=${{ secrets.GEO_API_KEY }} >> .env
+          echo VITE_FF_USE_GEO_API=true >> .env
+          cat .env
       - name: 🔨 Build Project
         run: |
           npm install

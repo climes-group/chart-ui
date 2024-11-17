@@ -8,10 +8,10 @@ import StepButton from "@mui/material/StepButton";
 import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import { useMediaQuery } from "@uidotdev/usehooks";
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import useMedia from "../../hooks/useMedia";
 import { jumpToStep } from "../../state/slices/flowReducer";
 import ApplicableSystemsCard from "./Flow/Cards/ApplicableSystemsCard";
 import SiteLocationCard from "./Flow/Cards/SiteLocationCard";
@@ -40,23 +40,35 @@ const SampleCard = styled.div`
   );
 `;
 
+const CardWrapper = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  border: 1px solid;
+  padding: 1rem;
+  min-height: 90vh;
+  @media (max-width: 767px) {
+    border: 0px;
+    padding: 0.5rem;
+  }
+`;
+
 const steps = [
   {
     name: "intake",
     label: "Intake",
     enterCond: [],
-    leaveCond: [(state) => state.geo.geoData],
+    leaveCond: (state) => state,
   },
   {
     name: "siteLocation",
     label: "Site Location",
     enterCond: [],
-    leaveCond: [(state) => state.geo.geoData],
+    leaveCond: (state) => state,
   },
   {
     name: "applicableSystems",
     label: "System Inventory",
-    enterCond: [(state) => state.geo.geoData],
+    enterCond: [(state) => state],
     leaveCond: [],
   },
   { name: "summary", label: "Summary" },
@@ -72,7 +84,6 @@ function renderInnerCard(currStep) {
       return <ApplicableSystemsCard />;
     default:
       return <SampleCard>Lorem</SampleCard>;
-      break;
   }
 }
 
@@ -84,16 +95,7 @@ export default function StepperFlow() {
   const [completed, setCompleted] = React.useState({});
   const [errorMsg, setErrorMsg] = React.useState("");
 
-  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
-  const isMediumDevice = useMediaQuery(
-    "only screen and (min-width : 769px) and (max-width : 992px)",
-  );
-  const isLargeDevice = useMediaQuery(
-    "only screen and (min-width : 993px) and (max-width : 1200px)",
-  );
-  const isExtraLargeDevice = useMediaQuery(
-    "only screen and (min-width : 1201px)",
-  );
+  const [isSmallDevice] = useMedia();
 
   const theme = useTheme();
 
@@ -107,7 +109,12 @@ export default function StepperFlow() {
           // find the first step that has been completed
           steps.findIndex((step, i) => !(i in completed))
         : activeStep + 1;
-    dispatch(jumpToStep(newActiveStep));
+
+    if (!leaveCond?.(true)) {
+      setErrorMsg("Condition not met");
+    } else {
+      dispatch(jumpToStep(newActiveStep));
+    }
   };
 
   const totalSteps = () => {
@@ -147,7 +154,7 @@ export default function StepperFlow() {
   };
 
   const DesktopStepper = (
-    <Stepper nonLinear activeStep={activeStep}>
+    <Stepper nonLinear activeStep={activeStep} sx={{ padding: "2em 0" }}>
       {steps.map((stepObj, index) => (
         <Step key={stepObj.label} completed={completed[index]}>
           <StepButton color="inherit" onClick={handleStep(index)}>
@@ -217,15 +224,7 @@ export default function StepperFlow() {
   return (
     <Container sx={{ padding: "1rem" }}>
       {!isSmallDevice && DesktopStepper}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          border: "0.5px solid",
-          padding: "1rem",
-          minHeight: "90vh",
-        }}
-      >
+      <CardWrapper>
         {allStepsCompleted() ? (
           <React.Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
@@ -246,7 +245,7 @@ export default function StepperFlow() {
             {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
           </React.Fragment>
         )}
-      </Box>
+      </CardWrapper>
     </Container>
   );
 }

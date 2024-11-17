@@ -65,9 +65,9 @@ export default function SiteLocationCard(props) {
       return;
     }
 
-    const baseGeoCodeApi = `https://maps.googleapis.com/maps/api/geocode/json?latlng=`;
+    const baseGeoCodeApi = `https://geocode.search.hereapi.com/v1/geocode`;
 
-    const finalUrl = `${baseGeoCodeApi}${geoCode.str}&key=${apiKey}`;
+    const finalUrl = `${baseGeoCodeApi}?q=${geoCode.str}&apikey=${apiKey}`;
     console.log(finalUrl);
     try {
       const resp = await fetch(finalUrl);
@@ -83,30 +83,28 @@ export default function SiteLocationCard(props) {
   }
 
   const useDeviceLocation = () => {
-    const currGeo =
-      navigator.geolocation.getCurrentPosition(lookUpHumanAddress);
+    navigator.geolocation.getCurrentPosition(lookUpHumanAddress);
+    dispatch(setHumanAddress(""));
   };
 
   return (
-    <>
-      <div>
-        <Typography variant="h6" textAlign={"left"}>
-          Select Location
-        </Typography>
-        <AddrSearchResults
-          onClickUseDeviceLocation={useDeviceLocation}
-          handleAddrChoose={(addr) => {
-            dispatch(setHumanAddress(addr?.formatted_address));
-            console.log(addr);
-            dispatch(setGeoData(addr?.geometry?.location));
-          }}
-        />
-        <SelectedAddr
-          humanAddr={humanAddr}
-          geoData={geoData}
-          hasAcceptedTerms={hasAcceptedTerms}
-        />
-      </div>
-    </>
+    <div>
+      <Typography variant="h6" textAlign={"left"}>
+        Select Location
+      </Typography>
+      <AddrSearchResults
+        onClickUseDeviceLocation={useDeviceLocation}
+        handleAddrChoose={(addr) => {
+          dispatch(setHumanAddress(addr?.address?.label));
+          console.log(addr);
+          dispatch(setGeoData(addr?.position));
+        }}
+      />
+      <SelectedAddr
+        humanAddr={humanAddr}
+        geoData={geoData}
+        hasAcceptedTerms={hasAcceptedTerms}
+      />
+    </div>
   );
 }

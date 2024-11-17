@@ -1,8 +1,9 @@
 import { Container, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-const apiKey = import.meta.env.VITE_GEO_API_KEY;
+import PropTypes from "prop-types";
+import MapView from "../../Map/MapView";
 
-export default function SelectedAddr({ humanAddr, geoData }) {
+function SelectedAddr({ humanAddr, geoData }) {
   return (
     <Container sx={{ marginTop: "2rem", marginBottom: "2rem" }} maxWidth="xl">
       <Grid container spacing={2} sx={{ marginBottom: "2rem" }}>
@@ -20,18 +21,14 @@ export default function SelectedAddr({ humanAddr, geoData }) {
           )}
         </Grid>
       </Grid>
-
-      {humanAddr && (
-        <iframe
-          width="100%"
-          height="250"
-          frameborder="0"
-          style={{ border: 0 }}
-          referrerpolicy="no-referrer-when-downgrade"
-          src={`https://www.google.com/maps/embed/v1/view?key=${apiKey}&center=${geoData.lat},${geoData.lng}&zoom=18&maptype=satellite`}
-          allowfullscreen
-        ></iframe>
-      )}
+      <MapView geoData={geoData} />
     </Container>
   );
 }
+
+SelectedAddr.propTypes = {
+  humanAddr: PropTypes.string,
+  geoData: PropTypes.object,
+};
+
+export default SelectedAddr;
