@@ -7,13 +7,9 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import {
-  setError,
-  stepBackward,
-  stepForward,
-} from "../../../state/slices/flowReducer";
+import useFlow from "../../../hooks/useFlow";
+
 const FlowButtonsDiv = styled.div`
   margin: 2rem;
   > button {
@@ -22,21 +18,7 @@ const FlowButtonsDiv = styled.div`
 `;
 
 export default function FlowCard(props) {
-  const dispatch = useDispatch();
-  const conditions = useSelector((s) => s.flow.conditions);
-
-  const error = useSelector((s) => s.flow.error);
-
-  function next() {
-    console.log(conditions);
-    if (conditions.every((x) => x)) {
-      console.log("Conditions passed");
-      dispatch(stepForward());
-    } else {
-      console.warn("Conditions did not pass");
-      dispatch(setError("Please specify a location."));
-    }
-  }
+  const { next, back, error } = useFlow();
 
   return (
     <Accordion
@@ -60,11 +42,7 @@ export default function FlowCard(props) {
         {props.children}
       </AccordionDetails>
       <AccordionActions>
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={() => dispatch(stepBackward())}
-        >
+        <Button variant="outlined" color="secondary" onClick={back}>
           Back
         </Button>
         <Button

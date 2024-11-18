@@ -9,10 +9,9 @@ import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import useFlow from "../../hooks/useFlow";
 import useMedia from "../../hooks/useMedia";
-import { jumpToStep } from "../../state/slices/flowReducer";
 import ApplicableSystemsCard from "./Flow/Cards/ApplicableSystemsCard";
 import SiteLocationCard from "./Flow/Cards/SiteLocationCard";
 
@@ -88,34 +87,14 @@ function renderInnerCard(currStep) {
 }
 
 export default function StepperFlow() {
-  const activeStep = useSelector((s) => s.flow.currentStepInd);
-
-  const dispatch = useDispatch();
-
   const [completed, setCompleted] = React.useState({});
   const [errorMsg, setErrorMsg] = React.useState("");
 
   const [isSmallDevice] = useMedia();
 
+  const { activeStep, next, back, jumpTo } = useFlow();
+
   const theme = useTheme();
-
-  const handleNext = () => {
-    // check leave condition
-    const { leaveCond } = steps[activeStep];
-
-    const newActiveStep =
-      isLastStep() && !allStepsCompleted()
-        ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
-        : activeStep + 1;
-
-    if (!leaveCond?.(true)) {
-      setErrorMsg("Condition not met");
-    } else {
-      dispatch(jumpToStep(newActiveStep));
-    }
-  };
 
   const totalSteps = () => {
     return steps.length;
@@ -125,19 +104,8 @@ export default function StepperFlow() {
     return Object.keys(completed).length;
   };
 
-  const isLastStep = () => {
-    return activeStep === totalSteps() - 1;
-  };
-
   const allStepsCompleted = () => {
     return completedSteps() === totalSteps();
-  };
-  const handleBack = () => {
-    dispatch(jumpToStep(activeStep - 1));
-  };
-
-  const handleStep = (step) => () => {
-    dispatch(jumpToStep(step));
   };
 
   const handleComplete = () => {
@@ -145,7 +113,7 @@ export default function StepperFlow() {
       ...completed,
       [activeStep]: true,
     });
-    handleNext();
+    next();
   };
 
   const handleReset = () => {
@@ -157,7 +125,7 @@ export default function StepperFlow() {
     <Stepper nonLinear activeStep={activeStep} sx={{ padding: "2em 0" }}>
       {steps.map((stepObj, index) => (
         <Step key={stepObj.label} completed={completed[index]}>
-          <StepButton color="inherit" onClick={handleStep(index)}>
+          <StepButton color="inherit" onClick={() => jumpTo(index)}>
             {stepObj.label}
           </StepButton>
         </Step>
@@ -170,13 +138,13 @@ export default function StepperFlow() {
       <Button
         color="inherit"
         disabled={activeStep === 0}
-        onClick={handleBack}
+        onClick={back}
         sx={{ mr: 1 }}
       >
         Back
       </Button>
       <Box sx={{ flex: "1 1 auto" }} />
-      <Button onClick={handleNext} sx={{ mr: 1 }}>
+      <Button onClick={next} sx={{ mr: 1 }}>
         Next
       </Button>
       {activeStep !== steps.length &&
@@ -199,7 +167,7 @@ export default function StepperFlow() {
       position="static"
       activeStep={activeStep}
       nextButton={
-        <Button size="small" onClick={handleNext} disabled={activeStep === 5}>
+        <Button size="small" onClick={next} disabled={activeStep === 5}>
           Next
           {theme.direction === "rtl" ? (
             <KeyboardArrowLeft />
@@ -209,7 +177,7 @@ export default function StepperFlow() {
         </Button>
       }
       backButton={
-        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+        <Button size="small" onClick={back} disabled={activeStep === 0}>
           {theme.direction === "rtl" ? (
             <KeyboardArrowRight />
           ) : (

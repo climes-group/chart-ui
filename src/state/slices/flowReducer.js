@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  steps: [],
   currentStep: undefined,
   currentStepInd: 0,
   conditions: [true],
@@ -14,14 +15,29 @@ export const flowSlice = createSlice({
     setInitial: (state, action) => {
       state.currentStep = action.payload;
     },
+    setSteps: (state, action) => {
+      state.steps = action.payload;
+      state.currentStep = action.payload[0];
+      state.currentStepInd = action.payload[0]?.id ?? 0;
+      state.conditions = action.payload.map(() => true);
+      state.error = undefined;
+    },
     stepBackward: (state) => {
+      console.log("stepBackward", state);
       state.currentStepInd = state.currentStep.prev;
+      state.currentStep = state.steps.find(
+        (x) => x.id === state.currentStep.prev,
+      );
     },
     stepForward: (state) => {
       state.currentStepInd = state.currentStep.next;
+      state.currentStep = state.steps.find(
+        (x) => x.id === state.currentStep.next,
+      );
     },
     jumpToStep: (state, action) => {
       state.currentStepInd = action.payload;
+      state.currentStep = state.steps.find((x) => x.id === action.payload);
     },
     meetCondition: (state, action) => {
       const newArr = [...state.conditions];
@@ -49,6 +65,7 @@ export const {
   meetCondition,
   setConditions,
   setError,
+  setSteps,
 } = flowSlice.actions;
 
 export default flowSlice.reducer;
