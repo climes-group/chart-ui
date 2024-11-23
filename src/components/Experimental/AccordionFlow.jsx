@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { setInitial } from "../../state/slices/flowReducer";
-import ApplicableSystemsCard from "./Flow/Cards/ApplicableSystemsCard";
-import SiteLocationCard from "./Flow/Cards/SiteLocationCard";
-import FlowCard from "./Flow/FlowCard";
-import GeoDialog from "./GeoDialog";
+import ApplicableSystemsCard from "../Chart/Flow/Cards/ApplicableSystemsCard";
+import SiteLocationCard from "../Chart/Flow/Cards/SiteLocationCard";
+import GeoDialog from "../Chart/GeoDialog";
+import FlowCard from "./FlowCard";
 
 const Root = styled.div`
   padding: 1em;

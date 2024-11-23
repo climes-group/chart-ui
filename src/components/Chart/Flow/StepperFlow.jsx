@@ -10,10 +10,10 @@ import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import * as React from "react";
 import styled from "styled-components";
-import useFlow from "../../hooks/useFlow";
-import useMedia from "../../hooks/useMedia";
-import ApplicableSystemsCard from "./Flow/Cards/ApplicableSystemsCard";
-import SiteLocationCard from "./Flow/Cards/SiteLocationCard";
+import useFlow from "../../../hooks/useFlow";
+import useMedia from "../../../hooks/useMedia";
+import ApplicableSystemsCard from "./Cards/ApplicableSystemsCard";
+import SiteLocationCard from "./Cards/SiteLocationCard";
 
 const StepHeading = styled.h2`
   margin-top: 0px;
@@ -55,34 +55,42 @@ const steps = [
   {
     name: "intake",
     label: "Intake",
-    enterCond: [],
-    leaveCond: (state) => state,
   },
   {
     name: "siteLocation",
     label: "Site Location",
-    enterCond: [],
-    leaveCond: (state) => state,
   },
   {
     name: "applicableSystems",
     label: "System Inventory",
-    enterCond: [(state) => state],
-    leaveCond: [],
   },
   { name: "summary", label: "Summary" },
   { name: "report", label: "Report" },
 ];
 
+// add prev and next to steps where next is name of next item in steps array
+steps.forEach((step, index) => {
+  step.prev = index === 0 ? null : steps[index - 1].name;
+  step.next = index === steps.length - 1 ? null : steps[index + 1].name;
+});
+
+// add id to steps
+steps.forEach((step, index) => {
+  step.id = index;
+});
+
 function renderInnerCard(currStep) {
+  if (!currStep) {
+    return null;
+  }
   const { name } = currStep;
   switch (name) {
     case "siteLocation":
-      return <SiteLocationCard />;
+      return <SiteLocationCard activeStep={currStep} />;
     case "applicableSystems":
-      return <ApplicableSystemsCard />;
+      return <ApplicableSystemsCard activeStep={currStep} />;
     default:
-      return <SampleCard>Lorem</SampleCard>;
+      return <SampleCard activeStep={currStep}>Lorem</SampleCard>;
   }
 }
 
@@ -92,7 +100,7 @@ export default function StepperFlow() {
 
   const [isSmallDevice] = useMedia();
 
-  const { activeStep, next, back, jumpTo } = useFlow();
+  const { currentStep, done, next, back, jumpTo } = useFlow(steps);
 
   const theme = useTheme();
 
@@ -109,20 +117,14 @@ export default function StepperFlow() {
   };
 
   const handleComplete = () => {
-    setCompleted({
-      ...completed,
-      [activeStep]: true,
-    });
+    done();
     next();
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-    setCompleted({});
-  };
+  const handleReset = () => {};
 
   const DesktopStepper = (
-    <Stepper nonLinear activeStep={activeStep} sx={{ padding: "2em 0" }}>
+    <Stepper nonLinear activeStep={currentStep?.id} sx={{ padding: "2em 0" }}>
       {steps.map((stepObj, index) => (
         <Step key={stepObj.label} completed={completed[index]}>
           <StepButton color="inherit" onClick={() => jumpTo(index)}>
@@ -137,7 +139,7 @@ export default function StepperFlow() {
     <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
       <Button
         color="inherit"
-        disabled={activeStep === 0}
+        disabled={currentStep?.prev === null}
         onClick={back}
         sx={{ mr: 1 }}
       >
@@ -147,16 +149,15 @@ export default function StepperFlow() {
       <Button onClick={next} sx={{ mr: 1 }}>
         Next
       </Button>
-      {activeStep !== steps.length &&
-        (completed[activeStep] ? (
-          <Typography variant="caption" sx={{ display: "inline-block" }}>
-            Step {activeStep + 1} already completed
-          </Typography>
-        ) : (
-          <Button onClick={handleComplete}>
-            {completedSteps() === totalSteps() - 1 ? "Finish" : "Complete Step"}
-          </Button>
-        ))}
+      {currentStep?.done ? (
+        <Typography variant="caption" sx={{ display: "inline-block" }}>
+          Step already completed
+        </Typography>
+      ) : (
+        <Button onClick={handleComplete}>
+          {currentStep?.next === undefined ? "Finish" : "Complete Step"}
+        </Button>
+      )}
     </Box>
   );
 
@@ -165,9 +166,13 @@ export default function StepperFlow() {
       variant="progress"
       steps={steps.length}
       position="static"
-      activeStep={activeStep}
+      activeStep={currentStep?.id}
       nextButton={
-        <Button size="small" onClick={next} disabled={activeStep === 5}>
+        <Button
+          size="small"
+          onClick={next}
+          disabled={currentStep?.next === null}
+        >
           Next
           {theme.direction === "rtl" ? (
             <KeyboardArrowLeft />
@@ -177,7 +182,11 @@ export default function StepperFlow() {
         </Button>
       }
       backButton={
-        <Button size="small" onClick={back} disabled={activeStep === 0}>
+        <Button
+          size="small"
+          onClick={back}
+          disabled={currentStep?.prev === null}
+        >
           {theme.direction === "rtl" ? (
             <KeyboardArrowRight />
           ) : (
@@ -205,10 +214,10 @@ export default function StepperFlow() {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <StepHeading>
-              Step {activeStep + 1} - {steps[activeStep]?.label}
-            </StepHeading>
-            <InnerFrame>{renderInnerCard(steps[activeStep])}</InnerFrame>
+            {!isSmallDevice && (
+              <StepHeading>Step {currentStep?.label}</StepHeading>
+            )}
+            <InnerFrame>{renderInnerCard(currentStep)}</InnerFrame>
             <Typography textAlign={"left"}>{errorMsg}</Typography>
             {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
           </React.Fragment>

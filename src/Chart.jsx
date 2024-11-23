@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import StepperFlow from "./components/Chart/StepperFlow";
+import StepperFlow from "./components/Chart/Flow/StepperFlow";
 
 function Chart() {
   const targetElement = useRef();
@@ -16,11 +16,9 @@ function Chart() {
   }, []);
 
   return (
-    <>
-      <div ref={targetElement}>
-        <StepperFlow />
-      </div>
-    </>
+    <div ref={targetElement}>
+      <StepperFlow />
+    </div>
   );
 }
 

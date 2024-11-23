@@ -18,6 +18,9 @@ export default defineConfig({
       exclude: [
         ".eslintrc.cjs",
         "vite.config.js",
+        "src/main.jsx",
+        "src/App.jsx",
+        "src/Chart.jsx",
         "**/dist/**",
         "**/Experimental/**",
       ],

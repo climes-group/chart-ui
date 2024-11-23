@@ -7,17 +7,10 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import styled from "styled-components";
-import useFlow from "../../../hooks/useFlow";
+import PropTypes from "prop-types";
+import useFlow from "../../hooks/useFlow";
 
-const FlowButtonsDiv = styled.div`
-  margin: 2rem;
-  > button {
-    margin-left: 1em;
-  }
-`;
-
-export default function FlowCard(props) {
+function FlowCard(props) {
   const { next, back, error } = useFlow();
 
   return (
@@ -32,7 +25,6 @@ export default function FlowCard(props) {
       >
         {props.step.title}
       </AccordionSummary>
-
       <AccordionDetails>
         <Typography variant="body2">{props.step.desc}</Typography>
         <Typography variant="body2" sx={{ color: "red" }}>
@@ -57,3 +49,19 @@ export default function FlowCard(props) {
     </Accordion>
   );
 }
+
+FlowCard.defaultProps = {
+  defaultExpanded: false,
+  lastItem: false,
+};
+
+FlowCard.propTypes = {
+  defaultExpanded: PropTypes.bool,
+  lastItem: PropTypes.bool,
+  step: PropTypes.shape({
+    title: PropTypes.string,
+    desc: PropTypes.string,
+  }),
+};
+
+export default FlowCard;

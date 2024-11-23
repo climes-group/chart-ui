@@ -85,24 +85,22 @@ const MenuLi = styled.li`
  */
 const Header = ({}) => {
   return (
-    <>
-      <Root>
-        <DesktopHeader>
-          <ClimesBanner>
-            <Link to="/">
-              <img src={climesBannerUrl} alt="Climes Banner Image" />
-            </Link>
-          </ClimesBanner>
-        </DesktopHeader>
-        <MobileHeader>
-          <ClimesLogoMobile>
-            <Link to="/">
-              <img src={climesTreeTransUrl} alt="Climes Banner Image" />
-            </Link>
-          </ClimesLogoMobile>
-        </MobileHeader>
-      </Root>
-    </>
+    <Root>
+      <DesktopHeader>
+        <ClimesBanner>
+          <Link to="/">
+            <img src={climesBannerUrl} alt="Climes Banner" />
+          </Link>
+        </ClimesBanner>
+      </DesktopHeader>
+      <MobileHeader>
+        <ClimesLogoMobile>
+          <Link to="/">
+            <img src={climesTreeTransUrl} alt="Climes Logo" />
+          </Link>
+        </ClimesLogoMobile>
+      </MobileHeader>
+    </Root>
   );
 };
 

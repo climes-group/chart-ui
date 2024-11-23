@@ -5,15 +5,12 @@ import {
   setError,
   setSteps,
   stepBackward,
+  stepDone,
   stepForward,
 } from "../state/slices/flowReducer";
 
 function useFlow(initialSteps = []) {
   const dispatch = useDispatch();
-
-  const activeStep = useSelector((s) => s.flow.currentStepInd);
-  const conditions = useSelector((s) => s.flow.conditions);
-  const error = useSelector((s) => s.flow.error);
 
   useEffect(() => {
     if (initialSteps.length > 0) {
@@ -21,8 +18,11 @@ function useFlow(initialSteps = []) {
     }
   }, [initialSteps]);
 
+  const currentStep = useSelector((s) => s.flow.currentStep);
+  const conditions = useSelector((s) => s.flow.conditions);
+  const error = useSelector((s) => s.flow.error);
+
   function next() {
-    console.log(conditions);
     if (conditions.every((x) => x)) {
       console.log("Conditions passed");
       dispatch(stepForward());
@@ -30,6 +30,10 @@ function useFlow(initialSteps = []) {
       console.warn("Conditions did not pass");
       dispatch(setError("Please specify a location."));
     }
+  }
+
+  function done() {
+    dispatch(stepDone());
   }
 
   function back() {
@@ -40,7 +44,7 @@ function useFlow(initialSteps = []) {
     dispatch(jumpToStep(step));
   }
 
-  return { activeStep, next, back, jumpTo, error };
+  return { currentStep, done, next, back, jumpTo, error };
 }
 
 export default useFlow;

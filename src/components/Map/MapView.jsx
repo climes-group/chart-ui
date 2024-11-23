@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import styled from "styled-components";
+import { GeoCode } from "../../utils/geocode";
 
 const apiKey = import.meta.env.VITE_GEO_API_KEY;
 
@@ -14,13 +15,14 @@ const Root = styled.div`
 function MapView({ geoData }) {
   if (!geoData) return null;
 
-  const position = [geoData.lat, geoData.lng];
+  const geoCode = new GeoCode(geoData?.lat, geoData?.lng);
 
   return (
     <Root>
       <MapContainer
-        key={`${geoData.lat}-${geoData.lng}`}
-        center={position}
+        key={geoCode.str}
+        q
+        center={[geoCode.lat, geoCode.lng]}
         zoom={13}
         scrollWheelZoom={false}
       >
@@ -28,12 +30,8 @@ function MapView({ geoData }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={position}>
-          <Popup>
-            Latitude: {geoData.lat}
-            <br />
-            Longitude: {geoData.lng}
-          </Popup>
+        <Marker position={[geoCode.lat, geoCode.lng]}>
+          <Popup>{geoCode.str}</Popup>
         </Marker>
       </MapContainer>
     </Root>
@@ -43,7 +41,7 @@ MapView.propTypes = {
   geoData: PropTypes.shape({
     lat: PropTypes.number.isRequired,
     lng: PropTypes.number.isRequired,
-  }).isRequired,
+  }),
 };
 
 export default MapView;
