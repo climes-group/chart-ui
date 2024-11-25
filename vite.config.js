@@ -23,6 +23,7 @@ export default defineConfig({
         "src/Chart.jsx",
         "**/dist/**",
         "**/Experimental/**",
+        "**/__tests__/**",
       ],
     },
   },

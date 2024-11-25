@@ -29,17 +29,20 @@ export class GeoCode {
     const lngMin = Math.floor((lngAbs - lngDeg) * 60);
     const lngSec = (lngAbs - lngDeg - lngMin / 60) * 3600;
 
+    const roundedLatSec = Math.round(latSec * 100) / 100;
+    const roundedLngSec = Math.round(lngSec * 100) / 100;
+
     return {
       lat: {
         deg: latDeg,
         min: latMin,
-        sec: latSec,
+        sec: roundedLatSec,
         dir: lat >= 0 ? "N" : "S",
       },
       lng: {
         deg: lngDeg,
         min: lngMin,
-        sec: lngSec,
+        sec: roundedLngSec,
         dir: lng >= 0 ? "E" : "W",
       },
     };
@@ -55,6 +58,11 @@ export class GeoCode {
       dmsFormat.lng.dir
     }`;
   }
+
+  get queryStr() {
+    return `${this.lat},${this.lng}`;
+  }
+
   get obj() {
     return {
       lat: this.lat,
@@ -63,6 +71,11 @@ export class GeoCode {
   }
 }
 
+/**
+ * Look up human readable address from a geocode
+ * @param {GeoCode} geoCode
+ * @returns {string} human readable address
+ */
 export async function lookUpHumanAddress(geoCode) {
   if (!apiKey || useGeoApi !== "true") {
     return;
@@ -70,12 +83,12 @@ export async function lookUpHumanAddress(geoCode) {
 
   const baseGeoCodeApi = `https://geocode.search.hereapi.com/v1/geocode`;
 
-  const finalUrl = `${baseGeoCodeApi}?q=${geoCode.str}&apikey=${apiKey}`;
+  const finalUrl = `${baseGeoCodeApi}?at=${geoCode.queryStr}&apikey=${apiKey}`;
   console.log(finalUrl);
   try {
     const resp = await fetch(finalUrl);
     const jsonResp = await resp.json();
-
+    console.log(jsonResp);
     if (jsonResp?.plus_code?.compound_code) {
       return jsonResp?.plus_code?.compound_code;
     }

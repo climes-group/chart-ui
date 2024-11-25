@@ -6,7 +6,7 @@ import {
   setGeoData,
   setHumanAddress,
 } from "../../../../state/slices/geoReducer";
-import { GeoCode, lookUpHumanAddress } from "../../../../utils/geocode";
+import { GeoCode } from "../../../../utils/geocode";
 import ChooseLocation from "../../geo/ChooseLocation";
 import SelectedLocation from "../../geo/SelectedLocation";
 
@@ -25,13 +25,8 @@ export default function SiteLocationCard(props) {
       const { coords } = pos;
       const geoCode = new GeoCode(coords.latitude, coords.longitude);
       dispatch(setGeoData(geoCode.obj));
-      const humanAddr = await lookUpHumanAddress(geoCode);
-      if (humanAddr) {
-        dispatch(setHumanAddress(humanAddr));
-        dispatch(meetCondition(props.id));
-      } else {
-        dispatch(setHumanAddress(""));
-      }
+      dispatch(setHumanAddress(""));
+      dispatch(meetCondition(props.id));
     }
     navigator.geolocation.getCurrentPosition(success);
   };

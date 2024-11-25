@@ -8,6 +8,7 @@ import StepButton from "@mui/material/StepButton";
 import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
+import PropTypes from "prop-types";
 import * as React from "react";
 import styled from "styled-components";
 import useFlow from "../../../hooks/useFlow";
@@ -51,34 +52,6 @@ const CardWrapper = styled(Box)`
   }
 `;
 
-const steps = [
-  {
-    name: "intake",
-    label: "Intake",
-  },
-  {
-    name: "siteLocation",
-    label: "Site Location",
-  },
-  {
-    name: "applicableSystems",
-    label: "System Inventory",
-  },
-  { name: "summary", label: "Summary" },
-  { name: "report", label: "Report" },
-];
-
-// add prev and next to steps where next is name of next item in steps array
-steps.forEach((step, index) => {
-  step.prev = index === 0 ? null : steps[index - 1].name;
-  step.next = index === steps.length - 1 ? null : steps[index + 1].name;
-});
-
-// add id to steps
-steps.forEach((step, index) => {
-  step.id = index;
-});
-
 function renderInnerCard(currStep) {
   if (!currStep) {
     return null;
@@ -94,7 +67,7 @@ function renderInnerCard(currStep) {
   }
 }
 
-export default function StepperFlow() {
+function StepperFlow({ steps }) {
   const [completed, setCompleted] = React.useState({});
   const [errorMsg, setErrorMsg] = React.useState("");
 
@@ -113,10 +86,12 @@ export default function StepperFlow() {
   };
 
   const allStepsCompleted = () => {
+    console.log(completedSteps(), totalSteps());
     return completedSteps() === totalSteps();
   };
 
   const handleComplete = () => {
+    setCompleted((x) => ({ ...x, [currentStep.id]: true }));
     done();
     next();
   };
@@ -174,11 +149,7 @@ export default function StepperFlow() {
           disabled={currentStep?.next === null}
         >
           Next
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowLeft />
-          ) : (
-            <KeyboardArrowRight />
-          )}
+          <KeyboardArrowRight />
         </Button>
       }
       backButton={
@@ -187,11 +158,7 @@ export default function StepperFlow() {
           onClick={back}
           disabled={currentStep?.prev === null}
         >
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowRight />
-          ) : (
-            <KeyboardArrowLeft />
-          )}
+          <KeyboardArrowLeft />
           Back
         </Button>
       }
@@ -226,3 +193,13 @@ export default function StepperFlow() {
     </Container>
   );
 }
+
+StepperFlow.defaultProps = {
+  steps: [],
+};
+
+StepperFlow.propTypes = {
+  steps: PropTypes.arrayOf(PropTypes.object),
+};
+
+export default StepperFlow;

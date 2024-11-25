@@ -32,6 +32,7 @@ function ChooseLocation(props) {
   }
 
   async function handleClearClick() {
+    console.log("Clearing search results");
     setFieldAddress("");
     setSearchResults(null);
   }

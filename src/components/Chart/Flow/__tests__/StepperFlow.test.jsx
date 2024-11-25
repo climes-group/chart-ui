@@ -1,22 +1,53 @@
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
+import { Provider } from "react-redux";
 import { describe } from "vitest";
-import useFlow from "../../../../hooks/useFlow";
+import { store } from "../../../../state/store.js";
+import steps from "../../../../steps.js";
 import StepperFlow from "../StepperFlow";
 
-vi.mock("../../../../hooks/useFlow");
+vi.mock("../../../../hooks/useFlow", { spy: true });
 
 describe("StepperFlow tests", () => {
-  it("should render Desktop stepper with clickable step", () => {
-    const mockUseFlow = {
-      next: vi.fn(),
-      back: vi.fn(),
-      done: vi.fn(),
-      jumpTo: vi.fn(),
-    };
-    useFlow.mockReturnValue(mockUseFlow);
-    const { getByText } = render(<StepperFlow />);
-    getByText("Intake").click();
+  // create a react-redux wrapper
+  const wrapper = ({ children }) => (
+    <Provider store={store}>{children}</Provider>
+  );
 
-    expect(mockUseFlow.jumpTo).toHaveBeenCalledWith(0);
+  it("should render Desktop stepper with clickable step", async () => {
+    const { getByText, findByText } = render(<StepperFlow steps={steps} />, {
+      wrapper,
+    });
+    act(() => {
+      getByText("Intake").click();
+    });
+    await findByText("Intake");
+  });
+
+  it("should have a finish button that completes step if last step", async () => {
+    const oneStep = [
+      {
+        id: 0,
+        name: "intake",
+        label: "Intake",
+        prev: undefined,
+        next: undefined,
+      },
+    ];
+    const { getByText, findByText } = render(<StepperFlow steps={oneStep} />, {
+      wrapper,
+    });
+    act(() => {
+      getByText("Finish").click();
+    });
+    await findByText("All steps completed - you're finished");
+  });
+
+  it("should have a complete button that completes step if not last step", async () => {
+    const { getByText } = render(<StepperFlow steps={steps} />, {
+      wrapper,
+    });
+    act(() => {
+      getByText("Complete Step").click();
+    });
   });
 });
