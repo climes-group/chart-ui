@@ -1,10 +1,11 @@
-import { Clear, Search, WrongLocation } from "@mui/icons-material";
 import {
   Button,
   Container,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
   Stack,
   TextField,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -14,34 +15,41 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
+import PropTypes from "prop-types";
 import { useState } from "react";
+import useMedia from "../../../hooks/useMedia";
 import { searchAddress } from "../../../utils/geocode";
 
-export default function AddrSearchResults(props) {
+function ChooseLocation(props) {
   const [fieldAddress, setFieldAddress] = useState("");
   const [searchResults, setSearchResults] = useState();
+  const [isSmallDevice] = useMedia();
 
   async function handleSearchClick() {
-    console.log("searching", fieldAddress);
     const resp = await searchAddress(fieldAddress);
     console.log(resp);
     setSearchResults(resp?.items);
   }
 
   async function handleClearClick() {
-    console.log("searching", fieldAddress);
+    console.log("Clearing search results");
     setFieldAddress("");
     setSearchResults(null);
   }
 
-  async function handleUseClick(id) {
-    return () => {
-      props.handleAddrChoose(searchResults[id]);
-    };
-  }
+  const containerSx = isSmallDevice
+    ? {
+        marginTop: "1rem",
+        marginBottom: "1rem",
+        padding: "0rem",
+      }
+    : {
+        marginTop: "2rem",
+        marginBottom: "2rem",
+      };
 
   return (
-    <Container sx={{ marginTop: "2rem", marginBottom: "2rem" }} maxWidth="xl">
+    <Container sx={containerSx} maxWidth="xl">
       <Grid
         container
         spacing={1}
@@ -70,19 +78,11 @@ export default function AddrSearchResults(props) {
           />
         </Grid>
 
-        <Button
-          variant="contained"
-          startIcon={<Search />}
-          onClick={handleSearchClick}
-        >
+        <Button variant="contained" onClick={handleSearchClick}>
           Search
         </Button>
 
-        <Button
-          variant="outlined"
-          startIcon={<Clear />}
-          onClick={handleClearClick}
-        >
+        <Button variant="outlined" onClick={handleClearClick}>
           Clear
         </Button>
       </Grid>
@@ -90,35 +90,31 @@ export default function AddrSearchResults(props) {
         <TableContainer component={Paper} sx={{ marginTop: "2rem" }}>
           <Table sx={{ minWidth: 400 }} aria-label="simple table">
             <TableBody>
-              {searchResults.slice(0, 10).map((row, ind) => {
-                return (
-                  <TableRow
-                    key={row.formatted_address}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      title={row.address.label}
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue="female"
+                name="radio-buttons-group"
+              >
+                {searchResults.slice(0, 10).map((row, ind) => {
+                  return (
+                    <TableRow
+                      key={row.id}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
-                      {
-                        // get first 10 characters of the address
-                        row.title.slice(0, 30)
-                      }
-                    </TableCell>
-                    <TableCell align="right">
-                      <Button
-                        size="small"
-                        onClick={() => {
-                          props.handleAddrChoose(searchResults[ind]);
-                        }}
-                      >
-                        Use
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                      <TableCell component="th" scope="row">
+                        <FormControlLabel
+                          value={ind}
+                          control={<Radio />}
+                          label={row.address.label}
+                          onClick={() => {
+                            props.onChooseAddr(searchResults[ind]);
+                          }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </RadioGroup>
             </TableBody>
           </Table>
         </TableContainer>
@@ -135,21 +131,17 @@ export default function AddrSearchResults(props) {
         }}
       >
         <Typography>or</Typography>
-        <Button variant="contained" onClick={props.onClickUseDeviceLocation}>
-          Device location
+        <Button variant="contained" onClick={props.onUseLocSvc}>
+          Use my location
         </Button>
-        <div>
-          {props?.hasAcceptedTerms ? (
-            <Tooltip title="Enabled">
-              <PublicIcon style={{ color: "#1976d2" }} />
-            </Tooltip>
-          ) : (
-            <Tooltip title="Location services unavailable / permission not granted">
-              <WrongLocation style={{ color: "rgb(226, 176, 70)" }} />
-            </Tooltip>
-          )}
-        </div>
       </Stack>
     </Container>
   );
 }
+
+ChooseLocation.propTypes = {
+  onChooseAddr: PropTypes.func,
+  onUseLocSvc: PropTypes.func,
+};
+
+export default ChooseLocation;

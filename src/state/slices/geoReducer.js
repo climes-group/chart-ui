@@ -10,9 +10,6 @@ export const geoSlice = createSlice({
   name: "geo",
   initialState,
   reducers: {
-    acceptTerms: (state) => {
-      state.hasAcceptedTerms = true;
-    },
     setGeoData: (state, action) => {
       state.geoData = action.payload;
     },

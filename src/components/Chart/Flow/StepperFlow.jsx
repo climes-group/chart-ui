@@ -8,13 +8,13 @@ import StepButton from "@mui/material/StepButton";
 import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
+import PropTypes from "prop-types";
 import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import useMedia from "../../hooks/useMedia";
-import { jumpToStep } from "../../state/slices/flowReducer";
-import ApplicableSystemsCard from "./Flow/Cards/ApplicableSystemsCard";
-import SiteLocationCard from "./Flow/Cards/SiteLocationCard";
+import useFlow from "../../../hooks/useFlow";
+import useMedia from "../../../hooks/useMedia";
+import ApplicableSystemsCard from "./Cards/ApplicableSystemsCard";
+import SiteLocationCard from "./Cards/SiteLocationCard";
 
 const StepHeading = styled.h2`
   margin-top: 0px;
@@ -52,70 +52,30 @@ const CardWrapper = styled(Box)`
   }
 `;
 
-const steps = [
-  {
-    name: "intake",
-    label: "Intake",
-    enterCond: [],
-    leaveCond: (state) => state,
-  },
-  {
-    name: "siteLocation",
-    label: "Site Location",
-    enterCond: [],
-    leaveCond: (state) => state,
-  },
-  {
-    name: "applicableSystems",
-    label: "System Inventory",
-    enterCond: [(state) => state],
-    leaveCond: [],
-  },
-  { name: "summary", label: "Summary" },
-  { name: "report", label: "Report" },
-];
-
 function renderInnerCard(currStep) {
+  if (!currStep) {
+    return null;
+  }
   const { name } = currStep;
   switch (name) {
     case "siteLocation":
-      return <SiteLocationCard />;
+      return <SiteLocationCard activeStep={currStep} />;
     case "applicableSystems":
-      return <ApplicableSystemsCard />;
+      return <ApplicableSystemsCard activeStep={currStep} />;
     default:
-      return <SampleCard>Lorem</SampleCard>;
+      return <SampleCard activeStep={currStep}>Lorem</SampleCard>;
   }
 }
 
-export default function StepperFlow() {
-  const activeStep = useSelector((s) => s.flow.currentStepInd);
-
-  const dispatch = useDispatch();
-
+function StepperFlow({ steps }) {
   const [completed, setCompleted] = React.useState({});
   const [errorMsg, setErrorMsg] = React.useState("");
 
   const [isSmallDevice] = useMedia();
 
+  const { currentStep, done, next, back, jumpTo } = useFlow(steps);
+
   const theme = useTheme();
-
-  const handleNext = () => {
-    // check leave condition
-    const { leaveCond } = steps[activeStep];
-
-    const newActiveStep =
-      isLastStep() && !allStepsCompleted()
-        ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
-        : activeStep + 1;
-
-    if (!leaveCond?.(true)) {
-      setErrorMsg("Condition not met");
-    } else {
-      dispatch(jumpToStep(newActiveStep));
-    }
-  };
 
   const totalSteps = () => {
     return steps.length;
@@ -125,39 +85,24 @@ export default function StepperFlow() {
     return Object.keys(completed).length;
   };
 
-  const isLastStep = () => {
-    return activeStep === totalSteps() - 1;
-  };
-
   const allStepsCompleted = () => {
+    console.log(completedSteps(), totalSteps());
     return completedSteps() === totalSteps();
-  };
-  const handleBack = () => {
-    dispatch(jumpToStep(activeStep - 1));
-  };
-
-  const handleStep = (step) => () => {
-    dispatch(jumpToStep(step));
   };
 
   const handleComplete = () => {
-    setCompleted({
-      ...completed,
-      [activeStep]: true,
-    });
-    handleNext();
+    setCompleted((x) => ({ ...x, [currentStep.id]: true }));
+    done();
+    next();
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-    setCompleted({});
-  };
+  const handleReset = () => {};
 
   const DesktopStepper = (
-    <Stepper nonLinear activeStep={activeStep} sx={{ padding: "2em 0" }}>
+    <Stepper nonLinear activeStep={currentStep?.id} sx={{ padding: "2em 0" }}>
       {steps.map((stepObj, index) => (
         <Step key={stepObj.label} completed={completed[index]}>
-          <StepButton color="inherit" onClick={handleStep(index)}>
+          <StepButton color="inherit" onClick={() => jumpTo(index)}>
             {stepObj.label}
           </StepButton>
         </Step>
@@ -169,26 +114,25 @@ export default function StepperFlow() {
     <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
       <Button
         color="inherit"
-        disabled={activeStep === 0}
-        onClick={handleBack}
+        disabled={currentStep?.prev === null}
+        onClick={back}
         sx={{ mr: 1 }}
       >
         Back
       </Button>
       <Box sx={{ flex: "1 1 auto" }} />
-      <Button onClick={handleNext} sx={{ mr: 1 }}>
+      <Button onClick={next} sx={{ mr: 1 }}>
         Next
       </Button>
-      {activeStep !== steps.length &&
-        (completed[activeStep] ? (
-          <Typography variant="caption" sx={{ display: "inline-block" }}>
-            Step {activeStep + 1} already completed
-          </Typography>
-        ) : (
-          <Button onClick={handleComplete}>
-            {completedSteps() === totalSteps() - 1 ? "Finish" : "Complete Step"}
-          </Button>
-        ))}
+      {currentStep?.done ? (
+        <Typography variant="caption" sx={{ display: "inline-block" }}>
+          Step already completed
+        </Typography>
+      ) : (
+        <Button onClick={handleComplete}>
+          {currentStep?.next === undefined ? "Finish" : "Complete Step"}
+        </Button>
+      )}
     </Box>
   );
 
@@ -197,24 +141,24 @@ export default function StepperFlow() {
       variant="progress"
       steps={steps.length}
       position="static"
-      activeStep={activeStep}
+      activeStep={currentStep?.id}
       nextButton={
-        <Button size="small" onClick={handleNext} disabled={activeStep === 5}>
+        <Button
+          size="small"
+          onClick={next}
+          disabled={currentStep?.next === null}
+        >
           Next
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowLeft />
-          ) : (
-            <KeyboardArrowRight />
-          )}
+          <KeyboardArrowRight />
         </Button>
       }
       backButton={
-        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-          {theme.direction === "rtl" ? (
-            <KeyboardArrowRight />
-          ) : (
-            <KeyboardArrowLeft />
-          )}
+        <Button
+          size="small"
+          onClick={back}
+          disabled={currentStep?.prev === null}
+        >
+          <KeyboardArrowLeft />
           Back
         </Button>
       }
@@ -237,10 +181,10 @@ export default function StepperFlow() {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <StepHeading>
-              Step {activeStep + 1} - {steps[activeStep]?.label}
-            </StepHeading>
-            <InnerFrame>{renderInnerCard(steps[activeStep])}</InnerFrame>
+            {!isSmallDevice && (
+              <StepHeading>Step {currentStep?.label}</StepHeading>
+            )}
+            <InnerFrame>{renderInnerCard(currentStep)}</InnerFrame>
             <Typography textAlign={"left"}>{errorMsg}</Typography>
             {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
           </React.Fragment>
@@ -249,3 +193,13 @@ export default function StepperFlow() {
     </Container>
   );
 }
+
+StepperFlow.defaultProps = {
+  steps: [],
+};
+
+StepperFlow.propTypes = {
+  steps: PropTypes.arrayOf(PropTypes.object),
+};
+
+export default StepperFlow;
