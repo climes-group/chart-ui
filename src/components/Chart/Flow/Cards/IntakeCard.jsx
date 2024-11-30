@@ -1,6 +1,7 @@
 import { NavigationOutlined } from "@mui/icons-material";
-import { Button, Fab, Stack } from "@mui/material";
+import { Fab, Stack } from "@mui/material";
 import styled from "styled-components";
+import useFlow from "../../../../hooks/useFlow";
 import { THEME } from "../../../../utils";
 
 const MiddleOfScreen = styled.div`
@@ -21,13 +22,6 @@ const LargeQuote = styled.h1`
     font-style: italic;
     color: ${THEME.PRIMARY}}
   }
-`;
-
-const LargeProceed = styled(Button)`
-  font-size: 2rem;
-  color: #333;
-  text-align: center;
-  font-style: italic;
 `;
 
 export default function IntakeCard(props) {

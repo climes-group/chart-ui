@@ -1,11 +1,11 @@
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import {
   downloadCsv,
   generateCsvFomJson,
 } from "../../../../utils/generateReport";
 
-export default function ReportCard(props) {
+export default function ReportCard() {
   const geoData = useSelector((s) => s.geo.geoData);
   const humanAddress = useSelector((s) => s.geo.humanAddress);
 
@@ -15,17 +15,14 @@ export default function ReportCard(props) {
         Download reports
       </Typography>
       <p>
-        <button
+        <Button
           onClick={() => {
-            const csvRaw = generateCsvFomJson([
-              "Site location details",
-              { geoData, humanAddress },
-            ]);
+            const csvRaw = generateCsvFomJson([{ geoData, humanAddress }]);
             downloadCsv(csvRaw, "site_location_details.csv");
           }}
         >
           Download site location details
-        </button>
+        </Button>
       </p>
       ;
     </>

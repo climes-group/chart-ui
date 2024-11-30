@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import { describe } from "vitest";
 import { store } from "../../../../state/store.js";
 import steps from "../../../../steps.js";
-import StepperFlow from "../StepperFlow";
+import StepperFlow from "../StepperFlow.jsx";
 
 vi.mock("../../../../hooks/useFlow", { spy: true });
 
