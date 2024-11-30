@@ -15,6 +15,8 @@ import useFlow from "../../../hooks/useFlow";
 import useMedia from "../../../hooks/useMedia";
 import ApplicableSystemsCard from "./Cards/ApplicableSystemsCard";
 import SiteLocationCard from "./Cards/SiteLocationCard";
+import IntakeCard from "./Flow/Cards/IntakeCard";
+import ReportCard from "./Flow/Cards/ReportCard";
 
 const StepHeading = styled.h2`
   margin-top: 0px;
@@ -52,16 +54,48 @@ const CardWrapper = styled(Box)`
   }
 `;
 
+const steps = [
+  {
+    name: "intake",
+    label: "Intake",
+    enterCond: [],
+    leaveCond: (state) => state,
+  },
+  {
+    name: "siteLocation",
+    label: "Site Location",
+    enterCond: [],
+    leaveCond: (state) => state,
+  },
+  {
+    name: "applicableSystems",
+    label: "System Inventory",
+    enterCond: [(state) => state],
+    leaveCond: (state) => state,
+  },
+  {
+    name: "summary",
+    label: "Summary",
+    enterCond: [],
+    leaveCond: (state) => state,
+  },
+  { name: "report", label: "Report" },
+];
+
 function renderInnerCard(currStep) {
   if (!currStep) {
     return null;
   }
   const { name } = currStep;
   switch (name) {
+    case "intake":
+      return <IntakeCard />;
     case "siteLocation":
       return <SiteLocationCard activeStep={currStep} />;
     case "applicableSystems":
       return <ApplicableSystemsCard activeStep={currStep} />;
+    case "report":
+      return <ReportCard />;
     default:
       return <SampleCard activeStep={currStep}>Lorem</SampleCard>;
   }
