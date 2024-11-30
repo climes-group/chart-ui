@@ -1,9 +1,17 @@
-import { beforeAll, describe, vi } from "vitest";
+import { afterAll, beforeAll, describe, vi } from "vitest";
 import { GeoCode, lookUpHumanAddress, searchAddress } from "../geocode";
 
 describe("geocode", () => {
+  let consoleErr = console.error;
   beforeAll(() => {
     global.fetch = vi.fn();
+    vi.stubEnv("VITE_FF_USE_GEO_API", "true");
+    console.error = vi.fn();
+  });
+
+  afterAll(() => {
+    vi.unstubAllEnvs();
+    console.error = consoleErr;
   });
 
   describe("Geocode tests", () => {
@@ -29,7 +37,7 @@ describe("geocode", () => {
     });
   });
 
-  it("should fetch address", async () => {
+  it("should search address", async () => {
     fetch.mockResolvedValue({
       json: async () => ({
         items: [
@@ -50,6 +58,14 @@ describe("geocode", () => {
     );
   });
 
+  it("should handle error when calling searchAddress", async () => {
+    fetch.mockRejectedValueOnce(new Error("error"));
+    const resp = await searchAddress(
+      "1600 Amphitheatre Parkway, Mountain View, CA",
+    );
+    expect(resp).toStrictEqual({});
+  });
+
   it("should look up human address", async () => {
     const geo = {
       coords: {
@@ -66,5 +82,23 @@ describe("geocode", () => {
     });
     const resp = await lookUpHumanAddress(geo);
     expect(resp).toBe("CWC8+R9 Mountain View, California, United States");
+  });
+
+  it("should handle error when calling lookUpHumanAddress", async () => {
+    const geo = {
+      coords: {
+        latitude: 37.4219999,
+        longitude: -122.0840575,
+      },
+    };
+    fetch.mockRejectedValueOnce(new Error("error"));
+    const resp = await lookUpHumanAddress(geo);
+    expect(resp).toBe("");
+  });
+
+  it("should handle missing API key", async () => {
+    vi.stubEnv("VITE_FF_USE_GEO_API", "");
+    const resp = await lookUpHumanAddress({});
+    expect(resp).toBe(undefined);
   });
 });

@@ -1,12 +1,4 @@
 const BASE_GEOCODE_URL = "https://geocode.search.hereapi.com/v1/geocode";
-const apiKey = import.meta.env.VITE_GEO_API_KEY;
-const useGeoApi = import.meta.env.VITE_FF_USE_GEO_API;
-
-export async function searchAddress(query) {
-  const resp = await fetch(`${BASE_GEOCODE_URL}?q=${query}&apiKey=${apiKey}`);
-  const result = await resp.json();
-  return result;
-}
 
 export class GeoCode {
   constructor(lat, lng) {
@@ -71,19 +63,46 @@ export class GeoCode {
   }
 }
 
+function getApiKey() {
+  const apiKey = import.meta.env.VITE_GEO_API_KEY;
+  const useGeoApi = import.meta.env.VITE_FF_USE_GEO_API;
+  return useGeoApi && apiKey;
+}
+
+/*
+ * Search for an address
+ * @param {string} query
+ * @returns {Promise}
+ */
+export async function searchAddress(query) {
+  try {
+    const resp = await fetch(
+      `${BASE_GEOCODE_URL}?q=${query}&apiKey=${getApiKey()}`,
+    );
+    const result = await resp.json();
+    return result;
+  } catch (e) {
+    console.error(e);
+    return {};
+  }
+}
+
 /**
  * Look up human readable address from a geocode
  * @param {GeoCode} geoCode
  * @returns {string} human readable address
  */
 export async function lookUpHumanAddress(geoCode) {
-  if (!apiKey || useGeoApi !== "true") {
+  const apiKey = getApiKey();
+  if (!apiKey) {
     return;
   }
 
   const baseGeoCodeApi = `https://geocode.search.hereapi.com/v1/geocode`;
 
-  const finalUrl = `${baseGeoCodeApi}?at=${geoCode.queryStr}&apikey=${apiKey}`;
+  const finalUrl = `${baseGeoCodeApi}?at=${
+    geoCode.queryStr
+  }&apikey=${getApiKey()}`;
   console.log(finalUrl);
   try {
     const resp = await fetch(finalUrl);
