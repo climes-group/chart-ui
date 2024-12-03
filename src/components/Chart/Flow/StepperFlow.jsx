@@ -9,6 +9,7 @@ import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import * as React from "react";
+import { Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 import useFlow from "../../../hooks/useFlow";
 import useMedia from "../../../hooks/useMedia";
@@ -72,6 +73,20 @@ function renderInnerCard(currStep) {
   }
 }
 
+// create a styled component that has a faded background image
+const StyledBackground = styled.div`
+  background-image: url("/src/assets/ahmed-zayan-9NLzxSyJiU4-unsplash.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.6;
+`;
+
 function StepperFlow({ steps }) {
   console.log(steps);
   const [errorMsg, setErrorMsg] = React.useState("");
@@ -90,7 +105,7 @@ function StepperFlow({ steps }) {
     <Stepper nonLinear activeStep={currentStep?.id} sx={{ padding: "2em 0" }}>
       {steps.map((stepObj, index) => (
         <Step key={stepObj.label}>
-          <StepButton color="inherit" onClick={() => jumpTo(index)}>
+          <StepButton color="inherit" onClick={() => jumpTo(stepObj.name)}>
             {stepObj.label}
           </StepButton>
         </Step>
@@ -163,7 +178,22 @@ function StepperFlow({ steps }) {
             {!isSmallDevice && (
               <StepHeading>Step - {currentStep?.label}</StepHeading>
             )}
-            <InnerFrame>{renderInnerCard(currentStep)}</InnerFrame>
+            <InnerFrame>
+              <Routes>
+                {steps.map((step) => (
+                  <Route
+                    exact
+                    key={`route-${step.name}`}
+                    path={`/${step.name}`}
+                    element={renderInnerCard(step)}
+                  />
+                ))}
+                <Route
+                  path="/*"
+                  element={<IntakeCard activeStep={currentStep} />}
+                />
+              </Routes>
+            </InnerFrame>
             <Typography textAlign={"left"}>{errorMsg}</Typography>
             {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
           </React.Fragment>

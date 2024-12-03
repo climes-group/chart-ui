@@ -31,7 +31,7 @@ export const flowSlice = createSlice({
       );
     },
     jumpToStep: (state, action) => {
-      state.currentStep = state.steps.find((x) => x.id === action.payload);
+      state.currentStep = state.steps.find((x) => x.name === action.payload);
     },
     meetCondition: (state, action) => {
       const { name, condition = true } = action.payload;
