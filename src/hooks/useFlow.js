@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import {
   jumpToStep,
   setError,
@@ -10,6 +11,7 @@ import {
 
 function useFlow(initialSteps = []) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (initialSteps.length > 0) {
@@ -27,6 +29,7 @@ function useFlow(initialSteps = []) {
     if (conditionsMet) {
       console.log("Conditions passed");
       dispatch(stepForward());
+      navigate(`/flow/${currentStep.next}`);
     } else {
       dispatch(setError("Please specify a location."));
     }
@@ -34,9 +37,10 @@ function useFlow(initialSteps = []) {
 
   function back() {
     dispatch(stepBackward());
+    navigate(`/flow/${currentStep.prev}`);
   }
 
-  function jumpTo(step) {
+  function jumpTo(name) {
     // all previous steps in chain should have conditions met
     let allConditionsMet = true;
     let prevStep = currentStep.prev;
@@ -47,7 +51,8 @@ function useFlow(initialSteps = []) {
     }
 
     if (allConditionsMet) {
-      dispatch(jumpToStep(step));
+      dispatch(jumpToStep(name));
+      navigate(`/flow/${name}`);
     } else {
       dispatch(setError("Conditions not met"));
     }
