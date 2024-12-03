@@ -3,8 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   steps: [],
   currentStep: undefined,
-  conditions: [true],
   error: undefined,
+  conditions: {},
 };
 
 export const flowSlice = createSlice({
@@ -17,8 +17,8 @@ export const flowSlice = createSlice({
     setSteps: (state, action) => {
       state.steps = action.payload;
       state.currentStep = action.payload[0];
-      state.conditions = action.payload.map(() => true);
       state.error = undefined;
+      state.conditions = {};
     },
     stepBackward: (state) => {
       state.currentStep = state.steps.find(
@@ -30,22 +30,13 @@ export const flowSlice = createSlice({
         (x) => x.name === state.currentStep.next,
       );
     },
-    stepDone: (state) => {
-      state.currentStep = { ...state.currentStep, done: true };
-    },
     jumpToStep: (state, action) => {
       state.currentStep = state.steps.find((x) => x.id === action.payload);
     },
     meetCondition: (state, action) => {
-      const newArr = [...state.conditions];
-      newArr[Math.min(newArr.length - 1, action.payload)] = true;
-      if (newArr.every((x) => x)) {
-        state.error = undefined;
-      }
-      state.conditions = newArr;
-    },
-    setConditions: (state, action) => {
-      state.conditions = action.payload;
+      const { name, condition = true } = action.payload;
+
+      state.conditions = { ...state.conditions, [name]: condition };
     },
     setError: (state, action) => {
       state.error = action.payload;
@@ -57,11 +48,9 @@ export const flowSlice = createSlice({
 export const {
   stepForward,
   stepBackward,
-  stepDone,
   jumpToStep,
   setInitial,
   meetCondition,
-  setConditions,
   setError,
   setSteps,
 } = flowSlice.actions;

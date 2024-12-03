@@ -26,10 +26,16 @@ export default function SiteLocationCard(props) {
       const geoCode = new GeoCode(coords.latitude, coords.longitude);
       dispatch(setGeoData(geoCode.obj));
       dispatch(setHumanAddress(""));
-      dispatch(meetCondition(props.id));
+      dispatch(meetCondition(props?.activeStep?.name));
     }
     navigator.geolocation.getCurrentPosition(success);
   };
+
+  function handleChooseAddr(addr) {
+    dispatch(setHumanAddress(addr?.address?.label));
+    dispatch(setGeoData(addr?.position));
+    dispatch(meetCondition(props?.activeStep?.name));
+  }
 
   return (
     <div>
@@ -38,11 +44,7 @@ export default function SiteLocationCard(props) {
       </Typography>
       <ChooseLocation
         onUseLocSvc={handleUseDeviceLocation}
-        onChooseAddr={(addr) => {
-          dispatch(setHumanAddress(addr?.address?.label));
-          console.log(addr);
-          dispatch(setGeoData(addr?.position));
-        }}
+        onChooseAddr={handleChooseAddr}
         isUsingGps={isUsingGps}
       />
       <SelectedLocation humanAddr={humanAddr} geoData={geoData} />

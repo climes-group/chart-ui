@@ -6,6 +6,9 @@ const steps = [
   {
     name: "siteLocation",
     label: "Site Location",
+    leaveCondition: {
+      hasAddr: false,
+    },
   },
   {
     name: "applicableSystems",
