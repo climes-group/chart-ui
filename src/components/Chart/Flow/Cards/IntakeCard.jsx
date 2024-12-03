@@ -26,13 +26,18 @@ const LargeQuote = styled.h1`
   > i {
     font-style: italic;
   }
+
+  @media (max-width: 767px) {
+    color: slategray;
+    margin-top: 1rem;
+  }
 `;
 
 export default function IntakeCard(props) {
   const { next } = useFlow();
   return (
     <MiddleOfScreen>
-      <Stack>
+      <Stack sx={{ padding: "1.5rem" }}>
         <LargeQuote>
           Welcome to <i>CHART</i>
         </LargeQuote>
