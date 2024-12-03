@@ -1,28 +1,32 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import App from "./App.jsx";
 import Chart from "./Chart.jsx";
-import Header from "./components/Header/index.jsx";
+
 import "./index.css";
 
 import { Provider } from "react-redux";
 import { store } from "./state/store.js";
-
 const router = createBrowserRouter([
   {
+    exact: true,
     path: "/",
     element: <App />,
     children: [
       {
-        path: "/",
-        element: (
-          <>
-            <Header />
-            <Chart />
-          </>
-        ),
+        exact: true,
+        path: "/flow/*",
+        element: <Chart />,
+      },
+      {
+        path: "*",
+        element: <Navigate to="/flow/intake" />,
       },
     ],
   },

@@ -1,16 +1,17 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import {
   jumpToStep,
   setError,
   setSteps,
   stepBackward,
-  stepDone,
   stepForward,
 } from "../state/slices/flowReducer";
 
 function useFlow(initialSteps = []) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (initialSteps.length > 0) {
@@ -23,28 +24,41 @@ function useFlow(initialSteps = []) {
   const error = useSelector((s) => s.flow.error);
 
   function next() {
-    if (conditions.every((x) => x)) {
+    const conditionsMet = conditions[currentStep.name] ?? true;
+
+    if (conditionsMet) {
       console.log("Conditions passed");
       dispatch(stepForward());
+      navigate(`/flow/${currentStep.next}`);
     } else {
-      console.warn("Conditions did not pass");
       dispatch(setError("Please specify a location."));
     }
   }
 
-  function done() {
-    dispatch(stepDone());
-  }
-
   function back() {
     dispatch(stepBackward());
+    navigate(`/flow/${currentStep.prev}`);
   }
 
-  function jumpTo(step) {
-    dispatch(jumpToStep(step));
+  function jumpTo(name) {
+    // all previous steps in chain should have conditions met
+    let allConditionsMet = true;
+    let prevStep = currentStep.prev;
+    while (prevStep) {
+      allConditionsMet =
+        allConditionsMet && (conditions[prevStep.name] ?? true);
+      prevStep = prevStep.prev;
+    }
+
+    if (allConditionsMet) {
+      dispatch(jumpToStep(name));
+      navigate(`/flow/${name}`);
+    } else {
+      dispatch(setError("Conditions not met"));
+    }
   }
 
-  return { currentStep, done, next, back, jumpTo, error };
+  return { currentStep, next, back, jumpTo, error };
 }
 
 export default useFlow;
