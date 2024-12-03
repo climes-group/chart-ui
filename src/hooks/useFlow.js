@@ -5,7 +5,6 @@ import {
   setError,
   setSteps,
   stepBackward,
-  stepDone,
   stepForward,
 } from "../state/slices/flowReducer";
 
@@ -23,17 +22,14 @@ function useFlow(initialSteps = []) {
   const error = useSelector((s) => s.flow.error);
 
   function next() {
-    if (conditions.every((x) => x)) {
+    const conditionsMet = conditions[currentStep.name] ?? true;
+
+    if (conditionsMet) {
       console.log("Conditions passed");
       dispatch(stepForward());
     } else {
-      console.warn("Conditions did not pass");
       dispatch(setError("Please specify a location."));
     }
-  }
-
-  function done() {
-    dispatch(stepDone());
   }
 
   function back() {
@@ -41,10 +37,23 @@ function useFlow(initialSteps = []) {
   }
 
   function jumpTo(step) {
-    dispatch(jumpToStep(step));
+    // all previous steps in chain should have conditions met
+    let allConditionsMet = true;
+    let prevStep = currentStep.prev;
+    while (prevStep) {
+      allConditionsMet =
+        allConditionsMet && (conditions[prevStep.name] ?? true);
+      prevStep = prevStep.prev;
+    }
+
+    if (allConditionsMet) {
+      dispatch(jumpToStep(step));
+    } else {
+      dispatch(setError("Conditions not met"));
+    }
   }
 
-  return { currentStep, done, next, back, jumpTo, error };
+  return { currentStep, next, back, jumpTo, error };
 }
 
 export default useFlow;

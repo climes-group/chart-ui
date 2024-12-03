@@ -7,7 +7,6 @@ import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
-import { useTheme } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import * as React from "react";
 import styled from "styled-components";
@@ -61,7 +60,7 @@ function renderInnerCard(currStep) {
   const { name } = currStep;
   switch (name) {
     case "intake":
-      return <IntakeCard />;
+      return <IntakeCard activeStep={currStep} />;
     case "siteLocation":
       return <SiteLocationCard activeStep={currStep} />;
     case "applicableSystems":
@@ -75,40 +74,22 @@ function renderInnerCard(currStep) {
 
 function StepperFlow({ steps }) {
   console.log(steps);
-  const [completed, setCompleted] = React.useState({});
   const [errorMsg, setErrorMsg] = React.useState("");
 
   const [isSmallDevice] = useMedia();
 
-  const { currentStep, done, next, back, jumpTo } = useFlow(steps);
+  const { currentStep, next, back, jumpTo } = useFlow(steps);
 
-  const theme = useTheme();
-
-  const totalSteps = () => {
-    return steps.length;
-  };
-
-  const completedSteps = () => {
-    return Object.keys(completed).length;
-  };
-
-  const allStepsCompleted = () => {
-    console.log(completedSteps(), totalSteps());
-    return completedSteps() === totalSteps();
-  };
-
-  const handleComplete = () => {
-    setCompleted((x) => ({ ...x, [currentStep.id]: true }));
-    done();
+  function handleNext() {
     next();
-  };
+  }
 
   const handleReset = () => {};
 
   const DesktopStepper = (
     <Stepper nonLinear activeStep={currentStep?.id} sx={{ padding: "2em 0" }}>
       {steps.map((stepObj, index) => (
-        <Step key={stepObj.label} completed={completed[index]}>
+        <Step key={stepObj.label}>
           <StepButton color="inherit" onClick={() => jumpTo(index)}>
             {stepObj.label}
           </StepButton>
@@ -128,18 +109,9 @@ function StepperFlow({ steps }) {
         Back
       </Button>
       <Box sx={{ flex: "1 1 auto" }} />
-      <Button onClick={next} sx={{ mr: 1 }}>
-        Next
+      <Button onClick={handleNext} sx={{ mr: 1 }}>
+        {!currentStep?.next ? "Finish" : "Next"}
       </Button>
-      {currentStep?.done ? (
-        <Typography variant="caption" sx={{ display: "inline-block" }}>
-          Step already completed
-        </Typography>
-      ) : (
-        <Button onClick={handleComplete}>
-          {currentStep?.next === undefined ? "Finish" : "Complete Step"}
-        </Button>
-      )}
     </Box>
   );
 
@@ -152,7 +124,7 @@ function StepperFlow({ steps }) {
       nextButton={
         <Button
           size="small"
-          onClick={next}
+          onClick={handleNext}
           disabled={currentStep?.next === null}
         >
           Next
@@ -176,7 +148,7 @@ function StepperFlow({ steps }) {
     <Container sx={{ padding: "1rem" }}>
       {!isSmallDevice && DesktopStepper}
       <CardWrapper>
-        {allStepsCompleted() ? (
+        {!currentStep ? (
           <React.Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
               All steps completed - you&apos;re finished
@@ -189,7 +161,7 @@ function StepperFlow({ steps }) {
         ) : (
           <React.Fragment>
             {!isSmallDevice && (
-              <StepHeading>Step {currentStep?.label}</StepHeading>
+              <StepHeading>Step - {currentStep?.label}</StepHeading>
             )}
             <InnerFrame>{renderInnerCard(currentStep)}</InnerFrame>
             <Typography textAlign={"left"}>{errorMsg}</Typography>
