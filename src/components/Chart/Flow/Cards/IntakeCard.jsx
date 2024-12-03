@@ -1,6 +1,7 @@
 import { NavigationOutlined } from "@mui/icons-material";
 import { Fab, Stack } from "@mui/material";
 import styled from "styled-components";
+import intakeBkg from "../../../../assets/daniel-gonzalez-KeiUIl9Lzo4-unsplash.jpg";
 import useFlow from "../../../../hooks/useFlow";
 
 const MiddleOfScreen = styled.div`
@@ -9,7 +10,7 @@ const MiddleOfScreen = styled.div`
   align-items: top;
   height: 80vh;
   width: 100%;
-  background-image: url("/src/assets/daniel-gonzalez-KeiUIl9Lzo4-unsplash.jpg");
+  background-image: url(${intakeBkg});
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
