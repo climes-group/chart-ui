@@ -1,4 +1,4 @@
-# Climes Group Site
+# Chart UI
 
 ## Code Quality
 

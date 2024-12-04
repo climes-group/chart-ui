@@ -47,7 +47,7 @@ const CardWrapper = styled(Box)`
   flex-direction: column;
   border: 1px solid;
   padding: 1rem;
-  min-height: 90vh;
+  min-height: 80vh;
   @media (max-width: 767px) {
     border: 0px;
     padding: 0.5rem;
@@ -160,7 +160,7 @@ function StepperFlow({ steps }) {
   );
 
   return (
-    <Container sx={{ padding: "1rem" }}>
+    <Container>
       {!isSmallDevice && DesktopStepper}
       <CardWrapper>
         {!currentStep ? (
