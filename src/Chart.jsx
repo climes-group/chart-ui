@@ -17,7 +17,7 @@ function Chart() {
   }, []);
 
   return (
-    <div ref={targetElement}>
+    <div ref={targetElement} className="flex justify-center flex-grow">
       <StepperFlow steps={steps} />
     </div>
   );

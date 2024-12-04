@@ -1,69 +1,38 @@
-import styled from "styled-components";
-import { THEME } from "../../utils";
-
+import { faLinkedin, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTwitter, faLinkedin } from "@fortawesome/free-brands-svg-icons";
-
-const Root = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 1rem;
-
-  a {
-    margin-left: 0.5rem;
-  }
-
-  ul {
-    padding-left: 0;
-  }
-
-  li {
-    display: inline-flex;
-  }
-`;
-
-const MediaButton = styled.button`
-  color: ${THEME.PRIMARY};
-  padding: 10px;
-  border-radius: 100%;
-  background-color: #fff;
-  border: solid 2px ${THEME.ACCENT};
-  height: 45px;
-  width: 45px;
-  margin: 0.2rem;
-
-  &:hover {
-    border: solid 2px ${THEME.PRIMARY};
-  }
-
-  @media (max-width: 1024px) {
-    align-self: flex-end;
-  }
-`;
 
 function Social() {
   return (
-    <Root>
-      <ul>
-        <li>
-          <a href="https://twitter.com/PEO_HQ" target="_blank">
-            <MediaButton id="social-twitter" aria-label="Twitter Link">
+    <section className="flex flex-col m-4">
+      <ul className="pl-0">
+        <li className="list-none inline-flex">
+          <a href="https://twitter.com/PEO_HQ" target="_blank" className="ml-4">
+            <button
+              id="social-twitter"
+              aria-label="Twitter Link"
+              className="media-icon"
+            >
               <FontAwesomeIcon icon={faTwitter} />
-            </MediaButton>
+            </button>
           </a>
         </li>
-        <li>
+        <li className="list-none inline-flex">
           <a
             href="https://www.linkedin.com/company/peo---professional-engineers-ontario/"
             target="_blank"
+            className="ml-4"
           >
-            <MediaButton id="social-linkedin" aria-label="Linkedin Link">
+            <button
+              id="social-linkedin"
+              aria-label="Linkedin Link"
+              className="media-icon"
+            >
               <FontAwesomeIcon icon={faLinkedin} />
-            </MediaButton>
+            </button>
           </a>
         </li>
       </ul>
-    </Root>
+    </section>
   );
 }
 
