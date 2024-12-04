@@ -1,21 +1,10 @@
-import styled from "styled-components";
-import { THEME } from "../../utils";
 import Social from "./Social";
-
-const Root = styled.footer`
-  border-top: solid 3px ${THEME.ACCENT};
-  min-height: 200px;
-  background-color: ${THEME.BKG};
-  padding: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-`;
 
 const Footer = () => {
   return (
-    <Root>
+    <footer className="flex justify-between p-6 border-t-4 border-golden-accent min-h-36 bg-linen-bkg ">
       <Social />
-    </Root>
+    </footer>
   );
 };
 
