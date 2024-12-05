@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import PropTypes from "prop-types";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { meetCondition } from "../../../../state/slices/flowReducer";
@@ -10,10 +11,8 @@ import { GeoCode } from "../../../../utils/geocode";
 import ChooseLocation from "../../geo/ChooseLocation";
 import SelectedLocation from "../../geo/SelectedLocation";
 
-export default function SiteLocationCard(props) {
+function SiteLocationCard(props) {
   const geoData = useSelector((s) => s.geo.geoData);
-
-  const hasAcceptedTerms = useSelector((s) => s.geo.hasAcceptedTerms);
   const humanAddr = useSelector((s) => s.geo.humanAddress);
   const dispatch = useDispatch();
 
@@ -51,3 +50,13 @@ export default function SiteLocationCard(props) {
     </div>
   );
 }
+
+SiteLocationCard.defaultProps = {
+  activeStep: { name: "" },
+};
+
+SiteLocationCard.propTypes = {
+  activeStep: PropTypes.object,
+};
+
+export default SiteLocationCard;
