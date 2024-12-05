@@ -1,6 +1,6 @@
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Container } from "@mui/material";
+import { Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import MobileStepper from "@mui/material/MobileStepper";
 import Step from "@mui/material/Step";
@@ -10,49 +10,12 @@ import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import * as React from "react";
 import { Route, Routes } from "react-router-dom";
-import styled from "styled-components";
 import useFlow from "../../../hooks/useFlow";
 import useMedia from "../../../hooks/useMedia";
 import ApplicableSystemsCard from "./Cards/ApplicableSystemsCard";
 import IntakeCard from "./Cards/IntakeCard";
 import ReportCard from "./Cards/ReportCard";
 import SiteLocationCard from "./Cards/SiteLocationCard";
-
-const StepHeading = styled.h2`
-  margin-top: 0px;
-`;
-
-const InnerFrame = styled.div`
-  flex-grow: 1;
-  position: relative;
-`;
-
-const SampleCard = styled.div`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: repeating-linear-gradient(
-    45deg,
-    rgb(255, 255, 255),
-    rgb(255, 255, 255) 10px,
-    rgba(226, 176, 70, 0.5) 10px,
-    rgba(226, 176, 70, 0.5) 20px
-  );
-`;
-
-const CardWrapper = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  border: 1px solid;
-  padding: 1rem;
-  min-height: 80vh;
-  @media (max-width: 767px) {
-    border: 0px;
-    padding: 0.5rem;
-  }
-`;
 
 function renderInnerCard(currStep) {
   if (!currStep) {
@@ -69,23 +32,16 @@ function renderInnerCard(currStep) {
     case "report":
       return <ReportCard />;
     default:
-      return <SampleCard activeStep={currStep}>Lorem</SampleCard>;
+      return (
+        <div className="bg-gradient-to-r from-white to-golden-accent absolute top-0 bottom-0">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam
+          velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate
+          commodo lectus, ac blandit elit tincidunt id. Sed rhoncus, tortor sed
+          eleifend tristique, tort
+        </div>
+      );
   }
 }
-
-// create a styled component that has a faded background image
-const StyledBackground = styled.div`
-  background-image: url("/src/assets/ahmed-zayan-9NLzxSyJiU4-unsplash.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  opacity: 0.6;
-`;
 
 function StepperFlow({ steps }) {
   console.log(steps);
@@ -160,9 +116,9 @@ function StepperFlow({ steps }) {
   );
 
   return (
-    <Container>
+    <section className="p-4 pt-0 md:p-12 max-w-screen-lg w-full flex-auto">
       {!isSmallDevice && DesktopStepper}
-      <CardWrapper>
+      <div className="flex flex-col pd-12 min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-32rem)]">
         {!currentStep ? (
           <React.Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
@@ -175,10 +131,8 @@ function StepperFlow({ steps }) {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            {!isSmallDevice && (
-              <StepHeading>Step - {currentStep?.label}</StepHeading>
-            )}
-            <InnerFrame>
+            {!isSmallDevice && <h2>Step - {currentStep?.label}</h2>}
+            <div className="flex-grow relative">
               <Routes>
                 {steps.map((step) => (
                   <Route
@@ -193,13 +147,13 @@ function StepperFlow({ steps }) {
                   element={<IntakeCard activeStep={currentStep} />}
                 />
               </Routes>
-            </InnerFrame>
+            </div>
             <Typography textAlign={"left"}>{errorMsg}</Typography>
-            {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
           </React.Fragment>
         )}
-      </CardWrapper>
-    </Container>
+        {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
+      </div>
+    </section>
   );
 }
 

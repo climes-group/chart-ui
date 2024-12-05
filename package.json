@@ -32,9 +32,7 @@
     "react-redux": "^9.1.2",
     "react-router": "^6.28.0",
     "react-router-dom": "^6.28.0",
-    "react-switch": "^7.0.0",
-    "reactflow": "^11.8.2",
-    "styled-components": "^5.3.11"
+    "react-switch": "^7.0.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
@@ -45,13 +43,17 @@
     "@vitejs/plugin-basic-ssl": "^1.1.0",
     "@vitejs/plugin-react": "^4.0.3",
     "@vitest/coverage-v8": "^2.1.5",
+    "autoprefixer": "^10.4.20",
     "eslint": "^8.45.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "jsdom": "^25.0.1",
+    "postcss": "^8.4.49",
     "prettier-plugin-organize-imports": "^3.2.3",
+    "prettier-plugin-tailwindcss": "^0.6.9",
     "serve": "^14.2.0",
+    "tailwindcss": "^3.4.16",
     "vite": "^4.4.5",
     "vitest": "^2.1.5"
   }

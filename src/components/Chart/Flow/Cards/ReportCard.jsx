@@ -24,7 +24,6 @@ export default function ReportCard() {
           Download site location details
         </Button>
       </p>
-      ;
     </>
   );
 }

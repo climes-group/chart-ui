@@ -1,16 +1,6 @@
 import PropTypes from "prop-types";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import styled from "styled-components";
 import { GeoCode } from "../../utils/geocode";
-
-const apiKey = import.meta.env.VITE_GEO_API_KEY;
-
-const Root = styled.div`
-  & > div {
-    height: 400px;
-    width: 100%;
-  }
-`;
 
 function MapView({ geoData }) {
   if (!geoData) return null;
@@ -18,13 +8,14 @@ function MapView({ geoData }) {
   const geoCode = new GeoCode(geoData?.lat, geoData?.lng);
 
   return (
-    <Root>
+    <div>
       <MapContainer
         key={geoCode.str}
         q
         center={[geoCode.lat, geoCode.lng]}
         zoom={13}
         scrollWheelZoom={false}
+        className="h-96 w-full"
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -34,7 +25,7 @@ function MapView({ geoData }) {
           <Popup>{geoCode.str}</Popup>
         </Marker>
       </MapContainer>
-    </Root>
+    </div>
   );
 }
 MapView.propTypes = {
