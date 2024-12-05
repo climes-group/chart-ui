@@ -14,7 +14,7 @@ const Header = () => {
           <img
             src={climesBannerUrl}
             alt="Climes Banner"
-            className="py-4 max-h-44"
+            className="py-4 max-h-32"
           />
         </Link>
       </div>
