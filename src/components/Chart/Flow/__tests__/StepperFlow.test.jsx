@@ -1,30 +1,51 @@
 import { act, render } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { beforeEach, describe } from "vitest";
+import { MemoryRouter } from "react-router";
+import { describe } from "vitest";
+import useMedia from "../../../../hooks/useMedia.js";
 import { store } from "../../../../state/store.js";
 import steps from "../../../../steps.js";
 import StepperFlow from "../StepperFlow.jsx";
 
 vi.mock("../../../../hooks/useFlow", { spy: true });
+vi.mock("../../../../hooks/useMedia");
 
 describe("StepperFlow tests", () => {
-  let wrapper;
   beforeEach(() => {
-    // create a react-redux wrapper
-    wrapper = ({ children }) => <Provider store={store}>{children}</Provider>;
+    useMedia.mockReturnValue([false]);
   });
 
   it("should render Desktop stepper with clickable step", async () => {
-    const { getByText, findByText } = render(<StepperFlow steps={steps} />, {
-      wrapper,
-    });
+    const { getByText, findByText } = render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <StepperFlow steps={steps} />
+        </MemoryRouter>
+      </Provider>,
+    );
     act(() => {
       getByText("Intake").click();
     });
     await findByText("Intake");
   });
 
+  it("should render Mobile stepper with clickable step", async () => {
+    const { getByText, findByText } = render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <StepperFlow steps={steps} />
+        </MemoryRouter>
+      </Provider>,
+    );
+    act(() => {
+      getByText("Proceed").click();
+    });
+    await findByText("Proceed");
+  });
+
   it("should have a finish button that completes step if last step", async () => {
+    // mock small screen
+    useMedia.mockReturnValueOnce([true]);
     const oneStep = [
       {
         id: 0,
@@ -34,9 +55,13 @@ describe("StepperFlow tests", () => {
         next: undefined,
       },
     ];
-    const { getByText, findByText } = render(<StepperFlow steps={oneStep} />, {
-      wrapper,
-    });
+    const { getByText, findByText } = render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <StepperFlow steps={oneStep} />
+        </MemoryRouter>
+      </Provider>,
+    );
     act(() => {
       getByText("Finish").click();
     });

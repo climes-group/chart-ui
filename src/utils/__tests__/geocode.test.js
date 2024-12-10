@@ -21,6 +21,9 @@ describe("geocode", () => {
     };
     const geocode = new GeoCode(geodata.lat, geodata.lng);
 
+    // another geocode for Australia
+    const sydney = new GeoCode(-33.865143, 151.2099);
+
     it("should generate query string", () => {
       expect(geocode.queryStr).toBe("37.4219999,-122.0840575");
     });
@@ -34,6 +37,10 @@ describe("geocode", () => {
 
     it("should generate string", () => {
       expect(geocode.str).toBe("37°25'19.20\"N 122°5'2.61\"W");
+    });
+
+    it("should generate another string", () => {
+      expect(sydney.str).toBe("33°51'54.51\"S 151°12'35.64\"E");
     });
   });
 
