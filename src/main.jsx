@@ -20,13 +20,17 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
+        index: true,
+        element: <Navigate to="/flow/intake" replace />,
+      },
+      {
         exact: true,
         path: "/flow/*",
         element: <Chart />,
       },
       {
         path: "*",
-        element: <Navigate to="/flow/intake" />,
+        element: <Navigate to="/flow/intake" replace />,
       },
     ],
   },

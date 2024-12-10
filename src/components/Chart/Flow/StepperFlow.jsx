@@ -9,6 +9,7 @@ import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import * as React from "react";
+import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import useFlow from "../../../hooks/useFlow";
 import useMedia from "../../../hooks/useMedia";
@@ -18,9 +19,6 @@ import ReportCard from "./Cards/ReportCard";
 import SiteLocationCard from "./Cards/SiteLocationCard";
 
 function renderInnerCard(currStep) {
-  if (!currStep) {
-    return null;
-  }
   const { name } = currStep;
   switch (name) {
     case "intake":
@@ -33,7 +31,7 @@ function renderInnerCard(currStep) {
       return <ReportCard />;
     default:
       return (
-        <div className="bg-gradient-to-r from-white to-golden-accent absolute top-0 bottom-0">
+        <div className="">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam
           velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate
           commodo lectus, ac blandit elit tincidunt id. Sed rhoncus, tortor sed
@@ -44,18 +42,15 @@ function renderInnerCard(currStep) {
 }
 
 function StepperFlow({ steps }) {
-  console.log(steps);
-  const [errorMsg, setErrorMsg] = React.useState("");
+  const errorMessage = useSelector((s) => s.flow.error);
 
   const [isSmallDevice] = useMedia();
 
-  const { currentStep, next, back, jumpTo } = useFlow(steps);
+  const { currentStep, next, back, jumpTo, reset } = useFlow(steps);
 
   function handleNext() {
     next();
   }
-
-  const handleReset = () => {};
 
   const DesktopStepper = (
     <Stepper nonLinear activeStep={currentStep?.id} sx={{ padding: "2em 0" }}>
@@ -126,7 +121,7 @@ function StepperFlow({ steps }) {
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Box sx={{ flex: "1 1 auto" }} />
-              <Button onClick={handleReset}>Reset</Button>
+              <Button onClick={reset}>Reset</Button>
             </Box>
           </React.Fragment>
         ) : (
@@ -148,7 +143,7 @@ function StepperFlow({ steps }) {
                 />
               </Routes>
             </div>
-            <Typography textAlign={"left"}>{errorMsg}</Typography>
+            <Typography textAlign={"left"}>{errorMessage}</Typography>
           </React.Fragment>
         )}
         {isSmallDevice ? MobileStepperControls : DesktopStepperControl}

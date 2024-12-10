@@ -17,7 +17,7 @@ export default defineConfig({
     coverage: {
       exclude: [
         ".eslintrc.cjs",
-        "vite.config.js",
+        "*.config.js",
         "src/main.jsx",
         "src/App.jsx",
         "src/Chart.jsx",

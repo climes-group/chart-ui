@@ -1,4 +1,4 @@
-import { act, render } from "@testing-library/react";
+import { act, fireEvent, render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { describe, vi } from "vitest";
 import { store } from "../../../../../state/store.js";
@@ -40,5 +40,44 @@ describe("SiteLocationCard tests", () => {
       screen.getByText("Use my location").click();
     });
     await screen.findByText(mockGeoCode.str);
+  });
+
+  it("should search an address and then choose it", async () => {
+    // mock fetch
+    global.fetch = vi.fn();
+    fetch.mockResolvedValue({
+      json: async () => ({
+        items: [
+          {
+            address: {
+              label:
+                "1600 Amphitheatre Pkwy, Mountain View, California, 94043, United States",
+            },
+          },
+        ],
+      }),
+    });
+
+    const screen = render(<SiteLocationCard />, { wrapper });
+    act(() => {
+      // find address text field and change value
+      const addressField = screen.getByLabelText("Address");
+      fireEvent.change(addressField, {
+        target: { value: "1600 Amphitheatre Parkway, Mountain View, CA" },
+      });
+      screen.getByText("Search").click();
+    });
+
+    // wait for search results
+    await screen.findByText("1 result(s) found.");
+
+    // click radio button
+    act(() => {
+      screen
+        .getByText(
+          "1600 Amphitheatre Pkwy, Mountain View, California, 94043, United States",
+        )
+        .click();
+    });
   });
 });
