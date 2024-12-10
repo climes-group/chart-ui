@@ -16,9 +16,16 @@ export const flowSlice = createSlice({
     },
     setSteps: (state, action) => {
       state.steps = action.payload;
-      state.currentStep = action.payload[0];
+      // call up to setIntial
+      flowSlice.caseReducers.setInitial(state, { payload: action.payload[0] });
       state.error = undefined;
-      state.conditions = {};
+      const newConditions = action.payload.reduce((acc, step) => {
+        if (step.leaveCondition) {
+          acc[step.name] = false;
+        }
+        return acc;
+      }, {});
+      state.conditions = newConditions;
     },
     stepBackward: (state) => {
       state.currentStep = state.steps.find(

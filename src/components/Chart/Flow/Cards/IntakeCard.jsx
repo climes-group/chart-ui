@@ -1,4 +1,4 @@
-import { NavigationOutlined } from "@mui/icons-material";
+import NavigationOutlined from "@mui/icons-material/NavigationOutlined";
 import { Fab } from "@mui/material";
 import useFlow from "../../../../hooks/useFlow";
 
