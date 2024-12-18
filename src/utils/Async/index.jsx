@@ -15,6 +15,7 @@ function Async({ children, fallback, error, fetchPromise }) {
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     fetchPromise
       .then((data) => {
         setFetchData(data);

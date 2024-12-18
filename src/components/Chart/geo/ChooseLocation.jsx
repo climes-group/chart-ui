@@ -16,24 +16,65 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import useMedia from "../../../hooks/useMedia";
+import Async from "../../../utils/Async";
 import { searchAddress } from "../../../utils/geocode";
+
+function ResultsTable({ data, onChooseAddr }) {
+  const searchResults = data.items;
+  return (
+    <div>
+      <TableContainer component={Paper} sx={{ marginTop: "2rem" }}>
+        <Table sx={{ minWidth: 400 }} aria-label="simple table">
+          <TableBody>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue="female"
+              name="radio-buttons-group"
+            >
+              {searchResults.slice(0, 10).map((row, ind) => {
+                return (
+                  <TableRow
+                    key={row.id}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      <FormControlLabel
+                        value={ind}
+                        control={<Radio />}
+                        label={row.address.label}
+                        onClick={() => {
+                          onChooseAddr(searchResults[ind]);
+                        }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </RadioGroup>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <div>
+        <Typography>{`${searchResults?.length} result(s) found.`}</Typography>
+      </div>
+    </div>
+  );
+}
 
 function ChooseLocation(props) {
   const [fieldAddress, setFieldAddress] = useState("");
-  const [searchResults, setSearchResults] = useState();
   const [isSmallDevice] = useMedia();
+  const fieldAddressRef = useRef(null);
 
   async function handleSearchClick() {
-    const resp = await searchAddress(fieldAddress);
-    console.log(resp);
-    setSearchResults(resp?.items);
+    // update field Address
+    setFieldAddress(fieldAddressRef.current.value);
   }
 
   async function handleClearClick() {
     setFieldAddress("");
-    setSearchResults(null);
   }
 
   const containerSx = isSmallDevice
@@ -68,12 +109,7 @@ function ChooseLocation(props) {
             label="Address"
             variant="filled"
             fullWidth
-            value={fieldAddress}
-            onChange={(e) => {
-              console.log(e.target.value);
-              setFieldAddress(e.target.value);
-            }}
-            sx={{}}
+            inputRef={fieldAddressRef}
           />
         </Grid>
 
@@ -85,41 +121,10 @@ function ChooseLocation(props) {
           Clear
         </Button>
       </Grid>
-      {searchResults?.length && (
-        <TableContainer component={Paper} sx={{ marginTop: "2rem" }}>
-          <Table sx={{ minWidth: 400 }} aria-label="simple table">
-            <TableBody>
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="female"
-                name="radio-buttons-group"
-              >
-                {searchResults.slice(0, 10).map((row, ind) => {
-                  return (
-                    <TableRow
-                      key={row.id}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        <FormControlLabel
-                          value={ind}
-                          control={<Radio />}
-                          label={row.address.label}
-                          onClick={() => {
-                            props.onChooseAddr(searchResults[ind]);
-                          }}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </RadioGroup>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-      {searchResults && (
-        <Typography>{`${searchResults?.length} result(s) found.`}</Typography>
+      {fieldAddress && (
+        <Async fetchPromise={searchAddress(fieldAddress)}>
+          <ResultsTable />
+        </Async>
       )}
       <Stack
         direction="row"
