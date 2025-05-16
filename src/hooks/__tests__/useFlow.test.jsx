@@ -2,11 +2,11 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { store } from "../../state/store.js";
+import { setupStore } from "../../state/store.js";
 import useFlow from "../useFlow";
 
 const wrapper = ({ children }) => (
-  <Provider store={store}>
+  <Provider store={setupStore()}>
     <MemoryRouter>{children}</MemoryRouter>
   </Provider>
 );
