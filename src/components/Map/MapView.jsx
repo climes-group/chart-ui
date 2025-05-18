@@ -1,6 +1,6 @@
+import { GeoCode } from "@/utils/geocode";
 import PropTypes from "prop-types";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { GeoCode } from "../../utils/geocode";
 
 function MapView({ geoData }) {
   if (!geoData) return null;

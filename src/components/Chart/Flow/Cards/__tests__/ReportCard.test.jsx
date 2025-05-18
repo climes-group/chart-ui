@@ -1,10 +1,10 @@
+import { downloadCsv } from "@/utils/generateReport";
 import { renderWithProviders } from "@/utils/testing";
 import { describe } from "vitest";
-import { downloadCsv } from "../../../../../utils/generateReport";
 import ReportCard from "../ReportCard";
 
 // vi.mock generateReport and downloadCsv
-vi.mock("../../../../../utils/generateReport", {
+vi.mock("@/utils/generateReport", {
   downloadCsv: vi.fn(),
   generateCsvFomJson: vi.fn(),
 });

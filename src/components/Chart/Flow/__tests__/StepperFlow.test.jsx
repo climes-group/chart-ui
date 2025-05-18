@@ -1,12 +1,12 @@
+import useMedia from "@/hooks/useMedia.js";
+import steps from "@/steps.js";
 import { renderWithProviders } from "@/utils/testing";
 import { act } from "@testing-library/react";
 import { describe } from "vitest";
-import useMedia from "../../../../hooks/useMedia.js";
-import steps from "../../../../steps.js";
 import StepperFlow from "../StepperFlow.jsx";
 
-vi.mock("../../../../hooks/useFlow", { spy: true });
-vi.mock("../../../../hooks/useMedia");
+vi.mock("@/hooks/useFlow", { spy: true });
+vi.mock("@/hooks/useMedia");
 
 describe("StepperFlow tests", () => {
   beforeEach(() => {

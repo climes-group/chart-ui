@@ -1,3 +1,5 @@
+import useMedia from "@/hooks/useMedia";
+import { searchAddress } from "@/utils/geocode";
 import {
   Button,
   Container,
@@ -17,8 +19,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import useMedia from "../../../hooks/useMedia";
-import { searchAddress } from "../../../utils/geocode";
 
 function ChooseLocation(props) {
   const [fieldAddress, setFieldAddress] = useState("");

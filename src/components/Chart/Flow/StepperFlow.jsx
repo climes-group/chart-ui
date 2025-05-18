@@ -1,3 +1,5 @@
+import useFlow from "@/hooks/useFlow";
+import useMedia from "@/hooks/useMedia";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { Box } from "@mui/material";
@@ -11,8 +13,6 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
-import useFlow from "../../../hooks/useFlow";
-import useMedia from "../../../hooks/useMedia";
 import ApplicableSystemsCard from "./Cards/ApplicableSystemsCard";
 import IntakeCard from "./Cards/IntakeCard";
 import ReportCard from "./Cards/ReportCard";

@@ -1,8 +1,8 @@
+import { GeoCode } from "@/utils/geocode.js";
 import { act, fireEvent, render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { describe, vi } from "vitest";
 import { setupStore } from "../../../../../state/store.js";
-import { GeoCode } from "../../../../../utils/geocode.js";
 import SiteLocationCard from "../SiteLocationCard";
 
 const wrapper = ({ children }) => (
