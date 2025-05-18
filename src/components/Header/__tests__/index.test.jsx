@@ -2,6 +2,10 @@ import { render } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { describe } from "vitest";
 import Header from "..";
+
+// mock OidcLogin component
+vitest.mock("@/components/Auth/OidcLogin");
+
 describe("Header tests", () => {
   // create a wrapper for React Browser Router
   const Wrapper = ({ children }) => {

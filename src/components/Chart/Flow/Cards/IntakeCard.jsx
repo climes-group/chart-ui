@@ -1,6 +1,6 @@
+import useFlow from "@/hooks/useFlow";
 import NavigationOutlined from "@mui/icons-material/NavigationOutlined";
 import { Fab } from "@mui/material";
-import useFlow from "../../../../hooks/useFlow";
 
 export default function IntakeCard(props) {
   const { next } = useFlow();

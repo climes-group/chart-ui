@@ -1,9 +1,6 @@
+import { downloadCsv, generateCsvFomJson } from "@/utils/generateReport";
 import { Button, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
-import {
-  downloadCsv,
-  generateCsvFomJson,
-} from "../../../../utils/generateReport";
 
 export default function ReportCard() {
   const geoData = useSelector((s) => s.geo.geoData);

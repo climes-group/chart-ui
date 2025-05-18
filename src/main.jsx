@@ -11,8 +11,10 @@ import Chart from "./Chart.jsx";
 
 import "./index.css";
 
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Provider } from "react-redux";
-import { store } from "./state/store.js";
+import { setupStore } from "./state/store.js";
+
 const router = createBrowserRouter([
   {
     exact: true,
@@ -45,11 +47,13 @@ const theme = createTheme({
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </Provider>
-  </React.StrictMode>,
+  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <React.StrictMode>
+      <Provider store={setupStore()}>
+        <ThemeProvider theme={theme}>
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </Provider>
+    </React.StrictMode>
+  </GoogleOAuthProvider>,
 );

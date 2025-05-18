@@ -1,8 +1,8 @@
+import useMedia from "@/hooks/useMedia";
+import { GeoCode } from "@/utils/geocode";
 import { Container, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import PropTypes from "prop-types";
-import useMedia from "../../../hooks/useMedia";
-import { GeoCode } from "../../../utils/geocode";
 import MapView from "../../Map/MapView";
 
 function SelectedLocation({ humanAddr, geoData }) {

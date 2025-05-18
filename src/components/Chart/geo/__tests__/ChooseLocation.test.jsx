@@ -1,11 +1,11 @@
+import useMedia from "@/hooks/useMedia";
+import { searchAddress } from "@/utils/geocode";
 import { act, fireEvent, render } from "@testing-library/react";
 import { beforeEach, describe } from "vitest";
-import useMedia from "../../../../hooks/useMedia";
-import { searchAddress } from "../../../../utils/geocode";
 import ChooseLocation from "../ChooseLocation";
 
-vi.mock("../../../../utils/geocode");
-vi.mock("../../../../hooks/useMedia");
+vi.mock("@/utils/geocode");
+vi.mock("@/hooks/useMedia");
 
 const mockAddressResult = {
   id: "123",

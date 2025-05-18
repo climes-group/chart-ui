@@ -1,11 +1,13 @@
+import { GeoCode } from "@/utils/geocode.js";
 import { act, fireEvent, render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { describe, vi } from "vitest";
-import { store } from "../../../../../state/store.js";
-import { GeoCode } from "../../../../../utils/geocode.js";
+import { setupStore } from "../../../../../state/store.js";
 import SiteLocationCard from "../SiteLocationCard";
 
-const wrapper = ({ children }) => <Provider store={store}>{children}</Provider>;
+const wrapper = ({ children }) => (
+  <Provider store={setupStore()}>{children}</Provider>
+);
 vi.mock("react-redux", { spy: true });
 
 describe("SiteLocationCard tests", () => {

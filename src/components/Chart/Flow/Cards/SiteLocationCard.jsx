@@ -1,3 +1,4 @@
+import { GeoCode } from "@/utils/geocode";
 import { Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import { useState } from "react";
@@ -7,7 +8,6 @@ import {
   setGeoData,
   setHumanAddress,
 } from "../../../../state/slices/geoReducer";
-import { GeoCode } from "../../../../utils/geocode";
 import ChooseLocation from "../../geo/ChooseLocation";
 import SelectedLocation from "../../geo/SelectedLocation";
 
