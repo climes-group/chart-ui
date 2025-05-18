@@ -27,7 +27,6 @@ function ChooseLocation(props) {
 
   async function handleSearchClick() {
     const resp = await searchAddress(fieldAddress);
-    console.log(resp);
     setSearchResults(resp?.items);
   }
 

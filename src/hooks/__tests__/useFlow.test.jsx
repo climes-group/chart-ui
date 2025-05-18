@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { setupStore } from "../../state/store.js";
 import useFlow from "../useFlow";
