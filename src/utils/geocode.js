@@ -99,15 +99,12 @@ export async function lookUpHumanAddress(geoCode) {
   }
 
   const baseGeoCodeApi = `https://geocode.search.hereapi.com/v1/geocode`;
-
   const finalUrl = `${baseGeoCodeApi}?at=${
     geoCode.queryStr
   }&apikey=${getApiKey()}`;
-  console.log(finalUrl);
   try {
     const resp = await fetch(finalUrl);
     const jsonResp = await resp.json();
-    console.log(jsonResp);
     if (jsonResp?.plus_code?.compound_code) {
       return jsonResp?.plus_code?.compound_code;
     }

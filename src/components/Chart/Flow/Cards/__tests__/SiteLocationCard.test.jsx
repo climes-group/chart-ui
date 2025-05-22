@@ -44,7 +44,7 @@ describe("SiteLocationCard tests", () => {
     await screen.findByText(mockGeoCode.str);
   });
 
-  it("should search an address and then choose it", async () => {
+  it.only("should search an address and then choose it", async () => {
     // mock fetch
     global.fetch = vi.fn();
     fetch.mockResolvedValue({

@@ -1,7 +1,7 @@
 import useMedia from "@/hooks/useMedia";
 import { GeoCode } from "@/utils/geocode";
 import { Container, Stack, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import PropTypes from "prop-types";
 import MapView from "../../Map/MapView";
 

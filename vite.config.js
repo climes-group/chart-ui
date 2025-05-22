@@ -32,5 +32,9 @@ export default defineConfig({
         "**/__tests__/**",
       ],
     },
+    env: {
+      VITE_GEO_API_KEY: "mock_key",
+      VITE_FF_USE_GEO_API: "true",
+    },
   },
 });
