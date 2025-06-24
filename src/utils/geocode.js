@@ -1,4 +1,7 @@
-const BASE_GEOCODE_URL = "https://geocode.search.hereapi.com/v1/geocode";
+const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org";
+// Nominatim requires a custom User-Agent header for API requests.
+// Replace with your actual app name and contact email.
+const USER_AGENT = "chart@climesgroup.ca";
 
 export class GeoCode {
   constructor(lat, lng) {
@@ -63,51 +66,76 @@ export class GeoCode {
   }
 }
 
-function getApiKey() {
-  const apiKey = import.meta.env.VITE_GEO_API_KEY;
-  const useGeoApi = import.meta.env.VITE_FF_USE_GEO_API;
-  return useGeoApi && apiKey;
-}
-
-/*
- * Search for an address
+/**
+ * Search for an address using Nominatim
  * @param {string} query
- * @returns {Promise}
+ * @returns {Promise<{items: Array}>}
  */
 export async function searchAddress(query) {
+  const params = new URLSearchParams({
+    q: query,
+    format: "json",
+    addressdetails: "1",
+  });
+
   try {
     const resp = await fetch(
-      `${BASE_GEOCODE_URL}?q=${query}&apiKey=${getApiKey()}`,
+      `${NOMINATIM_BASE_URL}/search?${params.toString()}`,
+      {
+        headers: { "User-Agent": USER_AGENT },
+      },
     );
     const result = await resp.json();
-    return result;
+
+    // Map the Nominatim response to the format your app expects
+    const mappedItems = result.map((item) => ({
+      id: item.place_id,
+      address: {
+        label: item.display_name,
+      },
+      position: {
+        lat: parseFloat(item.lat),
+        lng: parseFloat(item.lon),
+      },
+    }));
+
+    return { items: mappedItems };
   } catch (e) {
     console.error(e);
-    return {};
+    return { items: [] };
   }
 }
 
 /**
- * Look up human readable address from a geocode
+ * Look up human readable address from a geocode using Nominatim
  * @param {GeoCode} geoCode
- * @returns {string} human readable address
+ * @returns {Promise<string>} human readable address
  */
 export async function lookUpHumanAddress(geoCode) {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    return;
+  if (
+    !geoCode ||
+    typeof geoCode.lat === "undefined" ||
+    typeof geoCode.lng === "undefined"
+  ) {
+    return "";
   }
 
-  const baseGeoCodeApi = `https://geocode.search.hereapi.com/v1/geocode`;
-  const finalUrl = `${baseGeoCodeApi}?at=${
-    geoCode.queryStr
-  }&apikey=${getApiKey()}`;
+  const params = new URLSearchParams({
+    lat: geoCode.lat,
+    lon: geoCode.lng,
+    format: "json",
+  });
+
   try {
-    const resp = await fetch(finalUrl);
+    const resp = await fetch(
+      `${NOMINATIM_BASE_URL}/reverse?${params.toString()}`,
+      {
+        headers: { "User-Agent": USER_AGENT },
+      },
+    );
     const jsonResp = await resp.json();
-    if (jsonResp?.plus_code?.compound_code) {
-      return jsonResp?.plus_code?.compound_code;
-    }
+
+    return jsonResp?.display_name || "";
   } catch (e) {
     console.error(e);
   }

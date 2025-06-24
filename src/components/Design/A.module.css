@@ -1,0 +1,39 @@
+.a-link {
+  text-decoration: none;
+  position: relative;
+  color: inherit;
+  overflow: hidden;
+}
+
+.a-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 0;
+  bottom: -2px;
+  height: 2px;
+  background-color: var(--color-golden-accent);
+  opacity: 1;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.a-link:hover::after {
+  width: 50%;
+}
+
+@keyframes pulse-underline {
+  0% {
+    width: 50%;
+  }
+  30% {
+    width: 75%;
+  }
+  65% {
+    width: 50%;
+  }
+}
+
+.a-link:hover::after {
+  animation: pulse-underline 3.6s infinite;
+}
