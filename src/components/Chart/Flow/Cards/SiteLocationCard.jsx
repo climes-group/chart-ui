@@ -1,7 +1,6 @@
-import { GeoCode } from "@/utils/geocode";
-import { Typography } from "@mui/material";
+import { GeoCode, lookUpHumanAddress } from "@/utils/geocode";
+import { Card, CardContent, Typography } from "@mui/material";
 import PropTypes from "prop-types";
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { meetCondition } from "../../../../state/slices/flowReducer";
 import {
@@ -16,38 +15,51 @@ function SiteLocationCard(props) {
   const humanAddr = useSelector((s) => s.geo.humanAddress);
   const dispatch = useDispatch();
 
-  const [isUsingGps, setIsUsingGps] = useState(false);
-
   const handleUseDeviceLocation = () => {
-    async function success(pos) {
-      setIsUsingGps(true);
+    navigator.geolocation.getCurrentPosition(async (pos) => {
       const { coords } = pos;
       const geoCode = new GeoCode(coords.latitude, coords.longitude);
       dispatch(setGeoData(geoCode.obj));
-      dispatch(setHumanAddress(""));
-      dispatch(meetCondition(props?.activeStep?.name));
-    }
-    navigator.geolocation.getCurrentPosition(success);
+
+      const addressLabel = await lookUpHumanAddress(geoCode);
+      dispatch(setHumanAddress(addressLabel || "Current Location"));
+
+      dispatch(meetCondition({ name: props?.activeStep?.name }));
+    });
   };
 
   function handleChooseAddr(addr) {
     dispatch(setHumanAddress(addr?.address?.label));
     dispatch(setGeoData(addr?.position));
-    dispatch(meetCondition(props?.activeStep?.name));
+    dispatch(meetCondition({ name: props?.activeStep?.name }));
   }
 
   return (
-    <div>
-      <Typography variant="h6" textAlign={"left"}>
-        Select Location
-      </Typography>
-      <ChooseLocation
-        onUseLocSvc={handleUseDeviceLocation}
-        onChooseAddr={handleChooseAddr}
-        isUsingGps={isUsingGps}
-      />
-      <SelectedLocation humanAddr={humanAddr} geoData={geoData} />
-    </div>
+    <Card variant="outlined" sx={{ border: "none", bgcolor: "transparent" }}>
+      <CardContent>
+        <Typography variant="h5" component="h2" textAlign={"left"} gutterBottom>
+          Select Site Location
+        </Typography>
+        <Typography
+          variant="body1"
+          textAlign={"left"}
+          color="text.secondary"
+          sx={{ mb: 2 }}
+        >
+          Find the location of the site by searching for an address or using
+          your device's location.
+        </Typography>
+
+        <ChooseLocation
+          onUseLocSvc={handleUseDeviceLocation}
+          onChooseAddr={handleChooseAddr}
+        />
+
+        {(geoData || humanAddr) && (
+          <SelectedLocation humanAddr={humanAddr} geoData={geoData} />
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
