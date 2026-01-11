@@ -113,7 +113,7 @@ function StepperFlow({ steps }) {
   return (
     <section className="p-4 pt-0 md:p-12 max-w-screen-lg w-full flex-auto">
       {!isSmallDevice && DesktopStepper}
-      <div className="flex flex-col pd-12 min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-32rem)]">
+      <div className="flex flex-col pd-12 min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-24rem)]">
         {!currentStep ? (
           <React.Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
