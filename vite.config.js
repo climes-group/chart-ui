@@ -38,4 +38,10 @@ export default defineConfig({
       VITE_FF_USE_GEO_API: "true",
     },
   },
+  server: {
+    proxy: {
+      // Proxy API requests to the backend server during development
+      "/api": "http://localhost:8080",
+    },
+  },
 });
