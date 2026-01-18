@@ -29,9 +29,7 @@ export default function ApplicableSystemsCard() {
 
   const fetchSystems = useEffectEvent(async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8000/codes/building_service/v1",
-      );
+      const response = await fetch("/api/codes/building_service/v1");
       if (!response.ok) throw new Error("Failed to fetch systems");
       const data = await response.json();
       setAvailableSystems(data);
