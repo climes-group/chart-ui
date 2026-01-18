@@ -1,9 +1,15 @@
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import useFlow from "@/hooks/useFlow";
 import useMedia from "@/hooks/useMedia";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { Box } from "@mui/material";
-import Button from "@mui/material/Button";
 import MobileStepper from "@mui/material/MobileStepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
@@ -65,20 +71,24 @@ function StepperFlow({ steps }) {
   );
 
   const DesktopStepperControl = (
-    <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+    <div className="flex w-full px-4 py-2">
       <Button
-        color="inherit"
+        size="lg"
         disabled={currentStep?.prev === null}
         onClick={back}
-        sx={{ mr: 1 }}
+        variant="secondary"
       >
         Back
       </Button>
-      <Box sx={{ flex: "1 1 auto" }} />
-      <Button onClick={handleNext} sx={{ mr: 1 }}>
+      <div className="flex-1" />
+      <Button
+        onClick={handleNext}
+        size="lg"
+        className="bg-moss-primary/90 hover:bg-moss-primary"
+      >
         {!currentStep?.next ? "Finish" : "Next"}
       </Button>
-    </Box>
+    </div>
   );
 
   const MobileStepperControls = (
@@ -89,7 +99,7 @@ function StepperFlow({ steps }) {
       activeStep={currentStep?.id}
       nextButton={
         <Button
-          size="small"
+          size="sm"
           onClick={handleNext}
           disabled={currentStep?.next === null}
         >
@@ -98,11 +108,7 @@ function StepperFlow({ steps }) {
         </Button>
       }
       backButton={
-        <Button
-          size="small"
-          onClick={back}
-          disabled={currentStep?.prev === null}
-        >
+        <Button size="sm" onClick={back} disabled={currentStep?.prev === null}>
           <KeyboardArrowLeft />
           Back
         </Button>
@@ -111,44 +117,51 @@ function StepperFlow({ steps }) {
   );
 
   return (
-    <section className="p-4 pt-0 md:p-12 max-w-screen-lg w-full flex-auto">
-      {!isSmallDevice && DesktopStepper}
-      <div className="flex flex-col pd-12 min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-32rem)]">
-        {!currentStep ? (
-          <React.Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              All steps completed - you&apos;re finished
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <Box sx={{ flex: "1 1 auto" }} />
-              <Button onClick={reset}>Reset</Button>
-            </Box>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            {!isSmallDevice && <h2>Step - {currentStep?.label}</h2>}
-            <div className="flex-grow relative">
-              <Routes>
-                {steps.map((step) => (
+    <Card className="max-w-screen-lg w-full flex-auto">
+      <CardHeader className="bg-gray-50">
+        {!isSmallDevice && DesktopStepper}
+      </CardHeader>
+      <div className="flex flex-col min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-24rem)]">
+        <CardContent className="p-8">
+          {!currentStep ? (
+            <React.Fragment>
+              <Typography sx={{ mt: 2, mb: 1 }}>
+                All steps completed - you&apos;re finished
+              </Typography>
+              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+                <Box sx={{ flex: "1 1 auto" }} />
+                <Button onClick={reset}>Reset</Button>
+              </Box>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <div className="flex-grow relative">
+                <Routes>
+                  {steps.map((step) => (
+                    <Route
+                      exact
+                      key={`route-${step.name}`}
+                      path={`/${step.name}`}
+                      element={renderInnerCard(step)}
+                    />
+                  ))}
                   <Route
-                    exact
-                    key={`route-${step.name}`}
-                    path={`/${step.name}`}
-                    element={renderInnerCard(step)}
+                    path="/*"
+                    element={<IntakeCard activeStep={currentStep} />}
                   />
-                ))}
-                <Route
-                  path="/*"
-                  element={<IntakeCard activeStep={currentStep} />}
-                />
-              </Routes>
-            </div>
-            <Typography textAlign={"left"}>{errorMessage}</Typography>
-          </React.Fragment>
-        )}
-        {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
+                </Routes>
+              </div>
+              <div className="text-right">
+                <em>{errorMessage}</em>
+              </div>
+            </React.Fragment>
+          )}
+        </CardContent>
+        <CardFooter>
+          {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
+        </CardFooter>
       </div>
-    </section>
+    </Card>
   );
 }
 

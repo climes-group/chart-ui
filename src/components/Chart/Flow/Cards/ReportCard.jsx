@@ -1,5 +1,5 @@
 import { downloadCsv, generateCsvFomJson } from "@/utils/generateReport";
-import { Button, Typography } from "@mui/material";
+import { Button } from "@mui/material";
 import { useSelector } from "react-redux";
 
 export default function ReportCard() {
@@ -8,9 +8,7 @@ export default function ReportCard() {
 
   return (
     <>
-      <Typography variant="h6" textAlign={"left"}>
-        Download reports
-      </Typography>
+      <h2>Download Reports</h2>
       <p>
         <Button
           onClick={() => {

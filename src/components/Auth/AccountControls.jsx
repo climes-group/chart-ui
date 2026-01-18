@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button } from "@/components/ui/button";
 
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -44,7 +44,7 @@ function AccountControls({ login, logout }) {
           </Menu>
         </>
       ) : (
-        <Button variant="outlined" onClick={login}>
+        <Button variant="outline" onClick={login}>
           Login
         </Button>
       )}

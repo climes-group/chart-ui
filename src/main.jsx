@@ -1,6 +1,8 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
 import {
   createBrowserRouter,
   Navigate,
@@ -8,11 +10,8 @@ import {
 } from "react-router-dom";
 import App from "./App.jsx";
 import Chart from "./Chart.jsx";
-
+import Design from "./components/Design/index.jsx";
 import "./index.css";
-
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { Provider } from "react-redux";
 import { setupStore } from "./state/store.js";
 
 const router = createBrowserRouter([
@@ -21,6 +20,11 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />,
     children: [
+      {
+        exact: true,
+        path: "/design",
+        element: <Design />,
+      },
       {
         index: true,
         element: <Navigate to="/flow/intake" replace />,
@@ -42,6 +46,9 @@ const theme = createTheme({
   palette: {
     primary: {
       main: "rgb(52, 88, 0)",
+    },
+    secondary: {
+      main: "#e2b046",
     },
   },
 });

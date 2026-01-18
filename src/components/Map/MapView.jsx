@@ -11,7 +11,6 @@ function MapView({ geoData }) {
     <div>
       <MapContainer
         key={geoCode.str}
-        q
         center={[geoCode.lat, geoCode.lng]}
         zoom={13}
         scrollWheelZoom={false}
