@@ -1,5 +1,4 @@
 import { GeoCode, lookUpHumanAddress } from "@/utils/geocode";
-import { Card, CardContent, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { meetCondition } from "../../../../state/slices/flowReducer";
@@ -35,31 +34,22 @@ function SiteLocationCard(props) {
   }
 
   return (
-    <Card variant="outlined" sx={{ border: "none", bgcolor: "transparent" }}>
-      <CardContent>
-        <Typography variant="h5" component="h2" textAlign={"left"} gutterBottom>
-          Select Site Location
-        </Typography>
-        <Typography
-          variant="body1"
-          textAlign={"left"}
-          color="text.secondary"
-          sx={{ mb: 2 }}
-        >
-          Find the location of the site by searching for an address or using
-          your device's location.
-        </Typography>
+    <div>
+      <h2>Select Site Location</h2>
+      <p>
+        Find the location of the site by searching for an address or using your
+        device's location.
+      </p>
 
-        <ChooseLocation
-          onUseLocSvc={handleUseDeviceLocation}
-          onChooseAddr={handleChooseAddr}
-        />
+      <ChooseLocation
+        onUseLocSvc={handleUseDeviceLocation}
+        onChooseAddr={handleChooseAddr}
+      />
 
-        {(geoData || humanAddr) && (
-          <SelectedLocation humanAddr={humanAddr} geoData={geoData} />
-        )}
-      </CardContent>
-    </Card>
+      {(geoData || humanAddr) && (
+        <SelectedLocation humanAddr={humanAddr} geoData={geoData} />
+      )}
+    </div>
   );
 }
 
