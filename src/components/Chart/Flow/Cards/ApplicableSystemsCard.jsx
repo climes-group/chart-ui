@@ -53,7 +53,7 @@ export default function ApplicableSystemsCard() {
 
   return (
     <div>
-      <h3>Applicable Systems</h3>
+      <h2>Applicable Systems</h2>
       <Accordion
         type="single"
         collapsible
@@ -71,8 +71,8 @@ export default function ApplicableSystemsCard() {
           return (
             <AccordionItem value={service}>
               <AccordionTrigger>
-                <div className="flex items-center gap-4">
-                  <h3 className="font-bold">{service}</h3>
+                <div className="flex flex-col mr-2">
+                  <span className="font-bold text-lg">{service}</span>
                   {selectedCount > 0 && (
                     <Badge
                       variant="default"

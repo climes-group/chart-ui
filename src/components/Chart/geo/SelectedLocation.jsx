@@ -1,6 +1,6 @@
 import useMedia from "@/hooks/useMedia";
 import { GeoCode } from "@/utils/geocode";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import MapView from "../../Map/MapView";
 
@@ -31,10 +31,7 @@ function SelectedLocation({ humanAddr, geoData }) {
 
   return (
     <Box sx={{ mt: 4 }}>
-      <Paper
-        variant="outlined"
-        sx={{ p: 2, mb: 2, bgcolor: "rgba(0, 0, 0, 0.03)" }}
-      >
+      <div>
         <Typography variant="h6" gutterBottom>
           Selected Location
         </Typography>
@@ -52,7 +49,7 @@ function SelectedLocation({ humanAddr, geoData }) {
             <Typography>{geoCode ? geoCode.str : "N/A"}</Typography>
           </Grid>
         </Grid>
-      </Paper>
+      </div>
       <MapView geoData={geoData} />
     </Box>
   );
