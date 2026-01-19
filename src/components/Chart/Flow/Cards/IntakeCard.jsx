@@ -1,6 +1,6 @@
 import useFlow from "@/hooks/useFlow";
-import NavigationOutlined from "@mui/icons-material/NavigationOutlined";
 import { Fab } from "@mui/material";
+import { NavigationIcon } from "lucide-react";
 
 export default function IntakeCard(props) {
   const { next } = useFlow();
@@ -20,7 +20,7 @@ export default function IntakeCard(props) {
           className="!bg-green-600 hover:!bg-green-700 text-white px-8 py-2 text-lg font-semibold shadow-md transition-colors duration-200"
           sx={{ borderRadius: "9999px", minWidth: "180px" }}
         >
-          <NavigationOutlined sx={{ mr: 1 }} />
+          <NavigationIcon />
           Get Started
         </Fab>
       </div>

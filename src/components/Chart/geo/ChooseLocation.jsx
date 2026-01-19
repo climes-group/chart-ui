@@ -1,7 +1,4 @@
 import { searchAddress } from "@/utils/geocode";
-import ClearIcon from "@mui/icons-material/Clear";
-import MyLocationIcon from "@mui/icons-material/MyLocation";
-import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
   Button,
@@ -16,6 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { EraserIcon, LocateFixedIcon, SearchIcon } from "lucide-react";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
@@ -58,7 +56,7 @@ function ChooseLocation(props) {
                     aria-label="clear search"
                     onClick={handleClearClick}
                   >
-                    <ClearIcon />
+                    <EraserIcon />
                   </IconButton>
                 )}
                 <IconButton aria-label="search" onClick={handleSearchClick}>
@@ -89,15 +87,13 @@ function ChooseLocation(props) {
         )}
 
         <Divider>
-          <Typography variant="body2" color="text.secondary">
-            OR
-          </Typography>
+          <p>OR</p>
         </Divider>
 
         <Button
           variant="outlined"
           onClick={props.onUseLocSvc}
-          startIcon={<MyLocationIcon />}
+          startIcon={<LocateFixedIcon />}
           fullWidth
         >
           Use my current location

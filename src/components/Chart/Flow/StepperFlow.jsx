@@ -7,14 +7,13 @@ import {
 } from "@/components/ui/card";
 import useFlow from "@/hooks/useFlow";
 import useMedia from "@/hooks/useMedia";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { Box } from "@mui/material";
 import MobileStepper from "@mui/material/MobileStepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import PropTypes from "prop-types";
 import * as React from "react";
 import { useSelector } from "react-redux";
@@ -94,22 +93,27 @@ function StepperFlow({ steps }) {
   const MobileStepperControls = (
     <MobileStepper
       variant="progress"
+      className="w-full"
       steps={steps.length}
       position="static"
       activeStep={currentStep?.id}
       nextButton={
         <Button
-          size="sm"
+          size="default"
           onClick={handleNext}
           disabled={currentStep?.next === null}
         >
           Next
-          <KeyboardArrowRight />
+          <ChevronRightIcon />
         </Button>
       }
       backButton={
-        <Button size="sm" onClick={back} disabled={currentStep?.prev === null}>
-          <KeyboardArrowLeft />
+        <Button
+          size="default"
+          onClick={back}
+          disabled={currentStep?.prev === null}
+        >
+          <ChevronLeftIcon />
           Back
         </Button>
       }
