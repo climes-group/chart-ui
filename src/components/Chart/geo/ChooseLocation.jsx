@@ -9,7 +9,6 @@ import {
   ListItemButton,
   ListItemText,
   Paper,
-  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -40,7 +39,7 @@ function ChooseLocation(props) {
 
   return (
     <Box sx={{ my: 2 }}>
-      <Stack spacing={2}>
+      <div className="flex flex-col mb-4 gap-6 ">
         <TextField
           id="address-search"
           label="Search for an address"
@@ -91,14 +90,13 @@ function ChooseLocation(props) {
         </Divider>
 
         <Button
-          variant="outlined"
           onClick={props.onUseLocSvc}
           startIcon={<LocateFixedIcon />}
-          fullWidth
+          style={{ margin: "auto" }}
         >
-          Use my current location
+          Find my site
         </Button>
-      </Stack>
+      </div>
     </Box>
   );
 }

@@ -44,7 +44,7 @@ function AccountControls({ login, logout }) {
           </Menu>
         </>
       ) : (
-        <Button variant="outline" onClick={login}>
+        <Button variant="primary" onClick={login}>
           Login
         </Button>
       )}

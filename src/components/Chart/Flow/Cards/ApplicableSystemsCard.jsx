@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
@@ -45,7 +46,17 @@ export default function ApplicableSystemsCard() {
   }, []);
 
   if (error) return <div>Error: {error}</div>;
-  if (!availableSystems) return <div>Loading...</div>;
+  if (!availableSystems)
+    return (
+      <div className="flex flex-col space-y-3">
+        <h2>Applicable Systems</h2>
+        <Skeleton className="h-[60px] w-full rounded-xl" />
+        <Skeleton className="h-[60px] w-full rounded-xl" />
+        <Skeleton className="h-[60px] w-full rounded-xl" />
+        <Skeleton className="h-[60px] w-full rounded-xl" />
+        <Skeleton className="h-[60px] w-full rounded-xl" />
+      </div>
+    );
 
   const uniqueServices = [
     ...new Set(availableSystems.map((system) => system.Services)),

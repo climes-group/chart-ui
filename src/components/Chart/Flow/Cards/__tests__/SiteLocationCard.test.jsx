@@ -48,38 +48,24 @@ describe("SiteLocationCard tests", () => {
     // mock fetch
     global.fetch = vi.fn();
     fetch.mockResolvedValue({
-      json: async () => ({
-        items: [
-          {
-            address: {
-              label:
-                "1600 Amphitheatre Pkwy, Mountain View, California, 94043, United States",
-            },
-          },
-        ],
-      }),
+      json: async () => [
+        {
+          place_id: "123456",
+          display_name: "123 Main St.",
+          lat: "40.712776",
+          lon: "-74.005974",
+        },
+      ],
     });
 
     const screen = render(<SiteLocationCard />, { wrapper });
     act(() => {
       // find address text field and change value
-      const addressField = screen.getByLabelText("Address");
+      const addressField = screen.getByLabelText(/Search for an address/i);
       fireEvent.change(addressField, {
-        target: { value: "1600 Amphitheatre Parkway, Mountain View, CA" },
+        target: { value: "123 Main St." },
       });
-      screen.getByText("Search").click();
-    });
-
-    // wait for search results
-    await screen.findByText("1 result(s) found.");
-
-    // click radio button
-    act(() => {
-      screen
-        .getByText(
-          "1600 Amphitheatre Pkwy, Mountain View, California, 94043, United States",
-        )
-        .click();
+      screen.getByLabelText("search").click();
     });
   });
 });

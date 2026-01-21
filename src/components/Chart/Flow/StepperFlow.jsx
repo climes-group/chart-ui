@@ -13,7 +13,7 @@ import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import PropTypes from "prop-types";
 import * as React from "react";
 import { useSelector } from "react-redux";
@@ -59,7 +59,7 @@ function StepperFlow({ steps }) {
 
   const DesktopStepper = (
     <Stepper nonLinear activeStep={currentStep?.id} sx={{ padding: "2em 0" }}>
-      {steps.map((stepObj, index) => (
+      {steps.map((stepObj) => (
         <Step key={stepObj.label}>
           <StepButton color="inherit" onClick={() => jumpTo(stepObj.name)}>
             {stepObj.label}
@@ -75,16 +75,12 @@ function StepperFlow({ steps }) {
         size="lg"
         disabled={currentStep?.prev === null}
         onClick={back}
-        variant="secondary"
+        variant="primary"
       >
         Back
       </Button>
       <div className="flex-1" />
-      <Button
-        onClick={handleNext}
-        size="lg"
-        className="bg-moss-primary/90 hover:bg-moss-primary"
-      >
+      <Button onClick={handleNext} variant="primary" size="lg">
         {!currentStep?.next ? "Finish" : "Next"}
       </Button>
     </div>
@@ -92,29 +88,29 @@ function StepperFlow({ steps }) {
 
   const MobileStepperControls = (
     <MobileStepper
-      variant="progress"
+      variant="dots"
       className="w-full"
       steps={steps.length}
       position="static"
       activeStep={currentStep?.id}
       nextButton={
         <Button
+          variant="outline"
           size="default"
           onClick={handleNext}
           disabled={currentStep?.next === null}
         >
-          Next
-          <ChevronRightIcon />
+          <ArrowRightIcon />
         </Button>
       }
       backButton={
         <Button
+          variant="outline"
           size="default"
           onClick={back}
           disabled={currentStep?.prev === null}
         >
-          <ChevronLeftIcon />
-          Back
+          <ArrowLeftIcon />
         </Button>
       }
     />
@@ -122,11 +118,13 @@ function StepperFlow({ steps }) {
 
   return (
     <Card className="max-w-screen-lg w-full flex-auto">
-      <CardHeader className="bg-gray-50">
-        {!isSmallDevice && DesktopStepper}
-      </CardHeader>
-      <div className="flex flex-col min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-24rem)]">
-        <CardContent className="p-8">
+      {!isSmallDevice && (
+        <CardHeader className="bg-gradient-to-b from-gray-50 to-white">
+          {DesktopStepper}
+        </CardHeader>
+      )}
+      <div className="flex flex-col min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-24rem)] justify-between">
+        <CardContent className="p-8 flex flex-col flex-grow">
           {!currentStep ? (
             <React.Fragment>
               <Typography sx={{ mt: 2, mb: 1 }}>
@@ -155,15 +153,19 @@ function StepperFlow({ steps }) {
                   />
                 </Routes>
               </div>
-              <div className="text-right">
-                <em>{errorMessage}</em>
-              </div>
+              {currentStep?.id > 0 && (
+                <div className="text-right">
+                  <em>{errorMessage}</em>
+                </div>
+              )}
             </React.Fragment>
           )}
         </CardContent>
-        <CardFooter>
-          {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
-        </CardFooter>
+        {currentStep?.id > 0 && (
+          <CardFooter>
+            {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
+          </CardFooter>
+        )}
       </div>
     </Card>
   );
