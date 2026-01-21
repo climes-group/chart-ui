@@ -1,7 +1,4 @@
 import { searchAddress } from "@/utils/geocode";
-import ClearIcon from "@mui/icons-material/Clear";
-import MyLocationIcon from "@mui/icons-material/MyLocation";
-import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
   Button,
@@ -12,10 +9,10 @@ import {
   ListItemButton,
   ListItemText,
   Paper,
-  Stack,
   TextField,
   Typography,
 } from "@mui/material";
+import { EraserIcon, LocateFixedIcon, SearchIcon } from "lucide-react";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
@@ -42,7 +39,7 @@ function ChooseLocation(props) {
 
   return (
     <Box sx={{ my: 2 }}>
-      <Stack spacing={2}>
+      <div className="flex flex-col mb-4 gap-6 ">
         <TextField
           id="address-search"
           label="Search for an address"
@@ -58,7 +55,7 @@ function ChooseLocation(props) {
                     aria-label="clear search"
                     onClick={handleClearClick}
                   >
-                    <ClearIcon />
+                    <EraserIcon />
                   </IconButton>
                 )}
                 <IconButton aria-label="search" onClick={handleSearchClick}>
@@ -89,20 +86,17 @@ function ChooseLocation(props) {
         )}
 
         <Divider>
-          <Typography variant="body2" color="text.secondary">
-            OR
-          </Typography>
+          <p>OR</p>
         </Divider>
 
         <Button
-          variant="outlined"
           onClick={props.onUseLocSvc}
-          startIcon={<MyLocationIcon />}
-          fullWidth
+          startIcon={<LocateFixedIcon />}
+          style={{ margin: "auto" }}
         >
-          Use my current location
+          Find my site
         </Button>
-      </Stack>
+      </div>
     </Box>
   );
 }
