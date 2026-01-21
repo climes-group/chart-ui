@@ -12,6 +12,7 @@
   --color-moss-primary: #345800;
   --color-linen-bkg: #f0efe3;
   --color-golden-accent: #e2b046;
+  --color-charcoal: #1a202c;
 }
 
 @font-face {
@@ -110,7 +111,7 @@ p {
     background-color: #f0efe3;
   }
   a:hover {
-    color: #747bff;
+    color: var(--color-golden-accent);
   }
 }
 

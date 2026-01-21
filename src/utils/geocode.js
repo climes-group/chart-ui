@@ -86,7 +86,6 @@ export async function searchAddress(query) {
       },
     );
     const result = await resp.json();
-
     // Map the Nominatim response to the format your app expects
     const mappedItems = result.map((item) => ({
       id: item.place_id,
@@ -98,7 +97,6 @@ export async function searchAddress(query) {
         lng: parseFloat(item.lon),
       },
     }));
-
     return { items: mappedItems };
   } catch (e) {
     console.error(e);
