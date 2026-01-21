@@ -28,7 +28,9 @@ function useFlow(initialSteps = []) {
     const conditionsMet = conditions[currentStep.name] ?? true;
     if (conditionsMet) {
       console.log("Conditions passed");
+      dispatch(setError(null));
       dispatch(stepForward());
+
       navigate(`/flow/${currentStep.next}`);
     } else {
       console.log("Not passed");
