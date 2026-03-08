@@ -8,13 +8,24 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Breadcrumbs } from "@mui/material";
+import { Breadcrumbs, Link } from "@mui/material";
 import SystemItemCard from "./SystemItemCard";
+
+function sanitizeName(name) {
+  return name.replace("_", " ");
+}
+
+function getItemKey(element) {
+  return `${element["Services"]}-${element["Classification"]}-${element["ASTM.Name"]}-${element["ASTM.System.Name"]}`;
+}
 
 export default function ApplicableSystemsCard() {
   const [availableSystems, setAvailableSystems] = useState(null);
   // Track selected system IDs
   const [selectedSystems, setSelectedSystems] = useState(new Set());
+  // Track open accordions
+  const [openService, setOpenService] = useState(null);
+  const [openClassification, setOpenClassification] = useState(null);
 
   const toggleSystem = (id) => {
     const next = new Set(selectedSystems);
@@ -64,19 +75,30 @@ export default function ApplicableSystemsCard() {
   return (
     <div>
       <h2>Applicable Systems</h2>
-      <Breadcrumbs
-        aria-label="applicable systems"
-        className="mb-4 sticky top-0 bg-background z-10"
-      >
-        {uniqueServices.map((service) => (
-          <span key={service}>{service}</span>
-        ))}
-      </Breadcrumbs>
+      {/* Sticky breadcrumbs for open accordions */}
+      <div className="sticky top-0 z-20 bg-background mb-2 flex justify-end">
+        <Breadcrumbs aria-label="current selection" className="list-none">
+          {openService && (
+            <Link href={`#trigger-svc-${openService}`}>
+              {sanitizeName(openService)}
+            </Link>
+          )}
+          {openClassification && (
+            <Link href={`#trigger-class-${openClassification}`}>
+              {sanitizeName(openClassification)}
+            </Link>
+          )}
+        </Breadcrumbs>
+      </div>
       <Accordion
         type="single"
         collapsible
         className="w-full"
         defaultValue="item-1"
+        onValueChange={(value) => {
+          setOpenService(value || null);
+          setOpenClassification(null); // Reset classification when service changes
+        }}
       >
         {uniqueServices.map((service) => {
           const elementsForService = availableSystems.filter(
@@ -86,46 +108,72 @@ export default function ApplicableSystemsCard() {
             ...new Set(elementsForService.map((el) => el.Classification)),
           ];
 
-          const selectedCount = elementsForService.filter((element) =>
-            selectedSystems.has(element["ASTM.Element.Code"]),
-          ).length;
+          const selectedServiceCount = elementsForService.filter((element) => {
+            const itemKey = getItemKey(element);
+            return selectedSystems.has(itemKey);
+          }).length;
 
           return (
-            <AccordionItem value={service}>
-              <AccordionTrigger>
-                <div className="flex flex-col mr-2">
-                  <span className="font-bold text-lg">{service}</span>
-                  {selectedCount > 0 && (
+            <AccordionItem value={service} className="border-b-2" key={service}>
+              <AccordionTrigger id={`trigger-svc-${service}`}>
+                <div className="flex gap-2 mr-2">
+                  <span className="font-bold text-lg">
+                    {sanitizeName(service)}
+                  </span>
+                  {selectedServiceCount > 0 && (
                     <Badge
                       variant="default"
                       className="bg-moss-primary hover:bg-moss-primary text-primary-foreground"
                     >
-                      {selectedCount} Selected
+                      {selectedServiceCount} Selected
                     </Badge>
                   )}
                 </div>
               </AccordionTrigger>
               <AccordionContent className="flex flex-col gap-4 text-balance">
-                <Accordion type="single" collapsible className="w-full mx-4">
+                <Accordion
+                  type="single"
+                  collapsible
+                  className="w-full mx-4"
+                  onValueChange={(value) =>
+                    setOpenClassification(value || null)
+                  }
+                >
                   {uniqueClassificationsInService.map((uniqueClass) => {
                     const elementsInClass = elementsForService.filter(
                       (el) => el.Classification === uniqueClass,
                     );
-                    console.log(
-                      "Elements in class",
-                      uniqueClass,
-                      elementsInClass,
-                    );
+
+                    const selectedClassCount = elementsInClass.filter(
+                      (element) => {
+                        const itemKey = getItemKey(element);
+                        return selectedSystems.has(itemKey);
+                      },
+                    ).length;
+
                     return (
-                      <AccordionItem value={uniqueClass}>
-                        <AccordionTrigger>
-                          <h3 className="text-md">{uniqueClass}</h3>
+                      <AccordionItem className="border-b-0" value={uniqueClass}>
+                        <AccordionTrigger
+                          id={`trigger-class-${uniqueClass}`}
+                          className="flex gap-2 mr-2"
+                        >
+                          <h3 className="text-md">
+                            {sanitizeName(uniqueClass)}
+                          </h3>
+                          {selectedClassCount > 0 && (
+                            <Badge
+                              variant="default"
+                              className="bg-moss-primary hover:bg-moss-primary text-primary-foreground"
+                            >
+                              {selectedClassCount} Selected
+                            </Badge>
+                          )}
                         </AccordionTrigger>
                         <AccordionContent>
                           {/* Responsive Grid: 1 col on mobile, 2 on tablet, 3 on desktop */}
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {elementsInClass.map((element) => {
-                              const itemKey = `${element["Services"]}-${element["Classification"]}-${element["ASTM.Name"]}-${element["ASTM.System.Name"]}`;
+                              const itemKey = getItemKey(element);
                               return (
                                 <SystemItemCard
                                   key={itemKey}

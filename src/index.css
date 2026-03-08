@@ -96,6 +96,12 @@ main li {
   color: inherit;
 }
 
+/* Remove bullet points from breadcrumbs */
+.MuiBreadcrumbs-ol,
+.MuiBreadcrumbs-li {
+  list-style: none;
+}
+
 p {
   color: black;
   text-align: left;
