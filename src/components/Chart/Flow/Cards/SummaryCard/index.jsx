@@ -36,10 +36,9 @@ function SummaryCard() {
       <h2>Summary</h2>
       <div className="mb-4">
         <div className="flex items-center gap-2">
-          <h3>Site Location</h3>
+          <h3 className="mb-0">Site Location</h3>
           <Link
             to="/flow/siteLocation"
-            className="text-blue-600 hover:text-blue-800 p-1"
             aria-label="Edit Site Location"
             title="Edit Site Location"
             tabIndex={0}
@@ -68,7 +67,6 @@ function SummaryCard() {
         <h3>Selected Systems</h3>
         <Link
           to="/flow/applicableSystems"
-          className="text-blue-600 hover:text-blue-800 p-1"
           aria-label="Edit Selected Systems"
           title="Edit Selected Systems"
           tabIndex={0}
