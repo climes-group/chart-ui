@@ -8,7 +8,12 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  addSelectedSystem,
+  removeSelectedSystem,
+} from "@/state/slices/reportReducer";
 import { Breadcrumbs, Link } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import SystemItemCard from "./SystemItemCard";
 
 function sanitizeName(name) {
@@ -21,20 +26,21 @@ function getItemKey(element) {
 
 export default function ApplicableSystemsCard() {
   const [availableSystems, setAvailableSystems] = useState(null);
-  // Track selected system IDs
-  const [selectedSystems, setSelectedSystems] = useState(new Set());
+  const dispatch = useDispatch();
   // Track open accordions
   const [openService, setOpenService] = useState(null);
   const [openClassification, setOpenClassification] = useState(null);
+  const selectedSystems = useSelector((state) => state.report.selectedSystems);
 
+  /** Toggle system selection */
   const toggleSystem = (id) => {
-    const next = new Set(selectedSystems);
-    if (next.has(id)) {
-      next.delete(id);
+    if (selectedSystems.has(id)) {
+      dispatch(removeSelectedSystem(id));
     } else {
-      next.add(id);
+      console.log("Current systems before adding:", selectedSystems);
+      console.log("Adding system:", id);
+      dispatch(addSelectedSystem(id));
     }
-    setSelectedSystems(next);
   };
   const [error, setError] = useState(null);
 
