@@ -22,6 +22,7 @@ import ApplicableSystemsCard from "./Cards/ApplicableSystemsCard";
 import IntakeCard from "./Cards/IntakeCard";
 import ReportCard from "./Cards/ReportCard";
 import SiteLocationCard from "./Cards/SiteLocationCard";
+import SummaryCard from "./Cards/SummaryCard";
 
 function renderInnerCard(currStep) {
   const { name } = currStep;
@@ -32,6 +33,8 @@ function renderInnerCard(currStep) {
       return <SiteLocationCard activeStep={currStep} />;
     case "applicableSystems":
       return <ApplicableSystemsCard activeStep={currStep} />;
+    case "summary":
+      return <SummaryCard activeStep={currStep} />;
     case "report":
       return <ReportCard />;
     default:
@@ -124,7 +127,7 @@ function StepperFlow({ steps }) {
         </CardHeader>
       )}
       <div className="flex flex-col min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-24rem)] justify-between">
-        <CardContent className="p-8 flex flex-col flex-grow">
+        <CardContent className="p-8 flex flex-col flex-grow md:pt-0">
           {!currentStep ? (
             <React.Fragment>
               <Typography sx={{ mt: 2, mb: 1 }}>

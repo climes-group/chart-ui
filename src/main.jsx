@@ -1,5 +1,6 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { enableMapSet } from "immer";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
@@ -13,6 +14,8 @@ import Chart from "./Chart.jsx";
 import Design from "./components/Design/index.jsx";
 import "./index.css";
 import { setupStore } from "./state/store.js";
+
+enableMapSet();
 
 const router = createBrowserRouter([
   {
