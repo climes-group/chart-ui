@@ -6,13 +6,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   addSelectedSystem,
   removeSelectedSystem,
 } from "@/state/slices/reportReducer";
-import { Breadcrumbs, Link } from "@mui/material";
+
+import { Breadcrumbs, Chip, Link } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import SystemItemCard from "./SystemItemCard";
 
@@ -82,20 +82,7 @@ export default function ApplicableSystemsCard() {
     <div>
       <h2>Applicable Systems</h2>
       {/* Sticky breadcrumbs for open accordions */}
-      <div className="sticky top-0 z-20 bg-background mb-2 flex justify-end">
-        <Breadcrumbs aria-label="current selection" className="list-none">
-          {openService && (
-            <Link href={`#trigger-svc-${openService}`}>
-              {sanitizeName(openService)}
-            </Link>
-          )}
-          {openClassification && (
-            <Link href={`#trigger-class-${openClassification}`}>
-              {sanitizeName(openClassification)}
-            </Link>
-          )}
-        </Breadcrumbs>
-      </div>
+
       <Accordion
         type="single"
         collapsible
@@ -106,6 +93,24 @@ export default function ApplicableSystemsCard() {
           setOpenClassification(null); // Reset classification when service changes
         }}
       >
+        <div className="sticky top-5 z-20 bg-transparent mb-2 text-sm flex justify-end">
+          <Breadcrumbs
+            variant="default"
+            aria-label="current selection"
+            className="list-none"
+          >
+            {openService && (
+              <Link href={`#trigger-svc-${openService}`}>
+                {sanitizeName(openService)}
+              </Link>
+            )}
+            {openClassification && (
+              <Link href={`#trigger-class-${openClassification}`}>
+                {sanitizeName(openClassification)}
+              </Link>
+            )}
+          </Breadcrumbs>
+        </div>
         {uniqueServices.map((service) => {
           const elementsForService = availableSystems.filter(
             (system) => system.Services === service,
@@ -121,22 +126,22 @@ export default function ApplicableSystemsCard() {
 
           return (
             <AccordionItem value={service} className="border-b-2" key={service}>
-              <AccordionTrigger id={`trigger-svc-${service}`}>
-                <div className="flex gap-2 mr-2">
-                  <span className="font-bold text-lg">
-                    {sanitizeName(service)}
-                  </span>
-                  {selectedServiceCount > 0 && (
-                    <Badge
-                      variant="default"
-                      className="bg-moss-primary hover:bg-moss-primary text-primary-foreground"
-                    >
-                      {selectedServiceCount} Selected
-                    </Badge>
-                  )}
-                </div>
+              <AccordionTrigger
+                id={`trigger-svc-${service}`}
+                className="bg-background"
+              >
+                <div className="flex gap-2 mr-2">{sanitizeName(service)}</div>
+                {selectedServiceCount > 0 && (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    label={`${selectedServiceCount} selected`}
+                  ></Chip>
+                )}
               </AccordionTrigger>
-              <AccordionContent className="flex flex-col gap-4 text-balance">
+
+              <AccordionContent className="flex flex-col gap-4 text-balance border-l-2 border-golden-accent">
                 <Accordion
                   type="single"
                   collapsible
@@ -161,23 +166,21 @@ export default function ApplicableSystemsCard() {
                       <AccordionItem className="border-b-0" value={uniqueClass}>
                         <AccordionTrigger
                           id={`trigger-class-${uniqueClass}`}
-                          className="flex gap-2 mr-2"
+                          className="flex gap-2 mr-2 "
                         >
-                          <h3 className="text-md">
-                            {sanitizeName(uniqueClass)}
-                          </h3>
+                          {sanitizeName(uniqueClass)}
                           {selectedClassCount > 0 && (
-                            <Badge
-                              variant="default"
-                              className="bg-moss-primary hover:bg-moss-primary text-primary-foreground"
-                            >
-                              {selectedClassCount} Selected
-                            </Badge>
+                            <Chip
+                              size="small"
+                              variant="outlined"
+                              color="primary"
+                              label={`${selectedClassCount} selected`}
+                            ></Chip>
                           )}
                         </AccordionTrigger>
                         <AccordionContent>
-                          {/* Responsive Grid: 1 col on mobile, 2 on tablet, 3 on desktop */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {/* Responsive Grid: 1 col on mobile, 3 on tablet, 3 on desktop */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
                             {elementsInClass.map((element) => {
                               const itemKey = getItemKey(element);
                               return (

@@ -16,8 +16,7 @@ export default function IntakeCard(props) {
           </div>
         </h1>
         <p className="mb-8 text-gray-800 text-base md:text-lg font-light">
-          Your journey to climate lorem ipsum starts here. This is a brief
-          introduction to the CHART platform.
+          Climate resilience lorem ipsum
         </p>
         <Fab
           color="secondary"

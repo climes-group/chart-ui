@@ -6,7 +6,7 @@ import {
 } from "@/state/slices/reportReducer";
 import { downloadCsv, generateCsvFomJson } from "@/utils/generateReport";
 import { Button } from "@mui/material";
-import { Download, DownloadCloud } from "lucide-react";
+import { Download, DownloadCloud, TrashIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function ReportCard() {
@@ -45,20 +45,19 @@ export default function ReportCard() {
   return (
     <>
       <h2>Report</h2>
-      <div className="flex flex-col md:flex-row justify-between md:space-x-6 md:space-y-0">
-        <div className="flex flex-col gap-y-4 flex-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-y-4">
           <h3>Ready to generate</h3>
-          <p>
+          <div className="flex gap-4">
             <Button
               onClick={handleGenerateReport}
               disabled={reportStatus === "generated"}
-              variant="outlined"
+              variant="contained"
               size="sm"
             >
               Generate
             </Button>
-          </p>
-          <p>
+
             <Button
               onClick={handleClearReport}
               variant="outlined"
@@ -67,14 +66,20 @@ export default function ReportCard() {
             >
               Clear
             </Button>
-          </p>
+          </div>
         </div>
-        <div className="pl-4 flex-2">
+        <div className="pl-0 md:pl-4 ">
           {reportStatus === "not_generated" && <p>No report generated yet.</p>}
           {reportStatus === "generating" && <p>Generating report...</p>}
           {reportStatus === "generated" && (
-            <div className="flex flex-col space-y-6">
-              <h3>Generated Report: {reportGenAt}</h3>
+            <div className="flex flex-col space-y-6 p-4 bg-gray-50 border border-gray-200 rounded">
+              <h3 className="flex justify-between items-center  ">
+                Report{" "}
+                <TrashIcon
+                  className="hover:text-golden-accent"
+                  onClick={handleClearReport}
+                />
+              </h3>
               <p>
                 <div>Status: {reportStatus} (mock)</div>
                 {reportGenAt && <div>Generated at: {reportGenAt}</div>}
@@ -82,7 +87,7 @@ export default function ReportCard() {
                   <div>Generate time: {(reportGenTime / 1000).toFixed(2)}s</div>
                 )}
               </p>
-              <div className="flex gap-6 justify-start">
+              <div className="flex gap-6 justify-evenly">
                 <div>
                   <h4>Download</h4>
                   <p>

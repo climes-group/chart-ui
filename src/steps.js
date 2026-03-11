@@ -5,14 +5,14 @@ const steps = [
   },
   {
     name: "siteLocation",
-    label: "Site Location",
+    label: "Location",
     leaveCondition: {
       hasAddr: false,
     },
   },
   {
     name: "applicableSystems",
-    label: "System Inventory",
+    label: "Inventory",
   },
   { name: "summary", label: "Summary" },
   { name: "report", label: "Report" },

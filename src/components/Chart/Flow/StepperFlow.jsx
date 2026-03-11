@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,7 +6,7 @@ import {
 } from "@/components/ui/card";
 import useFlow from "@/hooks/useFlow";
 import useMedia from "@/hooks/useMedia";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import MobileStepper from "@mui/material/MobileStepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
@@ -75,15 +74,15 @@ function StepperFlow({ steps }) {
   const DesktopStepperControl = (
     <div className="flex w-full px-4 py-2">
       <Button
-        size="lg"
+        variant="outlined"
+        size="sm"
         disabled={currentStep?.prev === null}
         onClick={back}
-        variant="primary"
       >
         Back
       </Button>
       <div className="flex-1" />
-      <Button onClick={handleNext} variant="primary" size="lg">
+      <Button onClick={handleNext} variant="contained" size="lg">
         {!currentStep?.next ? "Finish" : "Next"}
       </Button>
     </div>
