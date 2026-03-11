@@ -19,7 +19,7 @@ function SummaryCard() {
 
   // Convert Set to Array for display
   const selectedArray = Array.from(selectedSystems || []);
-  console.log(selectedSystems, selectedArray);
+
   // Split each system string on hyphen
   const rows = selectedArray.map((system) => {
     const parts = system.split("-");
@@ -34,7 +34,7 @@ function SummaryCard() {
   return (
     <div>
       <h2>Summary</h2>
-      <div className="mb-4">
+      <div className="mb-8">
         <div className="flex items-center gap-2">
           <h3 className="mb-0">Site Location</h3>
           <Link

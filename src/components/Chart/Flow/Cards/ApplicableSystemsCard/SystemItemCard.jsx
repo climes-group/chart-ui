@@ -3,6 +3,11 @@ import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
 function SystemItemCard({ systemItem, isSelected, onToggle }) {
+  const sanitizeName = (name) => {
+    if (!name) return "N/A";
+    return name.replace(/_/g, " ");
+  };
+
   return (
     <Card
       onClick={onToggle}
@@ -16,25 +21,20 @@ function SystemItemCard({ systemItem, isSelected, onToggle }) {
       <CardContent className="p-4 flex flex-col h-full">
         <div className="flex justify-between items-center mb-2">
           <div className="flex flex-col space-y-1">
-            <h4
-              className={cn(
-                "font-semibold leading-tight transition-colors",
-                isSelected ? "text-primary" : "text-card-foreground",
-              )}
-            >
-              {systemItem["ASTM.Element"]}
-            </h4>
+            <div className="text-sm">
+              {sanitizeName(systemItem["ASTM.System.Name"])}
+            </div>
             <small className="text-muted-foreground text-xs">
-              Classification: {systemItem["Classification"]}
+              Classification: {sanitizeName(systemItem["Classification"])}
             </small>
             <small className="text-muted-foreground text-xs">
-              System.Name: {systemItem["ASTM.System.Name"]}
+              System.Name: {sanitizeName(systemItem["ASTM.System.Name"])}
             </small>
             <small className="text-muted-foreground text-xs">
-              System.Elements: {systemItem["System.Elements"]}
+              System.Elements: {sanitizeName(systemItem["ASTM.Name"])}
             </small>
             <small className="text-muted-foreground text-xs">
-              Code: {systemItem["ASTM.Element.Code"]}
+              Code: {sanitizeName(systemItem["ASTM.System.Code"])}
             </small>
           </div>
           {/* Visual Checkbox Indicator */}
