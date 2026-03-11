@@ -5,7 +5,7 @@ const initialState = {
   reportStatus: "not_generated", // can be 'not_generated', 'generating', 'generated'
   reportGenAt: null,
   reportGenTime: null,
-  selectedSystems: new Set(),
+  selectedSystems: [], // Array of selected system identifiers
 };
 
 export const reportSlice = createSlice({
@@ -25,15 +25,14 @@ export const reportSlice = createSlice({
       state.reportGenTime = action.payload;
     },
     addSelectedSystem: (state, action) => {
-      state.selectedSystems = new Set([
-        ...state.selectedSystems,
-        action.payload,
-      ]);
+      state.selectedSystems = [
+        ...new Set([...state.selectedSystems, action.payload]),
+      ];
     },
     removeSelectedSystem: (state, action) => {
       const newSet = new Set(state.selectedSystems);
       newSet.delete(action.payload);
-      state.selectedSystems = newSet;
+      state.selectedSystems = [...newSet];
     },
   },
 });

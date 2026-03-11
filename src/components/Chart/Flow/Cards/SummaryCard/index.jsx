@@ -19,7 +19,7 @@ function SummaryCard() {
 
   // Convert Set to Array for display
   const selectedArray = Array.from(selectedSystems || []);
-  console.log(selectedSystems, selectedArray);
+
   // Split each system string on hyphen
   const rows = selectedArray.map((system) => {
     const parts = system.split("-");

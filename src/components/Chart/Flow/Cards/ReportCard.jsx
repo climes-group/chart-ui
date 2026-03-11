@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 export default function ReportCard() {
   const geoData = useSelector((s) => s.geo.geoData);
   const humanAddress = useSelector((s) => s.geo.humanAddress);
+  const selectedSystems = useSelector((state) => state.report.selectedSystems);
   const { reportStatus, reportGenAt, reportGenTime } = useSelector(
     (s) => s.report,
   );
@@ -22,17 +23,36 @@ export default function ReportCard() {
     downloadCsv(csvRaw, "site_location_details.csv");
   }
 
-  function handleGenerateReport() {
+  async function handleGenerateReport() {
     // Placeholder for report generation logic
     console.log("Generating report...");
     dispatch(setReportStatus("generating"));
     const startTime = Date.now();
-    setTimeout(() => {
-      console.log("Report generated!");
+
+    try {
+      const result = await fetch(
+        `${import.meta.env.VITE_API_HOST}/fault-tree-analysis`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            lat: geoData.lat,
+            lng: geoData.lng,
+            systems: selectedSystems ? Array.from(selectedSystems) : [],
+          }),
+        },
+      );
+      const responseData = await result.json();
       dispatch(setReportGenAt(new Date().toLocaleTimeString()));
       dispatch(setReportGenTime(Date.now() - startTime));
-      dispatch(setReportStatus("generated"));
-    }, 2000);
+      dispatch(setReportData(responseData));
+    } catch (error) {
+      console.error("Error generating report:", error);
+      dispatch(setReportStatus("error"));
+      return;
+    }
   }
 
   function handleClearReport() {

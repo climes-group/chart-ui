@@ -34,7 +34,7 @@ export default function ApplicableSystemsCard() {
 
   /** Toggle system selection */
   const toggleSystem = (id) => {
-    if (selectedSystems.has(id)) {
+    if (selectedSystems.includes(id)) {
       dispatch(removeSelectedSystem(id));
     } else {
       console.log("Current systems before adding:", selectedSystems);
@@ -121,7 +121,7 @@ export default function ApplicableSystemsCard() {
 
           const selectedServiceCount = elementsForService.filter((element) => {
             const itemKey = getItemKey(element);
-            return selectedSystems.has(itemKey);
+            return selectedSystems.includes(itemKey);
           }).length;
 
           return (
@@ -158,7 +158,7 @@ export default function ApplicableSystemsCard() {
                     const selectedClassCount = elementsInClass.filter(
                       (element) => {
                         const itemKey = getItemKey(element);
-                        return selectedSystems.has(itemKey);
+                        return selectedSystems.includes(itemKey);
                       },
                     ).length;
 
@@ -187,7 +187,7 @@ export default function ApplicableSystemsCard() {
                                 <SystemItemCard
                                   key={itemKey}
                                   systemItem={element}
-                                  isSelected={selectedSystems.has(itemKey)}
+                                  isSelected={selectedSystems.includes(itemKey)}
                                   onToggle={() => toggleSystem(itemKey)}
                                 />
                               );
