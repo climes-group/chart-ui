@@ -1,9 +1,18 @@
-import useFlow from "@/hooks/useFlow";
+import { dismissSplash } from "@/state/slices/flowReducer";
 import { Fab } from "@mui/material";
 import { NavigationIcon } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-export default function IntakeCard(props) {
-  const { next } = useFlow();
+export default function SplashCard() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleDismiss = () => {
+    dispatch(dismissSplash());
+    navigate("/flow/intake");
+  };
+
   return (
     <section className="min-h-[60vh] flex items-center justify-center bg-opacity-90 py-8">
       <div className="max-w-lg w-full p-8 flex flex-col items-center text-center mx-4">
@@ -20,7 +29,7 @@ export default function IntakeCard(props) {
         </p>
         <Fab
           color="secondary"
-          onClick={next}
+          onClick={handleDismiss}
           className="text-white px-8 py-2 text-lg font-semibold shadow-md transition-colors duration-200"
           sx={{
             borderRadius: "9999px",

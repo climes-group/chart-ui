@@ -5,6 +5,7 @@ const initialState = {
   currentStep: undefined,
   error: undefined,
   conditions: {},
+  splashDismissed: false,
 };
 
 export const flowSlice = createSlice({
@@ -48,6 +49,9 @@ export const flowSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    dismissSplash: (state) => {
+      state.splashDismissed = true;
+    },
   },
 });
 
@@ -60,6 +64,9 @@ export const {
   meetCondition,
   setError,
   setSteps,
+  dismissSplash,
 } = flowSlice.actions;
+
+export const selectSplashDismissed = (state) => state.flow.splashDismissed;
 
 export default flowSlice.reducer;
