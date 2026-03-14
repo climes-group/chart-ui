@@ -1,14 +1,11 @@
 import { searchAddress } from "@/utils/geocode";
 import {
-  Box,
   Button,
-  Divider,
   IconButton,
   InputAdornment,
   List,
   ListItemButton,
   ListItemText,
-  Paper,
   TextField,
   Typography,
 } from "@mui/material";
@@ -38,66 +35,88 @@ function ChooseLocation(props) {
   };
 
   return (
-    <Box sx={{ my: 2 }}>
-      <div className="flex flex-col mb-4 gap-6 ">
-        <TextField
-          id="address-search"
-          label="Search for an address"
-          variant="outlined"
-          value={fieldAddress}
-          onChange={(e) => setFieldAddress(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearchClick()}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                {fieldAddress && (
-                  <IconButton
-                    aria-label="clear search"
-                    onClick={handleClearClick}
-                  >
-                    <EraserIcon />
-                  </IconButton>
-                )}
-                <IconButton aria-label="search" onClick={handleSearchClick}>
-                  <SearchIcon />
+    <div className="flex flex-col gap-5">
+      <TextField
+        id="address-search"
+        label="Search for an address"
+        variant="outlined"
+        size="small"
+        fullWidth
+        value={fieldAddress}
+        onChange={(e) => setFieldAddress(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleSearchClick()}
+        className="bg-background"
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              {fieldAddress && (
+                <IconButton
+                  aria-label="clear search"
+                  onClick={handleClearClick}
+                  size="small"
+                >
+                  <EraserIcon className="h-4 w-4" />
                 </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
+              )}
+              <IconButton
+                aria-label="search"
+                onClick={handleSearchClick}
+                size="small"
+              >
+                <SearchIcon className="h-4 w-4" />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
 
-        {searchResults && (
-          <Paper elevation={3}>
-            {searchResults.length > 0 ? (
-              <List>
-                {searchResults.slice(0, 10).map((item) => (
-                  <ListItemButton
-                    key={item.id}
-                    onClick={() => handleAddressSelect(item)}
-                  >
-                    <ListItemText primary={item.address.label} />
-                  </ListItemButton>
-                ))}
-              </List>
-            ) : (
-              <Typography sx={{ p: 2 }}>No results found.</Typography>
-            )}
-          </Paper>
-        )}
+      {searchResults && (
+        <div className="rounded-lg border border-border bg-background overflow-hidden">
+          {searchResults.length > 0 ? (
+            <List disablePadding dense>
+              {searchResults.slice(0, 10).map((item) => (
+                <ListItemButton
+                  key={item.id}
+                  onClick={() => handleAddressSelect(item)}
+                  className="text-sm hover:bg-muted/50"
+                >
+                  <ListItemText
+                    primary={item.address.label}
+                    primaryTypographyProps={{ variant: "body2" }}
+                  />
+                </ListItemButton>
+              ))}
+            </List>
+          ) : (
+            <Typography
+              variant="body2"
+              className="p-4 text-muted-foreground text-center"
+            >
+              No results found.
+            </Typography>
+          )}
+        </div>
+      )}
 
-        <Divider>
-          <p>OR</p>
-        </Divider>
-
-        <Button
-          onClick={props.onUseLocSvc}
-          startIcon={<LocateFixedIcon />}
-          style={{ margin: "auto" }}
-        >
-          Find my site
-        </Button>
+      <div className="flex items-center gap-3">
+        <span className="flex-1 h-px bg-border" aria-hidden />
+        <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          Or
+        </span>
+        <span className="flex-1 h-px bg-border" aria-hidden />
       </div>
-    </Box>
+
+      <Button
+        variant="outlined"
+        color="primary"
+        size="medium"
+        onClick={props.onUseLocSvc}
+        startIcon={<LocateFixedIcon className="h-4 w-4" />}
+        className="w-full sm:w-auto sm:self-start"
+      >
+        Use my location
+      </Button>
+    </div>
   );
 }
 
