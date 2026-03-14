@@ -17,7 +17,7 @@ function SelectedLocation({ humanAddr, geoData }) {
       className="rounded-lg border border-border bg-background p-4 space-y-3"
       style={{ marginTop: 0 }}
     >
-      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+      <p className="heading-label">
         Selected location
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">

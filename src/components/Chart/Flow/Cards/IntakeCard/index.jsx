@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material";
+import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
 import { selectIntakeForm, setIntakeField } from "@/state/slices/reportReducer";
@@ -49,8 +49,8 @@ export default function IntakeCard({ onSubmit }) {
 
   return (
     <div>
-      <h2>Intake</h2>
-      <p className="text-sm text-muted-foreground mb-4">
+      <h2 className="heading-card mb-1">Intake</h2>
+      <p className="body-muted mb-4">
         Provide the core project, building, and assessor information to
         generate a complete intake record.
       </p>

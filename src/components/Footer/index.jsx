@@ -16,7 +16,7 @@ function Footer() {
             alt="Climes Logo"
             className="h-12 mb-4"
           />
-          <p className="font-avenir text-sm leading-relaxed text-black">
+          <p className="text-sm leading-relaxed text-current">
             &copy; {new Date().getFullYear()} Climes Group Engineering Inc.
             <br />
             All Rights Reserved.
@@ -25,7 +25,7 @@ function Footer() {
 
         {/* Column 2: Navigation */}
         <div className="flex-1 min-w-[150px] text-left">
-          <h4 className="font-avenir font-semibold text-lg mb-4">Navigation</h4>
+          <h4 className="text-base font-semibold mb-4">Navigation</h4>
           <ul className="list-none p-0 m-0 space-y-3">
             <li>
               <Link to="/" className={linkStyle}>
@@ -47,7 +47,7 @@ function Footer() {
 
         {/* Column 3: Legal */}
         <div className="flex-1 min-w-[150px] text-left">
-          <h4 className="font-avenir font-semibold text-lg mb-4">Legal</h4>
+          <h4 className="text-base font-semibold mb-4">Legal</h4>
           <ul className="list-none p-0 m-0 space-y-3">
             <li>
               <a href="#" className={linkStyle}>
@@ -64,7 +64,7 @@ function Footer() {
 
         {/* Column 4: Social */}
         <div className="flex-1 min-w-[150px] text-left">
-          <h4 className="font-avenir font-semibold text-lg mb-4">Connect</h4>
+          <h4 className="text-base font-semibold mb-4">Connect</h4>
           <Social />
         </div>
       </div>

@@ -1,14 +1,9 @@
-import { TextField, Typography } from "@mui/material";
+import { TextField } from "@mui/material";
 
 export default function AssessorInformationSection({ values, onChange }) {
   return (
     <div className="space-y-4">
-      <Typography
-        variant="h6"
-        className="text-base font-semibold text-foreground"
-      >
-        Assessor Information
-      </Typography>
+      <h3 className="heading-section">Assessor Information</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <TextField

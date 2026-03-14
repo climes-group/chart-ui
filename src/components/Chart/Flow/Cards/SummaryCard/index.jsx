@@ -33,10 +33,10 @@ function SummaryCard() {
 
   return (
     <div>
-      <h2>Summary</h2>
+      <h2 className="heading-card mb-1">Summary</h2>
       <div className="mb-8">
         <div className="flex items-center gap-2">
-          <h3 className="mb-0">Site Location</h3>
+          <h3 className="heading-section mb-0">Site Location</h3>
           <Link
             to="/flow/siteLocation"
             aria-label="Edit Site Location"
@@ -47,24 +47,24 @@ function SummaryCard() {
           </Link>
         </div>
         {humanAddress || geoData ? (
-          <div className="flex flex-col space-y-1 p-3 rounded bg-gray-50 border border-gray-200">
+          <div className="flex flex-col space-y-1 p-3 rounded-lg bg-muted/50 border border-border">
             <div>
-              <span className="font-semibold">Address:</span>
-              <span className="ml-2">{humanAddress || "N/A"}</span>
+              <span className="font-semibold text-foreground">Address:</span>
+              <span className="ml-2 text-foreground">{humanAddress || "N/A"}</span>
             </div>
             <div>
-              <span className="font-semibold">Coordinates:</span>
-              <span className="ml-2">
+              <span className="font-semibold text-foreground">Coordinates:</span>
+              <span className="ml-2 text-foreground">
                 {formatLatLong(geoData?.lat, geoData?.lng)}
               </span>
             </div>
           </div>
         ) : (
-          <div>No site selected.</div>
+          <p className="body-muted">No site selected.</p>
         )}
       </div>
       <div className="flex items-center gap-2">
-        <h3>Selected Systems</h3>
+        <h3 className="heading-section">Selected Systems</h3>
         <Link
           to="/flow/applicableSystems"
           aria-label="Edit Selected Systems"

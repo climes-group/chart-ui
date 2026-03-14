@@ -7,7 +7,6 @@ import {
   ListItemButton,
   ListItemText,
   TextField,
-  Typography,
 } from "@mui/material";
 import { EraserIcon, LocateFixedIcon, SearchIcon } from "lucide-react";
 import PropTypes from "prop-types";
@@ -88,21 +87,14 @@ function ChooseLocation(props) {
               ))}
             </List>
           ) : (
-            <Typography
-              variant="body2"
-              className="p-4 text-muted-foreground text-center"
-            >
-              No results found.
-            </Typography>
+            <p className="body-muted p-4 text-center">No results found.</p>
           )}
         </div>
       )}
 
       <div className="flex items-center gap-3">
         <span className="flex-1 h-px bg-border" aria-hidden />
-        <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Or
-        </span>
+        <span className="heading-label">Or</span>
         <span className="flex-1 h-px bg-border" aria-hidden />
       </div>
 

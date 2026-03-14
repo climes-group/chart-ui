@@ -6,7 +6,6 @@ import {
   FormLabel,
   MenuItem,
   TextField,
-  Typography,
 } from "@mui/material";
 
 const MODELLING_STANDARD_OPTIONS = [
@@ -23,12 +22,7 @@ export default function ProjectInformationSection({
 }) {
   return (
     <div className="space-y-4">
-      <Typography
-        variant="h6"
-        className="text-base font-semibold text-foreground"
-      >
-        Project Information
-      </Typography>
+      <h3 className="heading-section">Project Information</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <TextField
@@ -155,9 +149,9 @@ export default function ProjectInformationSection({
 
         <FormControl component="fieldset" className="mb-4">
           <FormLabel component="legend">Modelling Standard</FormLabel>
-          <Typography variant="caption" className="mb-1 block">
-            Multi-select checklist; "Other" triggers free-text input
-          </Typography>
+          <p className="text-xs text-muted-foreground mb-1">
+            Multi-select checklist; &quot;Other&quot; triggers free-text input
+          </p>
           <FormGroup>
             {MODELLING_STANDARD_OPTIONS.map((opt) => (
               <FormControlLabel

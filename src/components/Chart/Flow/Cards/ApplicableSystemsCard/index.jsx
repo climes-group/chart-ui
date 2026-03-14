@@ -132,7 +132,7 @@ export default function ApplicableSystemsCard() {
 
   return (
     <div>
-      <h2>Applicable Systems</h2>
+      <h2 className="heading-card mb-1">Applicable Systems</h2>
 
       <Accordion
         type="single"

@@ -35,8 +35,8 @@ function SiteLocationCard(props) {
 
   return (
     <div>
-      <h2>Select Site Location</h2>
-      <p className="text-sm text-muted-foreground mb-4">
+      <h2 className="heading-card mb-1">Select Site Location</h2>
+      <p className="body-muted mb-4">
         Find the location of the site by searching for an address or using your
         device&apos;s location.
       </p>
