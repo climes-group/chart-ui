@@ -9,6 +9,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   addSelectedSystem,
+  clearSelectedSystems,
   removeSelectedSystem,
 } from "@/state/slices/reportReducer";
 
@@ -21,7 +22,28 @@ function sanitizeName(name) {
 }
 
 function getItemKey(element) {
-  return `${element["Services"]}-${element["Classification"]}-${element["ASTM.Name"]}-${element["ASTM.System.Name"]}`;
+  return `${element["Services"]}-${element["Classification"]}-${element["ASTMName"]}-${element["ASTMSystemName"]}`;
+}
+
+function cleanAvailableSystems(systems) {
+  const uniqueKeys = new Set();
+  const cleanedSystems = [];
+
+  for (const system of systems) {
+    const key = getItemKey(system);
+    if (!uniqueKeys.has(key)) {
+      uniqueKeys.add(key);
+      cleanedSystems.push({
+        Services: system["Services"],
+        Classification: system["Classification"],
+        ASTMName: system["ASTM.Name"],
+        ASTMSystemName: system["ASTM.System.Name"],
+        ASTMSystemCode: system["ASTM.System.Code"],
+      });
+    }
+  }
+
+  return cleanedSystems;
 }
 
 export default function ApplicableSystemsCard() {
@@ -31,6 +53,34 @@ export default function ApplicableSystemsCard() {
   const [openService, setOpenService] = useState(null);
   const [openClassification, setOpenClassification] = useState(null);
   const selectedSystems = useSelector((state) => state.report.selectedSystems);
+
+  const clearAllSelections = () => {
+    dispatch(clearSelectedSystems());
+  };
+
+  const clearSelectedSystemsForService = (service) => () => {
+    const systemsToRemove = availableSystems
+      .filter((system) => system.Services === service)
+      .map((system) => getItemKey(system));
+
+    systemsToRemove.forEach((key) => {
+      if (selectedSystems.includes(key)) {
+        dispatch(removeSelectedSystem(key));
+      }
+    });
+  };
+
+  const clearSelectedSystemsForClassification = (classification) => () => {
+    const systemsToRemove = availableSystems
+      .filter((system) => system.Classification === classification)
+      .map((system) => getItemKey(system));
+
+    systemsToRemove.forEach((key) => {
+      if (selectedSystems.includes(key)) {
+        dispatch(removeSelectedSystem(key));
+      }
+    });
+  };
 
   /** Toggle system selection */
   const toggleSystem = (id) => {
@@ -51,7 +101,9 @@ export default function ApplicableSystemsCard() {
       );
       if (!response.ok) throw new Error("Failed to fetch systems");
       const data = await response.json();
-      setAvailableSystems(data);
+      const cleanedData = cleanAvailableSystems(data);
+      console.log(cleanedData);
+      setAvailableSystems(cleanedData);
     } catch (err) {
       setError(err.message);
     }
@@ -81,7 +133,6 @@ export default function ApplicableSystemsCard() {
   return (
     <div>
       <h2>Applicable Systems</h2>
-      {/* Sticky breadcrumbs for open accordions */}
 
       <Accordion
         type="single"
@@ -93,7 +144,7 @@ export default function ApplicableSystemsCard() {
           setOpenClassification(null); // Reset classification when service changes
         }}
       >
-        <div className="sticky top-5 z-20 bg-transparent mb-2 text-sm flex justify-end">
+        <div className="sticky top-5 z-20 bg-transparent mb-2 text-sm flex items-center gap-2 justify-end">
           <Breadcrumbs
             variant="default"
             aria-label="current selection"
@@ -110,6 +161,15 @@ export default function ApplicableSystemsCard() {
               </Link>
             )}
           </Breadcrumbs>
+          {selectedSystems.length > 0 && (
+            <Chip
+              size="small"
+              variant="outlined"
+              color="primary"
+              label={`${selectedSystems.length} selected total`}
+              onDelete={clearAllSelections}
+            />
+          )}
         </div>
         {uniqueServices.map((service) => {
           const elementsForService = availableSystems.filter(
@@ -129,16 +189,10 @@ export default function ApplicableSystemsCard() {
               <AccordionTrigger
                 id={`trigger-svc-${service}`}
                 className="bg-background"
+                selectedCount={selectedServiceCount}
+                clearSelected={clearSelectedSystemsForService(service)}
               >
-                <div className="flex gap-2 mr-2">{sanitizeName(service)}</div>
-                {selectedServiceCount > 0 && (
-                  <Chip
-                    size="small"
-                    variant="outlined"
-                    color="primary"
-                    label={`${selectedServiceCount} selected`}
-                  ></Chip>
-                )}
+                {sanitizeName(service)}
               </AccordionTrigger>
 
               <AccordionContent className="flex flex-col gap-4 text-balance border-l-2 border-golden-accent">
@@ -166,17 +220,12 @@ export default function ApplicableSystemsCard() {
                       <AccordionItem className="border-b-0" value={uniqueClass}>
                         <AccordionTrigger
                           id={`trigger-class-${uniqueClass}`}
-                          className="flex gap-2 mr-2 "
+                          selectedCount={selectedClassCount}
+                          clearSelected={clearSelectedSystemsForClassification(
+                            uniqueClass,
+                          )}
                         >
                           {sanitizeName(uniqueClass)}
-                          {selectedClassCount > 0 && (
-                            <Chip
-                              size="small"
-                              variant="outlined"
-                              color="primary"
-                              label={`${selectedClassCount} selected`}
-                            ></Chip>
-                          )}
                         </AccordionTrigger>
                         <AccordionContent>
                           {/* Responsive Grid: 1 col on mobile, 3 on tablet, 3 on desktop */}

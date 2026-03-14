@@ -12,29 +12,31 @@ function SystemItemCard({ systemItem, isSelected, onToggle }) {
     <Card
       onClick={onToggle}
       className={cn(
-        "cursor-pointer transition-all duration-200 border-2 select-none h-full",
+        "cursor-pointer transition-all duration-200 border-2 select-none h-full min-w-[160px]",
         isSelected
-          ? "border-primary bg-primary/5 shadow-md"
-          : "hover:border-muted-foreground/30 border-transparent bg-card",
+          ? "border-moss-primary bg-primary/5 shadow-md"
+          : "hover:border-muted-foreground/30  bg-card",
       )}
     >
       <CardContent className="p-4 flex flex-col h-full">
         <div className="flex justify-between items-center mb-2">
           <div className="flex flex-col space-y-1">
             <div className="text-sm">
-              {sanitizeName(systemItem["ASTM.System.Name"])}
+              {sanitizeName(
+                systemItem["ASTMSystemName"] ??
+                  systemItem["ASTMName"] ??
+                  systemItem["Classification"],
+              ) ?? "N/A"}
             </div>
+
             <small className="text-muted-foreground text-xs">
-              Classification: {sanitizeName(systemItem["Classification"])}
+              {sanitizeName(systemItem["Classification"])}
             </small>
             <small className="text-muted-foreground text-xs">
-              System.Name: {sanitizeName(systemItem["ASTM.System.Name"])}
+              {sanitizeName(systemItem["Services"])}
             </small>
             <small className="text-muted-foreground text-xs">
-              System.Elements: {sanitizeName(systemItem["ASTM.Name"])}
-            </small>
-            <small className="text-muted-foreground text-xs">
-              Code: {sanitizeName(systemItem["ASTM.System.Code"])}
+              Code: {sanitizeName(systemItem["ASTMSystemCode"])}
             </small>
           </div>
           {/* Visual Checkbox Indicator */}
@@ -42,7 +44,7 @@ function SystemItemCard({ systemItem, isSelected, onToggle }) {
             className={cn(
               "h-5 w-5 rounded-md border flex items-center justify-center transition-all",
               isSelected
-                ? "bg-primary border-primary"
+                ? "bg-moss-primary border-primary"
                 : "border-muted-foreground/30",
             )}
           >
