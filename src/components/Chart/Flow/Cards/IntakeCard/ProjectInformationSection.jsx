@@ -15,170 +15,253 @@ const MODELLING_STANDARD_OPTIONS = [
   "Other",
 ];
 
-export default function ProjectInformationSection({
-  values,
-  onChange,
-  onModellingStandardChange,
-}) {
+export default function ProjectInformationSection({ form }) {
   return (
     <div className="space-y-4">
       <h3 className="heading-section">Project Information</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <TextField
-          label="Building Permit #"
-          helperText="If Applicable"
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.building_permit}
-          onChange={onChange("building_permit")}
-        />
-        <TextField
-          label="Project Address"
-          required
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.project_address}
-          onChange={onChange("project_address")}
-        />
-        <TextField
-          label="Municipality / District"
-          required
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.municipality}
-          onChange={onChange("municipality")}
-        />
-        <TextField
-          label="Postal Code"
-          helperText="Canadian format: A1A 1A1"
-          required
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.postal_code}
-          onChange={onChange("postal_code")}
-        />
-        <TextField
-          label="PID or Legal Description"
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.pid_legal}
-          onChange={onChange("pid_legal")}
-        />
-        <TextField
-          label="Unit and Model Type"
-          required
-          select
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.unit_model_type}
-          onChange={onChange("unit_model_type")}
-          helperText="Dropdown menu"
+        <form.Field name="building_permit">
+          {(field) => (
+            <TextField
+              label="Building Permit #"
+              fullWidth
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+              helperText="If Applicable"
+            />
+          )}
+        </form.Field>
+        <form.Field
+          name="project_address"
+          validators={{
+            onBlur: ({ value }) => (!value ? "Required" : undefined),
+          }}
         >
-          {[
-            "Laneway House",
-            "Single Detached",
-            "Single Detached w/Secondary Suite",
-            "Double/Semi-detached (non-MURB)",
-            "Row House (non-MURB)",
-            "Multi-plex (non-MURB)",
-            "Low-Rise MURB",
-            "Stacked Duplex (MURB)",
-            "Triplex (MURB)",
-          ].map((opt) => (
-            <MenuItem key={opt} value={opt}>
-              {opt}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          label="Total Primary Dwelling Units"
-          type="number"
-          helperText="Integer ≥ 1"
-          required
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.total_primary_units}
-          onChange={onChange("total_primary_units")}
-        />
-        <TextField
-          label="Total Secondary Suites"
-          type="number"
-          helperText="Integer ≥ 0"
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.total_secondary_suites}
-          onChange={onChange("total_secondary_suites")}
-        />
-        <TextField
-          label="Building Plan Date"
-          type="date"
-          helperText="ISO 8601: YYYY-MM-DD"
-          fullWidth
-          size="small"
-          className="mb-4"
-          InputLabelProps={{ shrink: true }}
-          value={values.building_plan_date}
-          onChange={onChange("building_plan_date")}
-        />
-        <TextField
-          label="Building Plan Author"
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.building_plan_author}
-          onChange={onChange("building_plan_author")}
-        />
-        <TextField
-          label="Building Plan Version"
-          helperText="e.g. v1.0, Rev A"
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.building_plan_version}
-          onChange={onChange("building_plan_version")}
-        />
+          {(field) => (
+            <TextField
+              label="Project Address"
+              fullWidth
+              required
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+              error={
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched && field.state.meta.errors[0]
+              }
+            />
+          )}
+        </form.Field>
+        <form.Field
+          name="municipality"
+          validators={{
+            onBlur: ({ value }) => (!value ? "Required" : undefined),
+          }}
+        >
+          {(field) => (
+            <TextField
+              label="Municipality / District"
+              fullWidth
+              required
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+              error={
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+            />
+          )}
+        </form.Field>
+        <form.Field
+          name="postal_code"
+          validators={{
+            onBlur: ({ value }) =>
+              !/^[A-Z]\d[A-Z] \d[A-Z]\d$/i.test(value)
+                ? "Format: A1A 1A1"
+                : undefined,
+          }}
+        >
+          {(field) => (
+            <TextField
+              label="Postal Code"
+              fullWidth
+              required
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+              error={
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : "A1A 1A1"
+              }
+            />
+          )}
+        </form.Field>
 
-        <FormControl component="fieldset" className="mb-4">
-          <FormLabel component="legend">Modelling Standard</FormLabel>
-          <p className="text-xs text-muted-foreground mb-1">
-            Multi-select checklist; &quot;Other&quot; triggers free-text input
-          </p>
-          <FormGroup>
-            {MODELLING_STANDARD_OPTIONS.map((opt) => (
-              <FormControlLabel
-                key={opt}
-                control={
-                  <Checkbox
-                    size="small"
-                    checked={values.modelling_standard.includes(opt)}
-                    onChange={onModellingStandardChange(opt)}
+        <form.Field name="pid_legal">
+          {(field) => (
+            <TextField
+              label="PID or Legal Description"
+              fullWidth
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+          )}
+        </form.Field>
+        <form.Field
+          name="unit_model_type"
+          validators={{
+            onBlur: ({ value }) => (!value ? "Required" : undefined),
+          }}
+        >
+          {(field) => (
+            <TextField
+              select
+              label="Unit and Model Type"
+              fullWidth
+              required
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+              error={
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+            >
+              {[
+                "Laneway House",
+                "Single Detached",
+                "Single Detached w/Secondary Suite",
+                "Double/Semi-detached (non-MURB)",
+                "Row House (non-MURB)",
+                "Multi-plex (non-MURB)",
+                "Low-Rise MURB",
+                "Stacked Duplex (MURB)",
+                "Triplex (MURB)",
+              ].map((opt) => (
+                <MenuItem key={opt} value={opt}>
+                  {opt}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        </form.Field>
+        <form.Field
+          name="total_primary_units"
+          validators={{
+            onBlur: ({ value }) => (value < 1 ? "Min 1" : undefined),
+          }}
+        >
+          {(field) => (
+            <TextField
+              type="number"
+              label="Primary Units"
+              fullWidth
+              required
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+          )}
+        </form.Field>
+        <form.Field name="total_secondary_suites">
+          {(field) => (
+            <TextField
+              type="number"
+              label="Secondary Suites"
+              fullWidth
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+          )}
+        </form.Field>
+        <form.Field name="building_plan_date">
+          {(field) => (
+            <TextField
+              type="date"
+              label="Plan Date"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+          )}
+        </form.Field>
+        <form.Field name="building_plan_author">
+          {(field) => (
+            <TextField
+              label="Plan Author"
+              fullWidth
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+          )}
+        </form.Field>
+        <form.Field name="building_plan_version">
+          {(field) => (
+            <TextField
+              label="Plan Version"
+              fullWidth
+              placeholder="e.g. v1.0"
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+          )}
+        </form.Field>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-border pt-4">
+        <form.Field name="modelling_standard">
+          {(field) => (
+            <FormControl component="fieldset" sx={{ mt: 1 }}>
+              <FormLabel component="legend">Modelling Standard</FormLabel>
+              <FormGroup row>
+                {["EnerGuide", "Passive House", "CHBA Net-Zero", "Other"].map(
+                  (opt) => (
+                    <FormControlLabel
+                      key={opt}
+                      control={
+                        <Checkbox
+                          checked={field.state.value.includes(opt)}
+                          onChange={(e) => {
+                            const nextValue = e.target.checked
+                              ? [...field.state.value, opt]
+                              : field.state.value.filter((v) => v !== opt);
+                            field.handleChange(nextValue);
+                          }}
+                        />
+                      }
+                      label={opt}
+                    />
+                  ),
+                )}
+              </FormGroup>
+            </FormControl>
+          )}
+        </form.Field>
+
+        {/* Conditional "Other" Field */}
+        <form.Subscribe selector={(state) => state.values.modelling_standard}>
+          {(standards) =>
+            standards.includes("Other") && (
+              <form.Field name="modelling_standard_other">
+                {(field) => (
+                  <TextField
+                    label="Specify Other Standard"
+                    fullWidth
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
                   />
-                }
-                label={opt}
-              />
-            ))}
-          </FormGroup>
-        </FormControl>
-
-        <TextField
-          label="Modelling Standard – Other"
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.modelling_standard_other}
-          onChange={onChange("modelling_standard_other")}
-        />
+                )}
+              </form.Field>
+            )
+          }
+        </form.Subscribe>
       </div>
     </div>
   );
 }
-

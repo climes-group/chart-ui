@@ -1,100 +1,124 @@
 import { TextField } from "@mui/material";
 
-export default function AssessorInformationSection({ values, onChange }) {
+export default function AssessorInformationSection({ form }) {
   return (
     <div className="space-y-4">
       <h3 className="heading-section">Assessor Information</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <TextField
-          label="EA Name"
-          helperText="Energy Advisor full name"
-          required
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.ea_name}
-          onChange={onChange("ea_name")}
-        />
-        <TextField
-          label="EA Number"
-          required
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.ea_number}
-          onChange={onChange("ea_number")}
-        />
-        <TextField
-          label="EA Phone Number"
-          type="tel"
-          required
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.ea_phone}
-          onChange={onChange("ea_phone")}
-        />
-        <TextField
-          label="EA Business #"
-          required
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.ea_business}
-          onChange={onChange("ea_business")}
-        />
-        <TextField
-          label="SO Company Name"
-          helperText="Service Organisation company name"
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.so_company_name}
-          onChange={onChange("so_company_name")}
-        />
-        <TextField
-          label="Builder Name"
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.builder_name}
-          onChange={onChange("builder_name")}
-        />
-        <TextField
-          label="Builder Phone #"
-          type="tel"
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.builder_phone}
-          onChange={onChange("builder_phone")}
-        />
-
-        <TextField
-          label="EA Signature and Date"
-          helperText="Capture as base64 image + ISO date string"
-          multiline
-          minRows={3}
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.ea_signature_date}
-          onChange={onChange("ea_signature_date")}
-        />
-        <TextField
-          label="Builder Signature and Date"
-          helperText="Capture as base64 image + ISO date string"
-          multiline
-          minRows={3}
-          fullWidth
-          size="small"
-          className="mb-4"
-          value={values.builder_signature_date}
-          onChange={onChange("builder_signature_date")}
-        />
+        <form.Field
+          name="ea_name"
+          validators={{
+            onBlur: ({ value }) => (!value ? "Required" : undefined),
+          }}
+        >
+          {(field) => (
+            <TextField
+              label="EA Name"
+              fullWidth
+              required
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+              error={
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+            />
+          )}
+        </form.Field>
+        <form.Field
+          name="ea_number"
+          validators={{
+            onBlur: ({ value }) => (!value ? "Required" : undefined),
+          }}
+        >
+          {(field) => (
+            <TextField
+              label="EA Number"
+              fullWidth
+              required
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+              error={
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+            />
+          )}
+        </form.Field>
+        <form.Field
+          name="ea_phone"
+          validators={{
+            onBlur: ({ value }) => (!value ? "Required" : undefined),
+          }}
+        >
+          {(field) => (
+            <TextField
+              type="tel"
+              label="EA Phone"
+              fullWidth
+              required
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+              error={
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+            />
+          )}
+        </form.Field>
+        <form.Field
+          name="ea_business"
+          validators={{
+            onBlur: ({ value }) => (!value ? "Required" : undefined),
+          }}
+        >
+          {(field) => (
+            <TextField
+              label="EA Business #"
+              fullWidth
+              required
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+              error={
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+            />
+          )}
+        </form.Field>
+        <form.Field name="so_company_name">
+          {(field) => (
+            <TextField
+              label="Service Organisation Company Name"
+              fullWidth
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+          )}
+        </form.Field>
+        <form.Field name="builder_name">
+          {(field) => (
+            <TextField
+              label="Builder Name"
+              fullWidth
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+          )}
+        </form.Field>
+        <form.Field name="builder_phone">
+          {(field) => (
+            <TextField
+              type="tel"
+              label="Builder Phone #"
+              fullWidth
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+          )}
+        </form.Field>
       </div>
     </div>
   );
 }
-
