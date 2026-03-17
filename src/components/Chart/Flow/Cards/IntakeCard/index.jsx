@@ -1,7 +1,12 @@
 import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
-import { selectIntakeForm, setIntakeField } from "@/state/slices/reportReducer";
+import {
+  clearIntakeForm,
+  selectIntakeForm,
+  setIntakeField,
+  setIntakeForm,
+} from "@/state/slices/reportReducer";
 import { useForm } from "@tanstack/react-form";
 import AssessorInformationSection from "./AssessorInformationSection";
 import BuildingInformationSection from "./BuildingInformationSection";
@@ -49,6 +54,7 @@ export default function IntakeCard({ onSubmit }) {
     },
     onSubmit: async ({ value }) => {
       console.log("Form Data Submitted:", value);
+      dispatch(setIntakeForm(value));
     },
   });
 
@@ -80,24 +86,20 @@ export default function IntakeCard({ onSubmit }) {
     );
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (typeof onSubmit === "function") {
-      onSubmit(values);
-    }
-  };
-
   return (
     <div>
       <h2 className="heading-card mb-1">Intake</h2>
       <p className="body-muted mb-4">
-        Provide the core project, building, and assessor information to generate
-        a complete intake record.
+        Provide the project, building, and assessor information.
       </p>
 
       <form
-        onSubmit={handleSubmit}
-        className="space-y-8 bg-card/40 border border-border rounded-lg p-4 md:p-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+        className="space-y-8"
       >
         <ProjectInformationSection form={form} />
 
@@ -108,7 +110,14 @@ export default function IntakeCard({ onSubmit }) {
         <SignatureSection form={form} />
 
         <div className="flex justify-end gap-3 pt-4 border-t border-border">
-          <Button variant="outlined" size="large" onClick={() => form.reset()}>
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => {
+              form.reset();
+              dispatch(clearIntakeForm());
+            }}
+          >
             Clear Form
           </Button>
           <form.Subscribe

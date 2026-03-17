@@ -120,7 +120,7 @@ function StepperFlow({ steps }) {
   return (
     <Card className="max-w-screen-lg w-full flex-auto">
       {!isSmallDevice && (
-        <CardHeader className="bg-gradient-to-b from-gray-50 to-white">
+        <CardHeader className="bg-gradient-to-b from-gray-50 to-transparent">
           {DesktopStepper}
         </CardHeader>
       )}

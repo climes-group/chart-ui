@@ -5,6 +5,7 @@ import {
   FormGroup,
   FormLabel,
   MenuItem,
+  Paper,
   TextField,
 } from "@mui/material";
 
@@ -17,7 +18,7 @@ const MODELLING_STANDARD_OPTIONS = [
 
 export default function ProjectInformationSection({ form }) {
   return (
-    <div className="space-y-4">
+    <Paper variant="outlined" className="p-4 md:p-6 space-y-4">
       <h3 className="heading-section">Project Information</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -26,6 +27,7 @@ export default function ProjectInformationSection({ form }) {
             <TextField
               label="Building Permit #"
               fullWidth
+              variant="standard"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               helperText="If Applicable"
@@ -42,6 +44,7 @@ export default function ProjectInformationSection({ form }) {
             <TextField
               label="Project Address"
               fullWidth
+              variant="standard"
               required
               value={field.state.value}
               onBlur={field.handleBlur}
@@ -65,6 +68,7 @@ export default function ProjectInformationSection({ form }) {
             <TextField
               label="Municipality / District"
               fullWidth
+              variant="standard"
               required
               value={field.state.value}
               onBlur={field.handleBlur}
@@ -88,6 +92,7 @@ export default function ProjectInformationSection({ form }) {
             <TextField
               label="Postal Code"
               fullWidth
+              variant="standard"
               required
               value={field.state.value}
               onBlur={field.handleBlur}
@@ -109,6 +114,7 @@ export default function ProjectInformationSection({ form }) {
             <TextField
               label="PID or Legal Description"
               fullWidth
+              variant="standard"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -125,6 +131,7 @@ export default function ProjectInformationSection({ form }) {
               select
               label="Unit and Model Type"
               fullWidth
+              variant="standard"
               required
               value={field.state.value}
               onBlur={field.handleBlur}
@@ -162,6 +169,7 @@ export default function ProjectInformationSection({ form }) {
               type="number"
               label="Primary Units"
               fullWidth
+              variant="standard"
               required
               value={field.state.value}
               onBlur={field.handleBlur}
@@ -175,6 +183,7 @@ export default function ProjectInformationSection({ form }) {
               type="number"
               label="Secondary Suites"
               fullWidth
+              variant="standard"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -186,6 +195,7 @@ export default function ProjectInformationSection({ form }) {
               type="date"
               label="Plan Date"
               fullWidth
+              variant="standard"
               InputLabelProps={{ shrink: true }}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -197,6 +207,7 @@ export default function ProjectInformationSection({ form }) {
             <TextField
               label="Plan Author"
               fullWidth
+              variant="standard"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -207,6 +218,7 @@ export default function ProjectInformationSection({ form }) {
             <TextField
               label="Plan Version"
               fullWidth
+              variant="standard"
               placeholder="e.g. v1.0"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -253,6 +265,7 @@ export default function ProjectInformationSection({ form }) {
                   <TextField
                     label="Specify Other Standard"
                     fullWidth
+                    variant="standard"
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
                   />
@@ -262,6 +275,6 @@ export default function ProjectInformationSection({ form }) {
           }
         </form.Subscribe>
       </div>
-    </div>
+    </Paper>
   );
 }

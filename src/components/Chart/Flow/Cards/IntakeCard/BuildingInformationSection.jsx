@@ -1,8 +1,8 @@
-import { TextField } from "@mui/material";
+import { Paper, TextField } from "@mui/material";
 
 export default function BuildingInformationSection({ form }) {
   return (
-    <div className="space-y-4">
+    <Paper variant="outlined" className="p-4 md:p-6 space-y-4">
       <h3 className="heading-section">Building Information</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -11,6 +11,7 @@ export default function BuildingInformationSection({ form }) {
             <TextField
               type="number"
               label="Floor Area (m²)"
+              variant="standard"
               fullWidth
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -23,6 +24,7 @@ export default function BuildingInformationSection({ form }) {
               type="number"
               label="Floors"
               fullWidth
+              variant="standard"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -34,6 +36,7 @@ export default function BuildingInformationSection({ form }) {
               type="number"
               label="Electricity (kWh/y)"
               fullWidth
+              variant="standard"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -45,6 +48,7 @@ export default function BuildingInformationSection({ form }) {
               type="number"
               label="Fossil Fuel (GJ/y)"
               fullWidth
+              variant="standard"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -57,6 +61,8 @@ export default function BuildingInformationSection({ form }) {
               label="MEUI (kWh/m²/y)"
               fullWidth
               value={field.state.value}
+              variant="standard"
+              s
               onChange={(e) => field.handleChange(e.target.value)}
             />
           )}
@@ -67,6 +73,7 @@ export default function BuildingInformationSection({ form }) {
               type="number"
               label="TEDI (kWh/m²/y)"
               fullWidth
+              variant="standard"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -78,12 +85,13 @@ export default function BuildingInformationSection({ form }) {
               type="number"
               label="GHGI (kg CO₂e/m²/y)"
               fullWidth
+              variant="standard"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
           )}
         </form.Field>
       </div>
-    </div>
+    </Paper>
   );
 }

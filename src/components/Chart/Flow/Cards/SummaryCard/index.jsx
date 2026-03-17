@@ -17,6 +17,8 @@ function SummaryCard() {
   // Get selected site from geoReducer
   const { geoData, humanAddress } = useSelector((state) => state.geo);
 
+  const intakeForm = useSelector((state) => state.report.intakeForm);
+
   // Convert Set to Array for display
   const selectedArray = Array.from(selectedSystems || []);
 
@@ -33,15 +35,35 @@ function SummaryCard() {
 
   return (
     <div>
-      <h2 className="heading-card mb-1">Summary</h2>
+      <h2 className="heading-card">Summary</h2>
       <div className="mb-8">
         <div className="flex items-center gap-2">
-          <h3 className="heading-section mb-0">Site Location</h3>
+          <h3 className="heading-section">Project Information</h3>
+          <Link
+            to="/flow/intake"
+            aria-label="Edit Intake Information"
+            title="Edit Intake Information"
+            tabIndex={0}
+            className="mb-2"
+          >
+            <Pencil size={16} />
+          </Link>
+        </div>
+        {intakeForm && Object.keys(intakeForm).length > 0 ? (
+          <p className="body-muted">TBD</p>
+        ) : (
+          <p className="body-muted">No project information entered.</p>
+        )}
+      </div>
+      <div className="mb-8">
+        <div className="flex items-center gap-2">
+          <h3 className="heading-section">Site Location</h3>
           <Link
             to="/flow/siteLocation"
             aria-label="Edit Site Location"
             title="Edit Site Location"
             tabIndex={0}
+            className="mb-2"
           >
             <Pencil size={16} />
           </Link>
@@ -50,10 +72,14 @@ function SummaryCard() {
           <div className="flex flex-col space-y-1 p-3 rounded-lg bg-muted/50 border border-border">
             <div>
               <span className="font-semibold text-foreground">Address:</span>
-              <span className="ml-2 text-foreground">{humanAddress || "N/A"}</span>
+              <span className="ml-2 text-foreground">
+                {humanAddress || "N/A"}
+              </span>
             </div>
             <div>
-              <span className="font-semibold text-foreground">Coordinates:</span>
+              <span className="font-semibold text-foreground">
+                Coordinates:
+              </span>
               <span className="ml-2 text-foreground">
                 {formatLatLong(geoData?.lat, geoData?.lng)}
               </span>
@@ -70,6 +96,7 @@ function SummaryCard() {
           aria-label="Edit Selected Systems"
           title="Edit Selected Systems"
           tabIndex={0}
+          className="mb-2"
         >
           <Pencil size={16} />
         </Link>
