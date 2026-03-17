@@ -1,8 +1,8 @@
-import { Paper, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 
 export default function AssessorInformationSection({ form }) {
   return (
-    <Paper variant="outlined" className="p-4 md:p-6 space-y-4">
+    <div className="p-2 md:p-6 space-y-4">
       <h3 className="heading-section">Assessor Information</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -126,6 +126,6 @@ export default function AssessorInformationSection({ form }) {
           )}
         </form.Field>
       </div>
-    </Paper>
+    </div>
   );
 }

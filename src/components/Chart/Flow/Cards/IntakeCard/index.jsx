@@ -118,7 +118,7 @@ export default function IntakeCard({ onSubmit }) {
               dispatch(clearIntakeForm());
             }}
           >
-            Clear Form
+            Clear
           </Button>
           <form.Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
@@ -129,7 +129,7 @@ export default function IntakeCard({ onSubmit }) {
                 size="large"
                 disabled={!canSubmit}
               >
-                {isSubmitting ? "Submitting..." : "Submit Final Report"}
+                {isSubmitting ? "Submitting..." : "Save"}
               </Button>
             )}
           />
