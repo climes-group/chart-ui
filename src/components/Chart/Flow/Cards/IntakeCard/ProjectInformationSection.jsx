@@ -5,7 +5,6 @@ import {
   FormGroup,
   FormLabel,
   MenuItem,
-  Paper,
   TextField,
 } from "@mui/material";
 
@@ -18,7 +17,7 @@ const MODELLING_STANDARD_OPTIONS = [
 
 export default function ProjectInformationSection({ form }) {
   return (
-    <Paper variant="outlined" className="p-4 md:p-6 space-y-4">
+    <div variant="outlined" className="p-2 md:p-6 space-y-4">
       <h3 className="heading-section">Project Information</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -275,6 +274,6 @@ export default function ProjectInformationSection({ form }) {
           }
         </form.Subscribe>
       </div>
-    </Paper>
+    </div>
   );
 }

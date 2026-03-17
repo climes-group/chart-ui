@@ -14,7 +14,7 @@ export default function SplashCard() {
   };
 
   return (
-    <section className="min-h-[90vh] flex items-center justify-center py-8">
+    <section className="min-h-[90vh] flex items-center justify-center py-8 gap-4">
       <div className="max-w-lg w-full p-8 flex flex-col items-center text-center mx-4">
         <h1 className="text-foreground mb-2 text-xl md:text-2xl font-medium tracking-tight">
           Welcome to
@@ -33,6 +33,7 @@ export default function SplashCard() {
             borderRadius: "9999px",
             minWidth: "180px",
             gap: "8px",
+            color: "#fff",
           }}
         >
           <NavigationIcon />

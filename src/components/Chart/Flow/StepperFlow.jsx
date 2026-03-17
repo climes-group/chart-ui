@@ -164,11 +164,10 @@ function StepperFlow({ steps }) {
             </React.Fragment>
           )}
         </CardContent>
-        {currentStep?.id > 0 && (
-          <CardFooter>
-            {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
-          </CardFooter>
-        )}
+
+        <CardFooter>
+          {isSmallDevice ? MobileStepperControls : DesktopStepperControl}
+        </CardFooter>
       </div>
     </Card>
   );
