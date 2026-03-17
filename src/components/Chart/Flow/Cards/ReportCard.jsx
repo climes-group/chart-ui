@@ -64,10 +64,10 @@ export default function ReportCard() {
 
   return (
     <>
-      <h2>Report</h2>
+      <h2 className="heading-card mb-1">Report</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-y-4">
-          <h3>Ready to generate</h3>
+          <h3 className="heading-section">Ready to generate</h3>
           <div className="flex gap-4">
             <Button
               onClick={handleGenerateReport}
@@ -89,27 +89,31 @@ export default function ReportCard() {
           </div>
         </div>
         <div className="pl-0 md:pl-4 ">
-          {reportStatus === "not_generated" && <p>No report generated yet.</p>}
-          {reportStatus === "generating" && <p>Generating report...</p>}
+          {reportStatus === "not_generated" && (
+            <p className="body-muted">No report generated yet.</p>
+          )}
+          {reportStatus === "generating" && (
+            <p className="body-muted">Generating report...</p>
+          )}
           {reportStatus === "generated" && (
-            <div className="flex flex-col space-y-6 p-4 bg-gray-50 border border-gray-200 rounded">
-              <h3 className="flex justify-between items-center  ">
+            <div className="flex flex-col space-y-6 p-4 rounded-lg bg-muted/50 border border-border">
+              <h3 className="heading-section flex justify-between items-center">
                 Report{" "}
                 <TrashIcon
-                  className="hover:text-golden-accent"
+                  className="hover:text-golden-accent cursor-pointer"
                   onClick={handleClearReport}
                 />
               </h3>
-              <p>
-                <div>Status: {reportStatus} (mock)</div>
-                {reportGenAt && <div>Generated at: {reportGenAt}</div>}
+              <div className="text-sm text-foreground space-y-1">
+                <p>Status: {reportStatus} (mock)</p>
+                {reportGenAt && <p>Generated at: {reportGenAt}</p>}
                 {reportGenTime && (
-                  <div>Generate time: {(reportGenTime / 1000).toFixed(2)}s</div>
+                  <p>Generate time: {(reportGenTime / 1000).toFixed(2)}s</p>
                 )}
-              </p>
+              </div>
               <div className="flex gap-6 justify-evenly">
                 <div>
-                  <h4>Download</h4>
+                  <h4 className="heading-label mb-2">Download</h4>
                   <p>
                     <Button
                       onClick={handleDownloadReport}
@@ -123,7 +127,7 @@ export default function ReportCard() {
                 </div>
 
                 <div className="flex flex-col">
-                  <h4>Save to Cloud</h4>
+                  <h4 className="heading-label mb-2">Save to Cloud</h4>
                   <p>
                     <Button
                       disabled

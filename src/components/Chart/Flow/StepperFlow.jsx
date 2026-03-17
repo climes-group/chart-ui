@@ -6,12 +6,11 @@ import {
 } from "@/components/ui/card";
 import useFlow from "@/hooks/useFlow";
 import useMedia from "@/hooks/useMedia";
-import { Box, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import MobileStepper from "@mui/material/MobileStepper";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import Stepper from "@mui/material/Stepper";
-import Typography from "@mui/material/Typography";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import PropTypes from "prop-types";
 import * as React from "react";
@@ -121,22 +120,24 @@ function StepperFlow({ steps }) {
   return (
     <Card className="max-w-screen-lg w-full flex-auto">
       {!isSmallDevice && (
-        <CardHeader className="bg-gradient-to-b from-gray-50 to-white">
+        <CardHeader className="bg-gradient-to-b from-gray-50 to-transparent">
           {DesktopStepper}
         </CardHeader>
       )}
       <div className="flex flex-col min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-24rem)] justify-between">
         <CardContent className="p-8 flex flex-col flex-grow md:pt-0">
           {!currentStep ? (
-            <React.Fragment>
-              <Typography sx={{ mt: 2, mb: 1 }}>
-                All steps completed - you&apos;re finished
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <Button onClick={reset}>Reset</Button>
-              </Box>
-            </React.Fragment>
+            <div className="mt-4 mb-2">
+              <p className="text-foreground mb-4">
+                All steps completed — you&apos;re finished
+              </p>
+              <div className="flex flex-row pt-2">
+                <div className="flex-1" />
+                <Button onClick={reset} variant="outlined" size="small">
+                  Reset
+                </Button>
+              </div>
+            </div>
           ) : (
             <React.Fragment>
               <div className="flex-grow relative">
@@ -155,10 +156,10 @@ function StepperFlow({ steps }) {
                   />
                 </Routes>
               </div>
-              {currentStep?.id > 0 && (
-                <div className="text-right">
-                  <em>{errorMessage}</em>
-                </div>
+              {currentStep?.id > 0 && errorMessage && (
+                <p className="text-sm text-destructive text-right mt-2">
+                  {errorMessage}
+                </p>
               )}
             </React.Fragment>
           )}

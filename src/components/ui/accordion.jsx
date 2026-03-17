@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { Chip } from "@mui/material";
 
 const Accordion = AccordionPrimitive.Root;
 
@@ -16,12 +17,12 @@ const AccordionItem = React.forwardRef(({ className, ...props }, ref) => (
 AccordionItem.displayName = "AccordionItem";
 
 const AccordionTrigger = React.forwardRef(
-  ({ className, children, ...props }, ref) => (
-    <AccordionPrimitive.Header>
+  ({ className, children, selectedCount, clearSelected, ...props }, ref) => (
+    <AccordionPrimitive.Header className="flex items-center gap-2">
       <AccordionPrimitive.Trigger
         ref={ref}
         className={cn(
-          "flex flex-1 items-center py-4 text-sm font-medium transition-all hover:underline text-left [&[data-state=open]>svg]:rotate-180",
+          "inline-flex gap-2 items-center py-4 text-sm transition-all hover:underline text-left [&[data-state=open]>svg]:rotate-180",
           className,
         )}
         {...props}
@@ -29,6 +30,15 @@ const AccordionTrigger = React.forwardRef(
         {children}
         <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
       </AccordionPrimitive.Trigger>
+      {selectedCount > 0 && (
+        <Chip
+          size="small"
+          variant="outlined"
+          color="primary"
+          label={`${selectedCount} selected`}
+          onDelete={clearSelected}
+        ></Chip>
+      )}
     </AccordionPrimitive.Header>
   ),
 );

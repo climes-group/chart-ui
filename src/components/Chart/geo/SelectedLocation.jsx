@@ -1,6 +1,5 @@
 import useMedia from "@/hooks/useMedia";
 import { GeoCode } from "@/utils/geocode";
-import { Box, Grid, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import MapView from "../../Map/MapView";
 
@@ -13,45 +12,46 @@ function SelectedLocation({ humanAddr, geoData }) {
 
   const geoCode = geoData ? new GeoCode(geoData.lat, geoData.lng) : null;
 
-  if (isSmallDevice) {
-    return (
-      <Box sx={{ mt: 4 }}>
-        {humanAddr && <Typography variant="h6">{humanAddr}</Typography>}
-        {geoCode && (
-          <Typography variant="body2" color="text.secondary">
-            {geoCode.str}
-          </Typography>
-        )}
-        <Box sx={{ pt: 2 }}>
-          <MapView geoData={geoData} />
-        </Box>
-      </Box>
-    );
-  }
+  const summaryBlock = (
+    <div
+      className="rounded-lg border border-border bg-background p-4 space-y-3"
+      style={{ marginTop: 0 }}
+    >
+      <p className="heading-label">
+        Selected location
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+        <div>
+          <p className="text-xs text-muted-foreground mb-0.5">Address</p>
+          <p className="text-foreground font-medium">
+            {humanAddr || "—"}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground mb-0.5">
+            Coordinates
+          </p>
+          <p className="text-foreground font-mono text-xs">
+            {geoCode ? geoCode.str : "—"}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
-    <Box sx={{ mt: 4 }}>
-      <div>
-        <Typography variant="h6" gutterBottom>
-          Selected Location
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Typography variant="overline" display="block">
-              Address
-            </Typography>
-            <Typography>{humanAddr || "N/A"}</Typography>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Typography variant="overline" display="block">
-              Geo-coordinates
-            </Typography>
-            <Typography>{geoCode ? geoCode.str : "N/A"}</Typography>
-          </Grid>
-        </Grid>
+    <div className="pt-6 border-t border-border space-y-4">
+      {summaryBlock}
+      <div
+        className={
+          isSmallDevice
+            ? "rounded-lg overflow-hidden"
+            : "rounded-lg overflow-hidden border border-border"
+        }
+      >
+        <MapView geoData={geoData} />
       </div>
-      <MapView geoData={geoData} />
-    </Box>
+    </div>
   );
 }
 
