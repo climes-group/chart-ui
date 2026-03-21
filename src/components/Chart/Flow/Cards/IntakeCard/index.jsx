@@ -8,6 +8,7 @@ import {
   setIntakeForm,
 } from "@/state/slices/reportReducer";
 import { useForm } from "@tanstack/react-form";
+import { useState } from "react";
 import AssessorInformationSection from "./AssessorInformationSection";
 import BuildingInformationSection from "./BuildingInformationSection";
 import ProjectInformationSection from "./ProjectInformationSection";
@@ -16,6 +17,7 @@ import SignatureSection from "./SignatureSection";
 export default function IntakeCard({ onSubmit }) {
   const dispatch = useDispatch();
   const values = useSelector(selectIntakeForm);
+  const [saved, setSaved] = useState(false);
 
   const form = useForm({
     defaultValues: {
@@ -52,8 +54,9 @@ export default function IntakeCard({ onSubmit }) {
       ea_signature_date: "",
       builder_signature_date: "",
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
       console.log("Form Data Submitted:", value);
+      setSaved(true);
       dispatch(setIntakeForm(value));
     },
   });
@@ -121,13 +124,17 @@ export default function IntakeCard({ onSubmit }) {
             Clear
           </Button>
           <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
+            selector={(state) => [
+              state.canSubmit,
+              state.isSubmitting,
+              state.isDirty,
+            ]}
+            children={([canSubmit, isSubmitting, isDirty]) => (
               <Button
                 type="submit"
                 variant="contained"
                 size="large"
-                disabled={!canSubmit}
+                disabled={!canSubmit || (saved && !isDirty)}
               >
                 {isSubmitting ? "Submitting..." : "Save"}
               </Button>

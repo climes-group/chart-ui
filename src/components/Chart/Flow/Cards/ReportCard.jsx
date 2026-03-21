@@ -9,10 +9,34 @@ import { Button } from "@mui/material";
 import { Download, DownloadCloud, TrashIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
+const openPdfInNewWindow = async (result) => {
+  const byteCharacters = atob(result);
+  const byteNumbers = new Array(byteCharacters.length);
+
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+
+  const byteArray = new Uint8Array(byteNumbers);
+
+  // 2. Create the Blob
+  const blob = new Blob([byteArray], { type: "application/pdf" });
+
+  // 3. Create URL and Open Window
+  const fileURL = URL.createObjectURL(blob);
+  const pdfWindow = window.open(fileURL, "_blank");
+
+  if (!pdfWindow) {
+    alert("Popup blocked! Please allow popups to view the report.");
+  }
+};
+
 export default function ReportCard() {
   const geoData = useSelector((s) => s.geo.geoData);
   const humanAddress = useSelector((s) => s.geo.humanAddress);
   const selectedSystems = useSelector((state) => state.report.selectedSystems);
+  const intakeForm = useSelector((state) => state.report.intakeForm);
+  const reportData = useSelector((state) => state.report.reportData);
   const { reportStatus, reportGenAt, reportGenTime } = useSelector(
     (s) => s.report,
   );
@@ -24,30 +48,37 @@ export default function ReportCard() {
   }
 
   async function handleGenerateReport() {
-    // Placeholder for report generation logic
-    console.log("Generating report...");
     dispatch(setReportStatus("generating"));
     const startTime = Date.now();
 
     try {
       const result = await fetch(
-        `${import.meta.env.VITE_API_HOST}/fault-tree-analysis`,
+        `${import.meta.env.VITE_API_HOST}/generate_report`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            lat: geoData.lat,
-            lng: geoData.lng,
+            geo: {
+              lat: geoData.lat,
+              lon: geoData.lng,
+            },
             systems: selectedSystems ? Array.from(selectedSystems) : [],
+            intakeForm: intakeForm ?? {},
           }),
         },
       );
       const responseData = await result.json();
-      dispatch(setReportGenAt(new Date().toLocaleTimeString()));
-      dispatch(setReportGenTime(Date.now() - startTime));
-      dispatch(setReportData(responseData));
+
+      if (responseData.status === "Success") {
+        dispatch(setReportGenAt(new Date().toLocaleTimeString()));
+        dispatch(setReportGenTime(Date.now() - startTime));
+        dispatch(setReportData(responseData.data));
+        dispatch(setReportStatus("generated"));
+      } else {
+        dispatch(setReportStatus("error"));
+      }
     } catch (error) {
       console.error("Error generating report:", error);
       dispatch(setReportStatus("error"));
@@ -105,7 +136,7 @@ export default function ReportCard() {
                 />
               </h3>
               <div className="text-sm text-foreground space-y-1">
-                <p>Status: {reportStatus} (mock)</p>
+                <p>Status: {reportStatus}</p>
                 {reportGenAt && <p>Generated at: {reportGenAt}</p>}
                 {reportGenTime && (
                   <p>Generate time: {(reportGenTime / 1000).toFixed(2)}s</p>
@@ -120,8 +151,23 @@ export default function ReportCard() {
                       variant="outlined"
                       size="sm"
                       startIcon={<Download />}
+                      disabled
                     >
                       CSV
+                    </Button>
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="heading-label mb-2">Download</h4>
+                  <p>
+                    <Button
+                      onClick={() => openPdfInNewWindow(reportData)}
+                      variant="outlined"
+                      size="sm"
+                      startIcon={<Download />}
+                    >
+                      PDF
                     </Button>
                   </p>
                 </div>
