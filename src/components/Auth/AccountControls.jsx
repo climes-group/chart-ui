@@ -17,7 +17,7 @@ function AccountControls({ login, logout }) {
     setAnchorEl(null);
   };
   return (
-    <div className="flex flex-col items-center justify-center  m-8">
+    <div className="flex flex-col items-center justify-center">
       {profile ? (
         <>
           <Button

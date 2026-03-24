@@ -1,3 +1,4 @@
+import OidcLogin from "@/components/Auth/OidcLogin";
 import {
   setReportData,
   setReportGenAt,
@@ -95,6 +96,9 @@ export default function ReportCard() {
 
   return (
     <>
+      <div className="top-2 ight-2 absolute">
+        <OidcLogin />
+      </div>
       <h2 className="heading-card mb-1">Report</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-y-4">

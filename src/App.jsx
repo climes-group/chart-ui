@@ -1,9 +1,12 @@
+import { useSelector } from "react-redux";
 import { Outlet } from "react-router";
 
 function App() {
+  const theme = useSelector((state) => state.flow.theme);
+
   return (
     <>
-      <main className="m-8 min-h-[90vh]">
+      <main className="p-8 min-h-[90vh]" data-theme={theme}>
         <Outlet />
       </main>
     </>
