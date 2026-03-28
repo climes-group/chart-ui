@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { selectSplashDismissed } from "./state/slices/flowReducer";
-import StepperFlow from "./components/Chart/Flow/StepperFlow";
 import SplashCard from "./components/Chart/Flow/Cards/Splash";
+import StepperFlow from "./components/Chart/Flow/StepperFlow";
+import { selectSplashDismissed } from "./state/slices/flowReducer";
 import steps from "./steps";
 
 function Chart() {

@@ -1,8 +1,5 @@
 import { meetCondition } from "@/state/slices/flowReducer";
-import {
-  setGeoData,
-  setHumanAddress,
-} from "@/state/slices/geoReducer";
+import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import { GeoCode, lookUpHumanAddress } from "@/utils/geocode";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,7 +38,7 @@ function SiteLocationCard(props) {
         device&apos;s location.
       </p>
 
-      <div className="space-y-6 bg-card/40 border border-border rounded-lg p-4 md:p-6">
+      <div className="space-y-6 bg-card/40">
         <ChooseLocation
           onUseLocSvc={handleUseDeviceLocation}
           onChooseAddr={handleChooseAddr}

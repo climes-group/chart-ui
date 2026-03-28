@@ -1,4 +1,3 @@
-import OidcLogin from "@/components/Auth/OidcLogin";
 import { Button } from "@/components/ui/button";
 import { dismissSplash, setTheme } from "@/state/slices/flowReducer";
 import { Fab } from "@mui/material";
@@ -33,7 +32,6 @@ export default function SplashCard() {
             2
           </Button>
         </div>
-        <OidcLogin />
       </div>
       <div className="max-w-lg w-full p-8 flex flex-col items-center text-center mx-4">
         <h1 className="text-foreground mb-2 text-xl md:text-2xl font-medium tracking-tight">

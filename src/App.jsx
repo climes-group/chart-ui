@@ -1,12 +1,16 @@
 import { useSelector } from "react-redux";
 import { Outlet } from "react-router";
+import OidcLogin from "./components/Auth/OidcLogin";
 
 function App() {
   const theme = useSelector((state) => state.flow.theme);
 
   return (
     <>
-      <main className="p-8 min-h-[90vh]" data-theme={theme}>
+      <header className="absolute right-0">
+        <OidcLogin />
+      </header>
+      <main className="p-8 h-full" data-theme={theme}>
         <Outlet />
       </main>
     </>

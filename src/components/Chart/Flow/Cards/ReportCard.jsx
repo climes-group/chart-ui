@@ -1,4 +1,3 @@
-import OidcLogin from "@/components/Auth/OidcLogin";
 import {
   setReportData,
   setReportGenAt,
@@ -96,9 +95,6 @@ export default function ReportCard() {
 
   return (
     <>
-      <div className="top-2 ight-2 absolute">
-        <OidcLogin />
-      </div>
       <h2 className="heading-card mb-1">Report</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-y-4">
@@ -125,11 +121,12 @@ export default function ReportCard() {
         </div>
         <div className="pl-0 md:pl-4 ">
           {reportStatus === "not_generated" && (
-            <p className="body-muted">No report generated yet.</p>
+            <p className="">No report generated yet.</p>
           )}
           {reportStatus === "generating" && (
-            <p className="body-muted">Generating report...</p>
+            <p className="">Generating report...</p>
           )}
+          {reportStatus === "error" && <p className="text-red-600">Error</p>}
           {reportStatus === "generated" && (
             <div className="flex flex-col space-y-6 p-4 rounded-lg bg-muted/50 border border-border">
               <h3 className="heading-section flex justify-between items-center">
