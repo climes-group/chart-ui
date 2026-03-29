@@ -1,5 +1,4 @@
-import { Button } from "@/components/ui/button";
-
+import { Button } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
@@ -17,7 +16,7 @@ function AccountControls({ login, logout }) {
     setAnchorEl(null);
   };
   return (
-    <div className="flex flex-col items-center justify-center  m-8">
+    <div className="flex flex-col items-center justify-center">
       {profile ? (
         <>
           <Button
@@ -27,6 +26,7 @@ function AccountControls({ login, logout }) {
             aria-expanded={open ? "true" : undefined}
             onClick={handleClick}
             title={`Logged in as ${profile.email}`}
+            variant="text"
           >
             {profile?.given_name}
           </Button>

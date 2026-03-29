@@ -1,18 +1,9 @@
+import { Button } from "@/components/ui/button";
 import { searchAddress } from "@/utils/geocode";
-import {
-  Button,
-  IconButton,
-  InputAdornment,
-  List,
-  ListItemButton,
-  ListItemText,
-  TextField,
-} from "@mui/material";
 import { EraserIcon, LocateFixedIcon, SearchIcon } from "lucide-react";
-import PropTypes from "prop-types";
 import { useState } from "react";
 
-function ChooseLocation(props) {
+function ChooseLocation({ onChooseAddr, onUseLocSvc }) {
   const [fieldAddress, setFieldAddress] = useState("");
   const [searchResults, setSearchResults] = useState(null);
 
@@ -22,99 +13,93 @@ function ChooseLocation(props) {
     setSearchResults(resp?.items || []);
   }
 
-  async function handleClearClick() {
+  function handleClearClick() {
     setFieldAddress("");
     setSearchResults(null);
   }
 
-  const handleAddressSelect = (item) => {
-    props.onChooseAddr(item);
+  function handleAddressSelect(item) {
+    onChooseAddr(item);
     setFieldAddress(item.address.label);
     setSearchResults(null);
-  };
+  }
 
   return (
     <div className="flex flex-col gap-5">
-      <TextField
-        id="address-search"
-        label="Search for an address"
-        variant="outlined"
-        size="small"
-        fullWidth
-        value={fieldAddress}
-        onChange={(e) => setFieldAddress(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleSearchClick()}
-        className="bg-background"
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              {fieldAddress && (
-                <IconButton
-                  aria-label="clear search"
-                  onClick={handleClearClick}
-                  size="small"
-                >
-                  <EraserIcon className="h-4 w-4" />
-                </IconButton>
-              )}
-              <IconButton
-                aria-label="search"
-                onClick={handleSearchClick}
-                size="small"
-              >
-                <SearchIcon className="h-4 w-4" />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
+      {/* Search input */}
+      <div className="relative flex items-center">
+        <input
+          id="address-search"
+          type="text"
+          placeholder="Search for an address…"
+          value={fieldAddress}
+          onChange={(e) => setFieldAddress(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSearchClick()}
+          className="w-full h-10 rounded-md border border-input bg-background px-3 pr-20 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        />
+        <div className="absolute right-1 flex items-center gap-0.5">
+          {fieldAddress && (
+            <button
+              type="button"
+              onClick={handleClearClick}
+              aria-label="Clear search"
+              className="p-1.5 rounded text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <EraserIcon className="size-4" />
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={handleSearchClick}
+            aria-label="Search"
+            className="p-1.5 rounded text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <SearchIcon className="size-4" />
+          </button>
+        </div>
+      </div>
 
+      {/* Search results */}
       {searchResults && (
         <div className="rounded-lg border border-border bg-background overflow-hidden">
           {searchResults.length > 0 ? (
-            <List disablePadding dense>
+            <ul className="divide-y divide-border">
               {searchResults.slice(0, 10).map((item) => (
-                <ListItemButton
-                  key={item.id}
-                  onClick={() => handleAddressSelect(item)}
-                  className="text-sm hover:bg-muted/50"
-                >
-                  <ListItemText
-                    primary={item.address.label}
-                    primaryTypographyProps={{ variant: "body2" }}
-                  />
-                </ListItemButton>
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleAddressSelect(item)}
+                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-muted/50 transition-colors"
+                  >
+                    {item.address.label}
+                  </button>
+                </li>
               ))}
-            </List>
+            </ul>
           ) : (
             <p className="body-muted p-4 text-center">No results found.</p>
           )}
         </div>
       )}
 
+      {/* Divider */}
       <div className="flex items-center gap-3">
         <span className="flex-1 h-px bg-border" aria-hidden />
         <span className="heading-label">Or</span>
         <span className="flex-1 h-px bg-border" aria-hidden />
       </div>
 
+      {/* Device location */}
       <Button
-        variant="outlined"
-        color="primary"
-        size="medium"
-        onClick={props.onUseLocSvc}
-        startIcon={<LocateFixedIcon className="h-4 w-4" />}
+        variant="outline"
+        onClick={onUseLocSvc}
         className="w-full sm:w-auto sm:self-start"
       >
+        <LocateFixedIcon className="size-4" />
         Use my location
       </Button>
     </div>
   );
 }
-
-ChooseLocation.propTypes = {
-  onChooseAddr: PropTypes.func,
-  onUseLocSvc: PropTypes.func,
-};
 
 export default ChooseLocation;

@@ -54,6 +54,33 @@ const theme = createTheme({
       main: "#e2b046",
     },
   },
+  typography: {
+    // This applies the font to all variants (h1, body1, button, etc.)
+    fontFamily: ["AvenirLtNextPro", "Helvetica", "Arial", "sans-serif"].join(
+      ",",
+    ),
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        /* If you prefer to keep your @font-face inside the JS theme 
+           instead of a separate CSS file, paste it here:
+        */
+        @font-face {
+          font-family: 'AvenirLtNextPro';
+          src: url('assets/fonts/avenirLtPro.otf') format('opentype');
+          font-weight: 400;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'AvenirLtNextPro';
+          src: url('assets/fonts/avenirLtProItalic.otf') format('opentype');
+          font-weight: 400;
+          font-style: italic;
+        }
+      `,
+    },
+  },
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(

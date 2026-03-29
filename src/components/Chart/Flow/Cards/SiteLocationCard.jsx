@@ -4,7 +4,6 @@ import {
   setHumanAddress,
 } from "@/state/slices/geoReducer";
 import { GeoCode, lookUpHumanAddress } from "@/utils/geocode";
-import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import ChooseLocation from "../../geo/ChooseLocation";
 import SelectedLocation from "../../geo/SelectedLocation";
@@ -54,13 +53,5 @@ function SiteLocationCard(props) {
     </div>
   );
 }
-
-SiteLocationCard.defaultProps = {
-  activeStep: { name: "" },
-};
-
-SiteLocationCard.propTypes = {
-  activeStep: PropTypes.object,
-};
 
 export default SiteLocationCard;

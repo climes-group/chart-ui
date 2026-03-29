@@ -4,9 +4,15 @@ import {
   setReportGenTime,
   setReportStatus,
 } from "@/state/slices/reportReducer";
-import { downloadCsv, generateCsvFomJson } from "@/utils/generateReport";
-import { Button } from "@mui/material";
-import { Download, DownloadCloud, TrashIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  CheckCircle2,
+  Download,
+  FileText,
+  Loader2,
+  RefreshCw,
+  XCircle,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
 const openPdfInNewWindow = async (result) => {
@@ -18,11 +24,7 @@ const openPdfInNewWindow = async (result) => {
   }
 
   const byteArray = new Uint8Array(byteNumbers);
-
-  // 2. Create the Blob
   const blob = new Blob([byteArray], { type: "application/pdf" });
-
-  // 3. Create URL and Open Window
   const fileURL = URL.createObjectURL(blob);
   const pdfWindow = window.open(fileURL, "_blank");
 
@@ -33,7 +35,6 @@ const openPdfInNewWindow = async (result) => {
 
 export default function ReportCard() {
   const geoData = useSelector((s) => s.geo.geoData);
-  const humanAddress = useSelector((s) => s.geo.humanAddress);
   const selectedSystems = useSelector((state) => state.report.selectedSystems);
   const intakeForm = useSelector((state) => state.report.intakeForm);
   const reportData = useSelector((state) => state.report.reportData);
@@ -41,11 +42,6 @@ export default function ReportCard() {
     (s) => s.report,
   );
   const dispatch = useDispatch();
-
-  function handleDownloadReport() {
-    const csvRaw = generateCsvFomJson([{ geoData, humanAddress }]);
-    downloadCsv(csvRaw, "site_location_details.csv");
-  }
 
   async function handleGenerateReport() {
     dispatch(setReportStatus("generating"));
@@ -56,14 +52,9 @@ export default function ReportCard() {
         `${import.meta.env.VITE_API_HOST}/generate_report`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            geo: {
-              lat: geoData.lat,
-              lon: geoData.lng,
-            },
+            geo: { lat: geoData.lat, lon: geoData.lng },
             systems: selectedSystems ? Array.from(selectedSystems) : [],
             intakeForm: intakeForm ?? {},
           }),
@@ -82,7 +73,6 @@ export default function ReportCard() {
     } catch (error) {
       console.error("Error generating report:", error);
       dispatch(setReportStatus("error"));
-      return;
     }
   }
 
@@ -93,103 +83,114 @@ export default function ReportCard() {
     dispatch(setReportData(null));
   }
 
+  const isGenerating = reportStatus === "generating";
+  const isGenerated = reportStatus === "generated";
+  const isError = reportStatus === "error";
+
   return (
     <>
-      <h2 className="heading-card mb-1">Report</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="flex flex-col gap-y-4">
-          <h3 className="heading-section">Ready to generate</h3>
-          <div className="flex gap-4">
-            <Button
-              onClick={handleGenerateReport}
-              disabled={reportStatus === "generated"}
-              variant="contained"
-              size="sm"
-            >
-              Generate
-            </Button>
+      <h2 className="heading-card mb-5">Report</h2>
 
+      <div className="flex flex-col gap-5">
+        {/* Primary action row */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <Button
+            onClick={handleGenerateReport}
+            disabled={isGenerated || isGenerating}
+            className="bg-moss-primary text-white hover:bg-moss-primary/90 disabled:opacity-60 px-5"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="animate-spin" />
+                Generating…
+              </>
+            ) : (
+              <>
+                <FileText />
+                Generate Report
+              </>
+            )}
+          </Button>
+
+          {isGenerated && (
             <Button
               onClick={handleClearReport}
-              variant="outlined"
-              size="sm"
-              disabled={!(reportStatus === "generated")}
+              variant="outline"
+              className="text-muted-foreground"
             >
-              Clear
+              <RefreshCw />
+              Regenerate
             </Button>
-          </div>
+          )}
         </div>
-        <div className="pl-0 md:pl-4 ">
-          {reportStatus === "not_generated" && (
-            <p className="body-muted">No report generated yet.</p>
-          )}
-          {reportStatus === "generating" && (
-            <p className="body-muted">Generating report...</p>
-          )}
-          {reportStatus === "generated" && (
-            <div className="flex flex-col space-y-6 p-4 rounded-lg bg-muted/50 border border-border">
-              <h3 className="heading-section flex justify-between items-center">
-                Report{" "}
-                <TrashIcon
-                  className="hover:text-golden-accent cursor-pointer"
-                  onClick={handleClearReport}
-                />
-              </h3>
-              <div className="text-sm text-foreground space-y-1">
-                <p>Status: {reportStatus}</p>
-                {reportGenAt && <p>Generated at: {reportGenAt}</p>}
+
+        {/* Status panel */}
+        {reportStatus === "not_generated" && (
+          <p className="body-muted">
+            Generate a PDF report based on the selected systems and site data.
+          </p>
+        )}
+
+        {isGenerating && (
+          <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
+            <Loader2 className="size-4 shrink-0 animate-spin text-moss-primary" />
+            <span>Building your report, this may take a moment…</span>
+          </div>
+        )}
+
+        {isError && (
+          <div className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+            <XCircle className="mt-0.5 size-5 shrink-0 text-destructive" />
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-medium text-destructive">
+                Report generation failed
+              </p>
+              <p className="body-muted">
+                Please try again. If the issue persists, check your network
+                connection.
+              </p>
+              <Button
+                onClick={handleGenerateReport}
+                variant="outline"
+                size="sm"
+                className="w-fit"
+              >
+                Retry
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {isGenerated && (
+          <div className="rounded-lg border border-border bg-muted/20 p-5 space-y-4">
+            {/* Report header */}
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="size-5 shrink-0 text-moss-primary" />
+                <span className="text-sm font-semibold">Report ready</span>
+              </div>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                {reportGenAt && <span>Generated at {reportGenAt}</span>}
                 {reportGenTime && (
-                  <p>Generate time: {(reportGenTime / 1000).toFixed(2)}s</p>
+                  <span className="text-muted-foreground/60">
+                    {(reportGenTime / 1000).toFixed(1)}s
+                  </span>
                 )}
               </div>
-              <div className="flex gap-6 justify-evenly">
-                <div>
-                  <h4 className="heading-label mb-2">Download</h4>
-                  <p>
-                    <Button
-                      onClick={handleDownloadReport}
-                      variant="outlined"
-                      size="sm"
-                      startIcon={<Download />}
-                      disabled
-                    >
-                      CSV
-                    </Button>
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="heading-label mb-2">Download</h4>
-                  <p>
-                    <Button
-                      onClick={() => openPdfInNewWindow(reportData)}
-                      variant="outlined"
-                      size="sm"
-                      startIcon={<Download />}
-                    >
-                      PDF
-                    </Button>
-                  </p>
-                </div>
-
-                <div className="flex flex-col">
-                  <h4 className="heading-label mb-2">Save to Cloud</h4>
-                  <p>
-                    <Button
-                      disabled
-                      onClick={handleDownloadReport}
-                      variant="outlined"
-                      size="sm"
-                      startIcon={<DownloadCloud />}
-                    >
-                      TBD
-                    </Button>
-                  </p>
-                </div>
-              </div>
             </div>
-          )}
-        </div>
+
+            {/* Download action */}
+            <div className="pt-3 border-t border-border">
+              <Button
+                onClick={() => openPdfInNewWindow(reportData)}
+                className="bg-moss-primary text-white hover:bg-moss-primary/90 px-5"
+              >
+                <Download />
+                Download PDF
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

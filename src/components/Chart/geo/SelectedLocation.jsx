@@ -1,6 +1,5 @@
 import useMedia from "@/hooks/useMedia";
 import { GeoCode } from "@/utils/geocode";
-import PropTypes from "prop-types";
 import MapView from "../../Map/MapView";
 
 function SelectedLocation({ humanAddr, geoData }) {
@@ -13,10 +12,7 @@ function SelectedLocation({ humanAddr, geoData }) {
   const geoCode = geoData ? new GeoCode(geoData.lat, geoData.lng) : null;
 
   const summaryBlock = (
-    <div
-      className="rounded-lg border border-border bg-background p-4 space-y-3"
-      style={{ marginTop: 0 }}
-    >
+    <div className="rounded-lg border border-border bg-background p-4 space-y-3">
       <p className="heading-label">
         Selected location
       </p>
@@ -54,10 +50,5 @@ function SelectedLocation({ humanAddr, geoData }) {
     </div>
   );
 }
-
-SelectedLocation.propTypes = {
-  humanAddr: PropTypes.string,
-  geoData: PropTypes.object,
-};
 
 export default SelectedLocation;
