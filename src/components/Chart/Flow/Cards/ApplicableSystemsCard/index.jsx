@@ -1,24 +1,19 @@
 import { useEffect, useEffectEvent, useState } from "react";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import {
   addSelectedSystem,
   clearSelectedSystems,
   removeSelectedSystem,
 } from "@/state/slices/reportReducer";
-
-import { Breadcrumbs, Chip, Link } from "@mui/material";
+import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import SystemItemCard from "./SystemItemCard";
+import SystemPill from "./SystemItemCard";
 
 function sanitizeName(name) {
-  return name.replace("_", " ");
+  if (!name) return "N/A";
+  return name.replace(/_/g, " ");
 }
 
 function getItemKey(element) {
@@ -48,51 +43,31 @@ function cleanAvailableSystems(systems) {
 
 export default function ApplicableSystemsCard() {
   const [availableSystems, setAvailableSystems] = useState(null);
+  const [activeService, setActiveService] = useState(null);
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  // Track open accordions
-  const [openService, setOpenService] = useState(null);
-  const [openClassification, setOpenClassification] = useState(null);
   const selectedSystems = useSelector((state) => state.report.selectedSystems);
+
+  const toggleSystem = (id) => {
+    if (selectedSystems.includes(id)) {
+      dispatch(removeSelectedSystem(id));
+    } else {
+      dispatch(addSelectedSystem(id));
+    }
+  };
 
   const clearAllSelections = () => {
     dispatch(clearSelectedSystems());
   };
 
-  const clearSelectedSystemsForService = (service) => () => {
-    const systemsToRemove = availableSystems
-      .filter((system) => system.Services === service)
-      .map((system) => getItemKey(system));
-
-    systemsToRemove.forEach((key) => {
-      if (selectedSystems.includes(key)) {
-        dispatch(removeSelectedSystem(key));
-      }
-    });
+  const clearForClassification = (classification) => () => {
+    if (!availableSystems) return;
+    availableSystems
+      .filter((s) => s.Classification === classification)
+      .map((s) => getItemKey(s))
+      .filter((key) => selectedSystems.includes(key))
+      .forEach((key) => dispatch(removeSelectedSystem(key)));
   };
-
-  const clearSelectedSystemsForClassification = (classification) => () => {
-    const systemsToRemove = availableSystems
-      .filter((system) => system.Classification === classification)
-      .map((system) => getItemKey(system));
-
-    systemsToRemove.forEach((key) => {
-      if (selectedSystems.includes(key)) {
-        dispatch(removeSelectedSystem(key));
-      }
-    });
-  };
-
-  /** Toggle system selection */
-  const toggleSystem = (id) => {
-    if (selectedSystems.includes(id)) {
-      dispatch(removeSelectedSystem(id));
-    } else {
-      console.log("Current systems before adding:", selectedSystems);
-      console.log("Adding system:", id);
-      dispatch(addSelectedSystem(id));
-    }
-  };
-  const [error, setError] = useState(null);
 
   const fetchSystems = useEffectEvent(async () => {
     try {
@@ -101,9 +76,9 @@ export default function ApplicableSystemsCard() {
       );
       if (!response.ok) throw new Error("Failed to fetch systems");
       const data = await response.json();
-      const cleanedData = cleanAvailableSystems(data);
-      console.log(cleanedData);
-      setAvailableSystems(cleanedData);
+      const cleaned = cleanAvailableSystems(data);
+      setAvailableSystems(cleaned);
+      setActiveService(cleaned[0]?.Services ?? null);
     } catch (err) {
       setError(err.message);
     }
@@ -113,145 +88,130 @@ export default function ApplicableSystemsCard() {
     fetchSystems();
   }, []);
 
-  if (error) return <div>Error: {error}</div>;
+  if (error)
+    return (
+      <div>
+        <h2 className="heading-card mb-2">Applicable Systems</h2>
+        <p className="text-sm text-destructive">Error loading systems: {error}</p>
+      </div>
+    );
+
   if (!availableSystems)
     return (
-      <div className="flex flex-col space-y-3">
-        <h2>Applicable Systems</h2>
-        <Skeleton className="h-[60px] w-full rounded-xl" />
-        <Skeleton className="h-[60px] w-full rounded-xl" />
-        <Skeleton className="h-[60px] w-full rounded-xl" />
-        <Skeleton className="h-[60px] w-full rounded-xl" />
-        <Skeleton className="h-[60px] w-full rounded-xl" />
+      <div className="flex flex-col gap-3">
+        <h2 className="heading-card mb-1">Applicable Systems</h2>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-10 w-full rounded-lg" />
+        ))}
       </div>
     );
 
   const uniqueServices = [
-    ...new Set(availableSystems.map((system) => system.Services)),
+    ...new Set(availableSystems.map((s) => s.Services)),
+  ].sort();
+
+  const systemsForService = activeService
+    ? availableSystems.filter((s) => s.Services === activeService)
+    : [];
+
+  const classificationsForService = [
+    ...new Set(systemsForService.map((s) => s.Classification)),
   ];
 
   return (
     <div>
-      <h2 className="heading-card mb-1">Applicable Systems</h2>
-
-      <Accordion
-        type="single"
-        collapsible
-        className="w-full"
-        defaultValue="item-1"
-        onValueChange={(value) => {
-          setOpenService(value || null);
-          setOpenClassification(null); // Reset classification when service changes
-        }}
-      >
-        <div className="sticky top-5 z-20 bg-transparent mb-2 text-sm flex items-center gap-2 justify-end">
-          <Breadcrumbs
-            variant="default"
-            aria-label="current selection"
-            className="list-none"
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="heading-card">Applicable Systems</h2>
+        {selectedSystems.length > 0 && (
+          <button
+            onClick={clearAllSelections}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
           >
-            {openService && (
-              <Link href={`#trigger-svc-${openService}`}>
-                {sanitizeName(openService)}
-              </Link>
-            )}
-            {openClassification && (
-              <Link href={`#trigger-class-${openClassification}`}>
-                {sanitizeName(openClassification)}
-              </Link>
-            )}
-          </Breadcrumbs>
-          {selectedSystems.length > 0 && (
-            <Chip
-              size="small"
-              variant="outlined"
-              color="primary"
-              label={`${selectedSystems.length} selected total`}
-              onDelete={clearAllSelections}
-            />
-          )}
-        </div>
-        {uniqueServices.map((service) => {
-          const elementsForService = availableSystems.filter(
-            (system) => system.Services === service,
-          );
-          const uniqueClassificationsInService = [
-            ...new Set(elementsForService.map((el) => el.Classification)),
-          ];
+            <X className="size-3" />
+            Clear all ({selectedSystems.length})
+          </button>
+        )}
+      </div>
 
-          const selectedServiceCount = elementsForService.filter((element) => {
-            const itemKey = getItemKey(element);
-            return selectedSystems.includes(itemKey);
-          }).length;
+      {/* Service tabs */}
+      <div className="flex flex-wrap gap-2 pb-2 mb-5 border-b border-border">
+        {uniqueServices.map((service) => {
+          const selectedCount = availableSystems
+            .filter((s) => s.Services === service)
+            .filter((s) => selectedSystems.includes(getItemKey(s))).length;
 
           return (
-            <AccordionItem value={service} className="border-b-2" key={service}>
-              <AccordionTrigger
-                id={`trigger-svc-${service}`}
-                className="bg-background"
-                selectedCount={selectedServiceCount}
-                clearSelected={clearSelectedSystemsForService(service)}
-              >
-                {sanitizeName(service)}
-              </AccordionTrigger>
-
-              <AccordionContent className="flex flex-col gap-4 text-balance border-l-2 border-golden-accent">
-                <Accordion
-                  type="single"
-                  collapsible
-                  className="w-full mx-4"
-                  onValueChange={(value) =>
-                    setOpenClassification(value || null)
-                  }
+            <button
+              key={service}
+              onClick={() => setActiveService(service)}
+              className={cn(
+                "shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap border",
+                activeService === service
+                  ? "bg-moss-primary text-white border-moss-primary"
+                  : "bg-transparent text-muted-foreground border-border hover:text-foreground hover:border-muted-foreground/50",
+              )}
+            >
+              {sanitizeName(service)}
+              {selectedCount > 0 && (
+                <span
+                  className={cn(
+                    "inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full text-xs font-semibold",
+                    activeService === service
+                      ? "bg-white text-moss-primary"
+                      : "bg-moss-primary/10 text-moss-primary",
+                  )}
                 >
-                  {uniqueClassificationsInService.map((uniqueClass) => {
-                    const elementsInClass = elementsForService.filter(
-                      (el) => el.Classification === uniqueClass,
-                    );
-
-                    const selectedClassCount = elementsInClass.filter(
-                      (element) => {
-                        const itemKey = getItemKey(element);
-                        return selectedSystems.includes(itemKey);
-                      },
-                    ).length;
-
-                    return (
-                      <AccordionItem className="border-b-0" value={uniqueClass}>
-                        <AccordionTrigger
-                          id={`trigger-class-${uniqueClass}`}
-                          selectedCount={selectedClassCount}
-                          clearSelected={clearSelectedSystemsForClassification(
-                            uniqueClass,
-                          )}
-                        >
-                          {sanitizeName(uniqueClass)}
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          {/* Responsive Grid: 1 col on mobile, 3 on tablet, 3 on desktop */}
-                          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-                            {elementsInClass.map((element) => {
-                              const itemKey = getItemKey(element);
-                              return (
-                                <SystemItemCard
-                                  key={itemKey}
-                                  systemItem={element}
-                                  isSelected={selectedSystems.includes(itemKey)}
-                                  onToggle={() => toggleSystem(itemKey)}
-                                />
-                              );
-                            })}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })}
-                </Accordion>
-              </AccordionContent>
-            </AccordionItem>
+                  {selectedCount}
+                </span>
+              )}
+            </button>
           );
         })}
-      </Accordion>
+      </div>
+
+      {/* Systems grouped by Classification */}
+      <div className="space-y-5">
+        {classificationsForService.map((classification) => {
+          const systemsInClass = systemsForService.filter(
+            (s) => s.Classification === classification,
+          );
+          const selectedCount = systemsInClass.filter((s) =>
+            selectedSystems.includes(getItemKey(s)),
+          ).length;
+
+          return (
+            <div key={classification}>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wide">
+                  {sanitizeName(classification)}
+                </h3>
+                {selectedCount > 0 && (
+                  <button
+                    onClick={clearForClassification(classification)}
+                    className="text-xs text-muted-foreground hover:text-destructive transition-colors"
+                  >
+                    Clear {selectedCount}
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {systemsInClass.map((system) => {
+                  const key = getItemKey(system);
+                  return (
+                    <SystemPill
+                      key={key}
+                      system={system}
+                      isSelected={selectedSystems.includes(key)}
+                      onToggle={() => toggleSystem(key)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

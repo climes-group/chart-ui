@@ -1,65 +1,47 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
-function SystemItemCard({ systemItem, isSelected, onToggle }) {
-  const sanitizeName = (name) => {
-    if (!name) return "N/A";
-    return name.replace(/_/g, " ");
-  };
+function sanitizeName(name) {
+  if (!name) return "N/A";
+  return name.replace(/_/g, " ");
+}
+
+/** Compact toggleable pill for a single building system. */
+function SystemPill({ system, isSelected, onToggle }) {
+  const name =
+    system.ASTMSystemName ?? system.ASTMName ?? system.Classification;
 
   return (
-    <Card
+    <button
       onClick={onToggle}
       className={cn(
-        "cursor-pointer transition-all duration-200 border-2 select-none h-full min-w-[160px]",
+        "inline-flex items-center gap-2 px-3 py-1.5 rounded-md border text-sm transition-all select-none text-left",
         isSelected
-          ? "border-moss-primary bg-primary/5 shadow-md"
-          : "hover:border-muted-foreground/30  bg-card",
+          ? "border-moss-primary bg-moss-primary/5 text-moss-primary font-medium"
+          : "border-border text-foreground hover:border-muted-foreground/40 hover:bg-muted/30",
       )}
     >
-      <CardContent className="p-4 flex flex-col h-full">
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex flex-col space-y-1">
-            <div className="text-sm">
-              {sanitizeName(
-                systemItem["ASTMSystemName"] ??
-                  systemItem["ASTMName"] ??
-                  systemItem["Classification"],
-              ) ?? "N/A"}
-            </div>
+      {/* Checkbox indicator */}
+      <span
+        className={cn(
+          "size-4 rounded-sm border-[1.5px] flex items-center justify-center shrink-0 transition-colors",
+          isSelected
+            ? "bg-moss-primary border-moss-primary"
+            : "border-muted-foreground/30",
+        )}
+      >
+        {isSelected && <Check className="size-2.5 text-white" strokeWidth={3} />}
+      </span>
 
-            <small className="text-muted-foreground text-xs">
-              {sanitizeName(systemItem["Classification"])}
-            </small>
-            <small className="text-muted-foreground text-xs">
-              {sanitizeName(systemItem["Services"])}
-            </small>
-            <small className="text-muted-foreground text-xs">
-              Code: {sanitizeName(systemItem["ASTMSystemCode"])}
-            </small>
-          </div>
-          {/* Visual Checkbox Indicator */}
-          <div
-            className={cn(
-              "h-5 w-5 rounded-md border flex items-center justify-center transition-all",
-              isSelected
-                ? "bg-moss-primary border-primary"
-                : "border-muted-foreground/30",
-            )}
-          >
-            {isSelected && (
-              <Check className="h-3 w-3 text-white" strokeWidth={4} />
-            )}
-          </div>
-        </div>
+      <span className="leading-snug">{sanitizeName(name)}</span>
 
-        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
-          {systemItem.desc}
-        </p>
-      </CardContent>
-    </Card>
+      {system.ASTMSystemCode && (
+        <span className="text-xs text-muted-foreground/60 shrink-0 font-mono">
+          {system.ASTMSystemCode}
+        </span>
+      )}
+    </button>
   );
 }
 
-export default SystemItemCard;
+export default SystemPill;
