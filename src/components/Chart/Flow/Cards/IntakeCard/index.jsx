@@ -76,22 +76,22 @@ export default function IntakeCard({ onSubmit }) {
         <ProjectInformationSection form={form} />
 
         {/* Building Information */}
-        <div className="border-t border-border mt-6 pt-6">
+        <div className="border-t border-warm-gold/30 mt-6 pt-6">
           <BuildingInformationSection form={form} />
         </div>
 
         {/* Assessor Information */}
-        <div className="border-t border-border mt-6 pt-6">
+        <div className="border-t border-warm-gold/30 mt-6 pt-6">
           <AssessorInformationSection form={form} />
         </div>
 
         {/* Signature */}
-        <div className="border-t border-border mt-6 pt-6">
+        <div className="border-t border-warm-gold/30 mt-6 pt-6">
           <SignatureSection form={form} />
         </div>
 
         {/* Footer actions */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-border mt-6">
+        <div className="flex justify-end gap-3 pt-4 border-t border-warm-gold/30 mt-6">
           <Button
             variant="outline"
             type="button"

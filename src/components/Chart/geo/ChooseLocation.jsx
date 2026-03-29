@@ -61,15 +61,15 @@ function ChooseLocation({ onChooseAddr, onUseLocSvc }) {
 
       {/* Search results */}
       {searchResults && (
-        <div className="rounded-lg border border-border bg-background overflow-hidden">
+        <div className="rounded-lg border border-golden-accent/40 bg-background overflow-hidden">
           {searchResults.length > 0 ? (
-            <ul className="divide-y divide-border">
+            <ul className="divide-y divide-golden-accent/20">
               {searchResults.slice(0, 10).map((item) => (
                 <li key={item.id}>
                   <button
                     type="button"
                     onClick={() => handleAddressSelect(item)}
-                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-muted/50 transition-colors"
+                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-warm-gold/15 transition-colors"
                   >
                     {item.address.label}
                   </button>
@@ -84,9 +84,9 @@ function ChooseLocation({ onChooseAddr, onUseLocSvc }) {
 
       {/* Divider */}
       <div className="flex items-center gap-3">
-        <span className="flex-1 h-px bg-border" aria-hidden />
+        <span className="flex-1 h-px bg-warm-gold/40" aria-hidden />
         <span className="heading-label">Or</span>
-        <span className="flex-1 h-px bg-border" aria-hidden />
+        <span className="flex-1 h-px bg-warm-gold/40" aria-hidden />
       </div>
 
       {/* Device location */}

@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   CheckCircle2,
+  Circle,
   Download,
   FileText,
   Loader2,
@@ -33,8 +34,31 @@ const openPdfInNewWindow = async (result) => {
   }
 };
 
+function PreflightItem({ label, detail, ok }) {
+  return (
+    <div className="flex items-start gap-2.5 text-sm">
+      {ok ? (
+        <CheckCircle2 className="size-4 shrink-0 mt-0.5 text-moss-primary" />
+      ) : (
+        <Circle className="size-4 shrink-0 mt-0.5 text-muted-foreground/35" />
+      )}
+      <div>
+        <span className={ok ? "text-foreground" : "text-muted-foreground"}>
+          {label}
+        </span>
+        {detail && (
+          <span className="ml-1.5 text-xs text-muted-foreground">
+            — {detail}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function ReportCard() {
   const geoData = useSelector((s) => s.geo.geoData);
+  const humanAddress = useSelector((s) => s.geo.humanAddress);
   const selectedSystems = useSelector((state) => state.report.selectedSystems);
   const intakeForm = useSelector((state) => state.report.intakeForm);
   const reportData = useSelector((state) => state.report.reportData);
@@ -87,6 +111,13 @@ export default function ReportCard() {
   const isGenerated = reportStatus === "generated";
   const isError = reportStatus === "error";
 
+  const systemCount = selectedSystems?.length ?? 0;
+  const hasIntake =
+    !!intakeForm &&
+    Object.values(intakeForm).some((v) =>
+      Array.isArray(v) ? v.length > 0 : v !== "" && v !== 0,
+    );
+
   return (
     <>
       <h2 className="heading-card mb-5">Report</h2>
@@ -126,9 +157,37 @@ export default function ReportCard() {
 
         {/* Status panel */}
         {reportStatus === "not_generated" && (
-          <p className="body-muted">
-            Generate a PDF report based on the selected systems and site data.
-          </p>
+          <div className="space-y-4">
+            <p className="body-muted">
+              Generate a PDF report based on the selected systems and building location.
+            </p>
+
+            {/* Pre-flight checklist */}
+            <div className="rounded-lg border border-warm-gold/40 bg-warm-gold/10 p-4 space-y-2.5">
+              <p className="text-xs font-semibold text-warm-brown/70 uppercase tracking-wide mb-3">
+                Checklist
+              </p>
+              <PreflightItem
+                label="Site location selected"
+                detail={humanAddress || null}
+                ok={!!geoData}
+              />
+              <PreflightItem
+                label="Systems selected"
+                detail={
+                  systemCount > 0
+                    ? `${systemCount} system${systemCount !== 1 ? "s" : ""}`
+                    : null
+                }
+                ok={systemCount > 0}
+              />
+              <PreflightItem
+                label="Intake form filled"
+                detail={intakeForm?.project_address || null}
+                ok={hasIntake}
+              />
+            </div>
+          </div>
         )}
 
         {isGenerating && (
@@ -162,7 +221,7 @@ export default function ReportCard() {
         )}
 
         {isGenerated && (
-          <div className="rounded-lg border border-border bg-muted/20 p-5 space-y-4">
+          <div className="rounded-lg border border-moss-primary/20 bg-moss-primary/5 p-5 space-y-4">
             {/* Report header */}
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-2">
@@ -180,7 +239,7 @@ export default function ReportCard() {
             </div>
 
             {/* Download action */}
-            <div className="pt-3 border-t border-border">
+            <div className="pt-3 border-t border-moss-primary/20">
               <Button
                 onClick={() => openPdfInNewWindow(reportData)}
                 className="bg-moss-primary text-white hover:bg-moss-primary/90 px-5"

@@ -98,11 +98,36 @@ export default function ApplicableSystemsCard() {
 
   if (!availableSystems)
     return (
-      <div className="flex flex-col gap-3">
-        <h2 className="heading-card mb-1">Applicable Systems</h2>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-10 w-full rounded-lg" />
-        ))}
+      <div className="flex flex-col gap-5">
+        {/* Heading */}
+        <Skeleton className="h-6 w-44 rounded" />
+
+        {/* Service tabs */}
+        <div className="flex flex-wrap gap-2 pb-3 border-b border-border">
+          {[88, 112, 80].map((w) => (
+            <Skeleton key={w} className="h-9 rounded-full" style={{ width: w }} />
+          ))}
+        </div>
+
+        {/* Classification group 1 — ~6 pills */}
+        <div className="space-y-2.5">
+          <Skeleton className="h-3 w-20 rounded" />
+          <div className="flex flex-wrap gap-2">
+            {[96, 124, 80, 144, 100, 116].map((w, i) => (
+              <Skeleton key={i} className="h-8 rounded-md" style={{ width: w }} />
+            ))}
+          </div>
+        </div>
+
+        {/* Classification group 2 — ~4 pills */}
+        <div className="space-y-2.5">
+          <Skeleton className="h-3 w-28 rounded" />
+          <div className="flex flex-wrap gap-2">
+            {[108, 76, 130, 92].map((w, i) => (
+              <Skeleton key={i} className="h-8 rounded-md" style={{ width: w }} />
+            ))}
+          </div>
+        </div>
       </div>
     );
 
@@ -135,7 +160,7 @@ export default function ApplicableSystemsCard() {
       </div>
 
       {/* Service tabs */}
-      <div className="flex flex-wrap gap-2 pb-2 mb-5 border-b border-border">
+      <div className="flex flex-wrap gap-2 pb-2 mb-5 border-b border-golden-accent/30">
         {uniqueServices.map((service) => {
           const selectedCount = availableSystems
             .filter((s) => s.Services === service)
@@ -149,7 +174,7 @@ export default function ApplicableSystemsCard() {
                 "shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap border",
                 activeService === service
                   ? "bg-moss-primary text-white border-moss-primary"
-                  : "bg-transparent text-muted-foreground border-border hover:text-foreground hover:border-muted-foreground/50",
+                  : "bg-transparent text-muted-foreground border-border hover:text-foreground hover:border-golden-accent/60",
               )}
             >
               {sanitizeName(service)}
@@ -183,7 +208,7 @@ export default function ApplicableSystemsCard() {
           return (
             <div key={classification}>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wide">
+                <h3 className="text-xs font-semibold text-teal-deep/60 uppercase tracking-wide">
                   {sanitizeName(classification)}
                 </h3>
                 {selectedCount > 0 && (

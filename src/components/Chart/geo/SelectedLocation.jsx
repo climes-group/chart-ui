@@ -12,7 +12,7 @@ function SelectedLocation({ humanAddr, geoData }) {
   const geoCode = geoData ? new GeoCode(geoData.lat, geoData.lng) : null;
 
   const summaryBlock = (
-    <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+    <div className="rounded-lg border border-golden-accent/50 bg-background p-4 space-y-3">
       <p className="heading-label">
         Selected location
       </p>
@@ -27,7 +27,7 @@ function SelectedLocation({ humanAddr, geoData }) {
           <p className="text-xs text-muted-foreground mb-0.5">
             Coordinates
           </p>
-          <p className="text-foreground font-mono text-xs">
+          <p className="text-warm-brown font-mono text-xs">
             {geoCode ? geoCode.str : "—"}
           </p>
         </div>
@@ -36,7 +36,7 @@ function SelectedLocation({ humanAddr, geoData }) {
   );
 
   return (
-    <div className="pt-6 border-t border-border space-y-4">
+    <div className="pt-6 border-t border-golden-accent/30 space-y-4">
       {summaryBlock}
       <div
         className={

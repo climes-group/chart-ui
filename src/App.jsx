@@ -56,7 +56,7 @@ function App() {
               className={[
                 "px-3 py-1 rounded-full text-xs font-medium transition-colors",
                 i === variantIdx
-                  ? "bg-[#345800] text-white"
+                  ? "bg-moss-primary text-white"
                   : "text-muted-foreground hover:bg-muted",
               ].join(" ")}
             >

@@ -106,7 +106,7 @@ function StepperFlow({ steps = [] }) {
         Back
       </Button>
       <div className="flex items-center gap-3">
-        {currentStep?.id > 0 && errorMessage && (
+        {currentStep && errorMessage && (
           <span className="flex items-center gap-1.5 text-sm text-destructive">
             <AlertCircle className="size-4 shrink-0" />
             {errorMessage}
@@ -144,7 +144,7 @@ function StepperFlow({ steps = [] }) {
           <span className="text-xs text-muted-foreground">
             {currentStep.id + 1} of {steps.length}
           </span>
-          {currentStep.id > 0 && errorMessage && (
+          {errorMessage && (
             <span className="flex items-center gap-1 text-xs text-destructive mt-0.5">
               <AlertCircle className="size-3 shrink-0" />
               {errorMessage}

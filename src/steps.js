@@ -9,6 +9,7 @@ const steps = [
     leaveCondition: {
       hasAddr: false,
     },
+    errorMessage: "Please specify a location.",
   },
   {
     name: "applicableSystems",
