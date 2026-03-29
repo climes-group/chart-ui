@@ -86,17 +86,37 @@ export async function searchAddress(query) {
       },
     );
     const result = await resp.json();
-    // Map the Nominatim response to the format your app expects
-    const mappedItems = result.map((item) => ({
-      id: item.place_id,
-      address: {
-        label: item.display_name,
-      },
-      position: {
-        lat: parseFloat(item.lat),
-        lng: parseFloat(item.lon),
-      },
-    }));
+    // Map the Nominatim response to the format your app expects.
+    // addressdetails=1 gives us a structured `address` object on each result.
+    const mappedItems = result.map((item) => {
+      const addr = item.address || {};
+      const houseNum = addr.house_number ?? "";
+      const road =
+        addr.road ?? addr.pedestrian ?? addr.footway ?? addr.path ?? "";
+      const street = [houseNum, road].filter(Boolean).join(" ");
+      const city =
+        addr.city ??
+        addr.town ??
+        addr.village ??
+        addr.hamlet ??
+        addr.municipality ??
+        addr.county ??
+        "";
+      return {
+        id: item.place_id,
+        address: {
+          label: item.display_name,
+          street,
+          city,
+          province: addr.state ?? "",
+          postcode: addr.postcode ?? "",
+        },
+        position: {
+          lat: parseFloat(item.lat),
+          lng: parseFloat(item.lon),
+        },
+      };
+    });
     return { items: mappedItems };
   } catch (e) {
     console.error(e);

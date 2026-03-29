@@ -57,37 +57,23 @@
   flex-direction: column;
 }
 
-main {
-  &[data-theme="1"] {
-    background-image:
-    /* TOP LEFT: Massive width (180vw), shallow height (55vh) */
-      radial-gradient(
-        ellipse 180vw 55vh at 15% 0%,
-        #f0efe3 50%,
-        transparent 50.2%
-      ),
-      /* BOTTOM RIGHT: Massive width (180vw), shallow height (55vh) */
-        radial-gradient(
-          ellipse 180vw 55vh at 85% 100%,
-          #f0efe3 50%,
-          transparent 50.2%
-        );
-
-    /* Top-left position and Bottom-right position */
-    background-position:
-      top left,
-      bottom right;
-
-    /* Each gradient only takes up half the height to stay in its corner */
-    background-size: 100% 50%;
-    background-repeat: no-repeat;
-
-    /* The "main" page color */
-    background-color: #fff;
-  }
-  &[data-theme="2"] {
-    background-image: linear-gradient(172deg, #f0efe3 35vh, transparent 35vh);
-  }
+/*
+ * Page background — applied to the dedicated .page-bg div in App.jsx,
+ * NOT to <main>. This lets the SVG accent render between the background
+ * and the card content without z-index conflicts.
+ */
+.page-bg[data-theme="1"] {
+  background-image:
+    radial-gradient(ellipse 180vw 55vh at 15% 0%,   #f0efe3 50%, transparent 50.2%),
+    radial-gradient(ellipse 180vw 55vh at 85% 100%, #f0efe3 50%, transparent 50.2%);
+  background-position: top left, bottom right;
+  background-size: 100% 50%;
+  background-repeat: no-repeat;
+  background-color: #fff;
+}
+.page-bg[data-theme="2"] {
+  background-image: linear-gradient(172deg, #f0efe3 35vh, transparent 35vh);
+  background-color: #fff;
 }
 
 a {

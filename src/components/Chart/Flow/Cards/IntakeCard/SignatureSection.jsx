@@ -5,24 +5,29 @@ export default function SignatureSection({ form }) {
     <div className="space-y-4">
       <h3 className="heading-section">Signature</h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <form.Field name="ea_signature_date">
           {(field) => (
             <TextField
-              label="EA Signature & Date"
+              type="date"
+              label="EA Signature Date"
               fullWidth
-              placeholder="Capture Base64 + Date"
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
           )}
         </form.Field>
+
         <form.Field name="builder_signature_date">
           {(field) => (
             <TextField
-              label="Builder Signature & Date"
+              type="date"
+              label="Builder Signature Date"
               fullWidth
-              placeholder="Capture Base64 + Date"
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
