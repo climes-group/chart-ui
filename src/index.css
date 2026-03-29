@@ -8,6 +8,11 @@
   --color-linen-bkg: #f0efe3;
   --color-golden-accent: #e2b046;
   --color-charcoal: #1a202c;
+  /* Extended brand palette */
+  --color-warm-gold: #fadba4;
+  --color-coral: #e3724f;
+  --color-warm-brown: #9b592e;
+  --color-teal-deep: #224352;
 }
 
 @font-face {
@@ -37,7 +42,7 @@
     line-height: 1.3;
   }
   .heading-section {
-    @apply text-foreground font-semibold;
+    @apply text-teal-deep font-semibold;
     font-size: var(--heading-section-size, 1.125rem);
     line-height: 1.35;
   }
@@ -82,64 +87,68 @@ a {
   text-decoration: inherit;
 }
 
-/* Typography scale: inherit body color (foreground) for consistency */
-h1,
-h2,
-h3,
-h4 {
-  color: inherit;
-  font-family: inherit;
-  letter-spacing: -0.01em;
-  margin-top: 0;
-  margin-bottom: 0.5em;
-}
+@layer base {
+  /* Typography scale: inherit body color (foreground) for consistency.
+     Kept in @layer base so Tailwind utility classes (text-*, etc.) can
+     override these resets without needing !important. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: inherit;
+    font-family: inherit;
+    letter-spacing: -0.01em;
+    margin-top: 0;
+    margin-bottom: 0.5em;
+  }
 
-h1 {
-  font-size: 2rem;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
+  h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
 
-h2 {
-  font-size: 1.5rem;
-  line-height: 1.3;
-  font-weight: 600;
-}
+  h2 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+    font-weight: 600;
+  }
 
-h3 {
-  font-size: 1.125rem;
-  line-height: 1.35;
-  font-weight: 600;
-}
+  h3 {
+    font-size: 1.125rem;
+    line-height: 1.35;
+    font-weight: 600;
+  }
 
-h4 {
-  font-size: 1rem;
-  line-height: 1.4;
-  font-weight: 600;
-}
+  h4 {
+    font-size: 1rem;
+    line-height: 1.4;
+    font-weight: 600;
+  }
 
-/* Scoping list styles to the main content area to avoid affecting the footer */
-main ul,
-main li {
-  list-style-type: disc;
-  text-align: left;
-  font-size: inherit;
-  line-height: inherit;
-  color: inherit;
-}
+  p {
+    color: inherit;
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 0.5em;
+  }
 
-/* Remove bullet points from breadcrumbs */
-.MuiBreadcrumbs-ol,
-.MuiBreadcrumbs-li {
-  list-style: none;
-}
+  /* Scoping list styles to the main content area to avoid affecting the footer */
+  main ul,
+  main li {
+    list-style-type: disc;
+    text-align: left;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+  }
 
-p {
-  color: inherit;
-  text-align: left;
-  margin-top: 0;
-  margin-bottom: 0.5em;
+  /* Remove bullet points from breadcrumbs */
+  .MuiBreadcrumbs-ol,
+  .MuiBreadcrumbs-li {
+    list-style: none;
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -220,7 +229,7 @@ p {
   --muted-foreground: oklch(0.554 0.046 257.417);
   --accent: oklch(0.968 0.007 247.896);
   --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: oklch(0.62 0.14 40);
   --border: oklch(0.929 0.013 255.508);
   --input: oklch(0.929 0.013 255.508);
   --ring: oklch(0.704 0.04 256.788);

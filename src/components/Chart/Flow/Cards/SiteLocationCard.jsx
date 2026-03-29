@@ -3,6 +3,7 @@ import {
   setGeoData,
   setHumanAddress,
 } from "@/state/slices/geoReducer";
+import { cn } from "@/lib/utils";
 import { GeoCode, lookUpHumanAddress } from "@/utils/geocode";
 import { useDispatch, useSelector } from "react-redux";
 import ChooseLocation from "../../geo/ChooseLocation";
@@ -40,7 +41,10 @@ function SiteLocationCard(props) {
         device&apos;s location.
       </p>
 
-      <div className="space-y-6 bg-card/40 border border-border rounded-lg p-4 md:p-6">
+      <div className={cn(
+        "space-y-6 bg-card/40 border rounded-lg p-4 md:p-6 transition-colors duration-300",
+        geoData ? "border-golden-accent/60" : "border-border",
+      )}>
         <ChooseLocation
           onUseLocSvc={handleUseDeviceLocation}
           onChooseAddr={handleChooseAddr}

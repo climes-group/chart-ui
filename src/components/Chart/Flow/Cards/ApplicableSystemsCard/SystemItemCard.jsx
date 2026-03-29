@@ -18,7 +18,7 @@ function SystemPill({ system, isSelected, onToggle }) {
         "inline-flex items-center gap-2 px-3 py-1.5 rounded-md border text-sm transition-all select-none text-left",
         isSelected
           ? "border-moss-primary bg-moss-primary/5 text-moss-primary font-medium"
-          : "border-border text-foreground hover:border-muted-foreground/40 hover:bg-muted/30",
+          : "border-border text-foreground hover:border-golden-accent/50 hover:bg-warm-gold/10",
       )}
     >
       {/* Checkbox indicator */}
@@ -36,7 +36,7 @@ function SystemPill({ system, isSelected, onToggle }) {
       <span className="leading-snug">{sanitizeName(name)}</span>
 
       {system.ASTMSystemCode && (
-        <span className="text-xs text-muted-foreground/60 shrink-0 font-mono">
+        <span className="text-xs text-warm-brown/70 shrink-0 font-mono">
           {system.ASTMSystemCode}
         </span>
       )}

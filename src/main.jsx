@@ -53,6 +53,9 @@ const theme = createTheme({
     secondary: {
       main: "#e2b046",
     },
+    error: {
+      main: "#e3724f",
+    },
   },
   typography: {
     // Inherit the app's custom font so MUI labels/inputs render consistently

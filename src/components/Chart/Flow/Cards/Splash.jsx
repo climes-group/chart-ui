@@ -18,10 +18,10 @@ export default function SplashCard() {
     <section className="flex min-h-[90vh] items-center justify-center gap-4 py-8">
       <div className="absolute top-2 right-2 left-2 flex justify-between gap-2"></div>
       <div className="mx-4 flex w-full max-w-lg flex-col items-center p-8 text-center">
-        <h1 className="text-foreground mb-2 text-xl font-medium tracking-tight md:text-2xl">
+        <h1 className="text-teal-deep mb-2 text-xl font-medium tracking-tight md:text-2xl">
           Welcome to
         </h1>
-        <p className="text-foreground mb-4 text-4xl leading-tight font-bold tracking-tight md:text-5xl">
+        <p className="text-moss-primary mb-4 text-4xl leading-tight font-bold tracking-tight md:text-5xl">
           CHART
         </p>
         <p className="body-muted mb-8 max-w-sm text-center">
@@ -42,7 +42,7 @@ export default function SplashCard() {
           Get Started
         </Fab>
       </div>
-      <div className="absolute right-2 bottom-2 text-xs text-slate-700">
+      <div className="absolute right-2 bottom-2 text-xs text-charcoal/50">
         Copyright blurb 2025
       </div>
     </section>
