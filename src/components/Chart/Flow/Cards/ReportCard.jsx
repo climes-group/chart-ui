@@ -159,13 +159,13 @@ export default function ReportCard() {
         {reportStatus === "not_generated" && (
           <div className="space-y-4">
             <p className="body-muted">
-              Generate a PDF report based on the selected systems and site data.
+              Generate a PDF report based on the selected systems and building location.
             </p>
 
             {/* Pre-flight checklist */}
             <div className="rounded-lg border border-warm-gold/40 bg-warm-gold/10 p-4 space-y-2.5">
               <p className="text-xs font-semibold text-warm-brown/70 uppercase tracking-wide mb-3">
-                Pre-flight checklist
+                Checklist
               </p>
               <PreflightItem
                 label="Site location selected"
