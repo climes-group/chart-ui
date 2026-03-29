@@ -1,5 +1,8 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Autocomplete,
   Checkbox,
+  CircularProgress,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -7,17 +10,123 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
+import { searchAddress } from "@/utils/geocode";
 
-const MODELLING_STANDARD_OPTIONS = [
-  "EnerGuide",
-  "Passive House",
-  "CHBA Net-Zero",
-  "Other",
-];
+// ─── Debounced address search ─────────────────────────────────────────────────
+// Fires after the user stops typing for `delay` ms.
+// Requires at least 3 characters to avoid hammering Nominatim.
+function useAddressSearch(delay = 380) {
+  const [query, setQuery] = useState("");
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const timer = useRef(null);
 
+  const run = useCallback(async (q) => {
+    setLoading(true);
+    const resp = await searchAddress(q);
+    setOptions(resp?.items ?? []);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    clearTimeout(timer.current);
+    if (query.length < 3) {
+      setOptions([]);
+      return;
+    }
+    timer.current = setTimeout(() => run(query), delay);
+    return () => clearTimeout(timer.current);
+  }, [query, delay, run]);
+
+  return { query, setQuery, options, loading };
+}
+
+// ─── Autocomplete field ───────────────────────────────────────────────────────
+// Keeps TanStack Form as the source of truth for project_address.
+// On selection it also pushes city → municipality and postcode → postal_code.
+function ProjectAddressAutocomplete({ field, form }) {
+  const { setQuery, options, loading } = useAddressSearch();
+
+  function handleInputChange(_, newVal, reason) {
+    field.handleChange(newVal);
+    if (reason === "input") setQuery(newVal);
+  }
+
+  function handleSelect(_, item) {
+    if (!item || typeof item === "string") return;
+
+    // Use the parsed street line; fall back to the full display label
+    const streetLine = item.address.street || item.address.label;
+    field.handleChange(streetLine);
+
+    if (item.address.city)
+      form.setFieldValue("municipality", item.address.city);
+    if (item.address.postcode)
+      form.setFieldValue("postal_code", item.address.postcode);
+
+    // Reset search suggestions once a pick is made
+    setQuery("");
+  }
+
+  return (
+    <Autocomplete
+      freeSolo
+      // Disable the built-in client filter — results come from the server
+      filterOptions={(x) => x}
+      options={options}
+      getOptionLabel={(opt) =>
+        typeof opt === "string" ? opt : opt.address.label
+      }
+      loading={loading}
+      inputValue={field.state.value ?? ""}
+      onInputChange={handleInputChange}
+      onChange={handleSelect}
+      renderOption={(props, opt) => {
+        // Destructure key to avoid React "key in props" warning
+        const { key, ...rest } = props;
+        return (
+          <li key={key} {...rest}>
+            <span style={{ fontSize: "0.875rem", lineHeight: 1.4 }}>
+              {opt.address.label}
+            </span>
+          </li>
+        );
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Project Address"
+          required
+          variant="outlined"
+          fullWidth
+          onBlur={field.handleBlur}
+          error={field.state.meta.isTouched && !!field.state.meta.errors.length}
+          helperText={
+            field.state.meta.isTouched
+              ? field.state.meta.errors[0]
+              : "Start typing to search"
+          }
+          InputProps={{
+            ...params.InputProps,
+            endAdornment: (
+              <>
+                {loading ? (
+                  <CircularProgress color="inherit" size={16} sx={{ mr: 0.5 }} />
+                ) : null}
+                {params.InputProps.endAdornment}
+              </>
+            ),
+          }}
+        />
+      )}
+    />
+  );
+}
+
+// ─── Section ──────────────────────────────────────────────────────────────────
 export default function ProjectInformationSection({ form }) {
   return (
-    <div variant="outlined" className="p-2 md:p-6 space-y-4">
+    <div className="space-y-4">
       <h3 className="heading-section">Project Information</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -26,13 +135,15 @@ export default function ProjectInformationSection({ form }) {
             <TextField
               label="Building Permit #"
               fullWidth
-              variant="standard"
+              variant="outlined"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
-              helperText="If Applicable"
+              helperText="If applicable"
             />
           )}
         </form.Field>
+
+        {/* Address typeahead — spans full width so the dropdown has room */}
         <form.Field
           name="project_address"
           validators={{
@@ -40,23 +151,12 @@ export default function ProjectInformationSection({ form }) {
           }}
         >
           {(field) => (
-            <TextField
-              label="Project Address"
-              fullWidth
-              variant="standard"
-              required
-              value={field.state.value}
-              onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.target.value)}
-              error={
-                field.state.meta.isTouched && !!field.state.meta.errors.length
-              }
-              helperText={
-                field.state.meta.isTouched && field.state.meta.errors[0]
-              }
-            />
+            <div className="md:col-span-2">
+              <ProjectAddressAutocomplete field={field} form={form} />
+            </div>
           )}
         </form.Field>
+
         <form.Field
           name="municipality"
           validators={{
@@ -67,7 +167,7 @@ export default function ProjectInformationSection({ form }) {
             <TextField
               label="Municipality / District"
               fullWidth
-              variant="standard"
+              variant="outlined"
               required
               value={field.state.value}
               onBlur={field.handleBlur}
@@ -78,6 +178,7 @@ export default function ProjectInformationSection({ form }) {
             />
           )}
         </form.Field>
+
         <form.Field
           name="postal_code"
           validators={{
@@ -91,7 +192,7 @@ export default function ProjectInformationSection({ form }) {
             <TextField
               label="Postal Code"
               fullWidth
-              variant="standard"
+              variant="outlined"
               required
               value={field.state.value}
               onBlur={field.handleBlur}
@@ -113,12 +214,13 @@ export default function ProjectInformationSection({ form }) {
             <TextField
               label="PID or Legal Description"
               fullWidth
-              variant="standard"
+              variant="outlined"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
           )}
         </form.Field>
+
         <form.Field
           name="unit_model_type"
           validators={{
@@ -130,7 +232,7 @@ export default function ProjectInformationSection({ form }) {
               select
               label="Unit and Model Type"
               fullWidth
-              variant="standard"
+              variant="outlined"
               required
               value={field.state.value}
               onBlur={field.handleBlur}
@@ -157,6 +259,7 @@ export default function ProjectInformationSection({ form }) {
             </TextField>
           )}
         </form.Field>
+
         <form.Field
           name="total_primary_units"
           validators={{
@@ -168,7 +271,7 @@ export default function ProjectInformationSection({ form }) {
               type="number"
               label="Primary Units"
               fullWidth
-              variant="standard"
+              variant="outlined"
               required
               value={field.state.value}
               onBlur={field.handleBlur}
@@ -176,48 +279,52 @@ export default function ProjectInformationSection({ form }) {
             />
           )}
         </form.Field>
+
         <form.Field name="total_secondary_suites">
           {(field) => (
             <TextField
               type="number"
               label="Secondary Suites"
               fullWidth
-              variant="standard"
+              variant="outlined"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
           )}
         </form.Field>
+
         <form.Field name="building_plan_date">
           {(field) => (
             <TextField
               type="date"
               label="Plan Date"
               fullWidth
-              variant="standard"
+              variant="outlined"
               InputLabelProps={{ shrink: true }}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
           )}
         </form.Field>
+
         <form.Field name="building_plan_author">
           {(field) => (
             <TextField
               label="Plan Author"
               fullWidth
-              variant="standard"
+              variant="outlined"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
           )}
         </form.Field>
+
         <form.Field name="building_plan_version">
           {(field) => (
             <TextField
               label="Plan Version"
               fullWidth
-              variant="standard"
+              variant="outlined"
               placeholder="e.g. v1.0"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -225,10 +332,12 @@ export default function ProjectInformationSection({ form }) {
           )}
         </form.Field>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-border pt-4">
+
+      {/* Modelling Standard */}
+      <div className="border-t border-border pt-4">
         <form.Field name="modelling_standard">
           {(field) => (
-            <FormControl component="fieldset" sx={{ mt: 1 }}>
+            <FormControl component="fieldset">
               <FormLabel component="legend">Modelling Standard</FormLabel>
               <FormGroup row>
                 {["EnerGuide", "Passive House", "CHBA Net-Zero", "Other"].map(
@@ -255,7 +364,6 @@ export default function ProjectInformationSection({ form }) {
           )}
         </form.Field>
 
-        {/* Conditional "Other" Field */}
         <form.Subscribe selector={(state) => state.values.modelling_standard}>
           {(standards) =>
             standards.includes("Other") && (
@@ -264,9 +372,10 @@ export default function ProjectInformationSection({ form }) {
                   <TextField
                     label="Specify Other Standard"
                     fullWidth
-                    variant="standard"
+                    variant="outlined"
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
+                    sx={{ mt: 2, maxWidth: "50%" }}
                   />
                 )}
               </form.Field>

@@ -1,14 +1,13 @@
-import { Button } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 
+import { Button } from "@/components/ui/button";
 import {
   clearIntakeForm,
-  selectIntakeForm,
-  setIntakeField,
   setIntakeForm,
 } from "@/state/slices/reportReducer";
 import { useForm } from "@tanstack/react-form";
-import { useState } from "react";
 import AssessorInformationSection from "./AssessorInformationSection";
 import BuildingInformationSection from "./BuildingInformationSection";
 import ProjectInformationSection from "./ProjectInformationSection";
@@ -16,7 +15,6 @@ import SignatureSection from "./SignatureSection";
 
 export default function IntakeCard({ onSubmit }) {
   const dispatch = useDispatch();
-  const values = useSelector(selectIntakeForm);
   const [saved, setSaved] = useState(false);
 
   const form = useForm({
@@ -54,45 +52,16 @@ export default function IntakeCard({ onSubmit }) {
       ea_signature_date: "",
       builder_signature_date: "",
     },
-    onSubmit: async ({ value, formApi }) => {
-      console.log("Form Data Submitted:", value);
+    onSubmit: async ({ value }) => {
       setSaved(true);
       dispatch(setIntakeForm(value));
     },
   });
 
-  const handleChange = (key) => (event) => {
-    dispatch(setIntakeField({ key, value: event.target.value }));
-  };
-
-  const handleModellingStandardChange = (option) => (event) => {
-    const current = Array.isArray(values.modelling_standard)
-      ? values.modelling_standard
-      : [];
-
-    if (event.target.checked) {
-      if (current.includes(option)) return;
-      dispatch(
-        setIntakeField({
-          key: "modelling_standard",
-          value: [...current, option],
-        }),
-      );
-      return;
-    }
-
-    dispatch(
-      setIntakeField({
-        key: "modelling_standard",
-        value: current.filter((item) => item !== option),
-      }),
-    );
-  };
-
   return (
     <div>
       <h2 className="heading-card mb-1">Intake</h2>
-      <p className="body-muted mb-4">
+      <p className="body-muted mb-6">
         Provide the project, building, and assessor information.
       </p>
 
@@ -102,27 +71,39 @@ export default function IntakeCard({ onSubmit }) {
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="space-y-8"
       >
+        {/* Project Information */}
         <ProjectInformationSection form={form} />
 
-        <BuildingInformationSection form={form} />
+        {/* Building Information */}
+        <div className="border-t border-border mt-6 pt-6">
+          <BuildingInformationSection form={form} />
+        </div>
 
-        <AssessorInformationSection form={form} />
+        {/* Assessor Information */}
+        <div className="border-t border-border mt-6 pt-6">
+          <AssessorInformationSection form={form} />
+        </div>
 
-        <SignatureSection form={form} />
+        {/* Signature */}
+        <div className="border-t border-border mt-6 pt-6">
+          <SignatureSection form={form} />
+        </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-border">
+        {/* Footer actions */}
+        <div className="flex justify-end gap-3 pt-4 border-t border-border mt-6">
           <Button
-            variant="outlined"
-            size="large"
+            variant="outline"
+            type="button"
             onClick={() => {
               form.reset();
               dispatch(clearIntakeForm());
+              setSaved(false);
             }}
           >
             Clear
           </Button>
+
           <form.Subscribe
             selector={(state) => [
               state.canSubmit,
@@ -132,11 +113,11 @@ export default function IntakeCard({ onSubmit }) {
             children={([canSubmit, isSubmitting, isDirty]) => (
               <Button
                 type="submit"
-                variant="contained"
-                size="large"
                 disabled={!canSubmit || (saved && !isDirty)}
+                className="bg-moss-primary text-white hover:bg-moss-primary/90 disabled:opacity-50"
               >
-                {isSubmitting ? "Submitting..." : "Save"}
+                {isSubmitting ? "Saving…" : "Save"}
+                <ArrowRight className="size-4" />
               </Button>
             )}
           />

@@ -55,31 +55,14 @@ const theme = createTheme({
     },
   },
   typography: {
-    // This applies the font to all variants (h1, body1, button, etc.)
+    // Inherit the app's custom font so MUI labels/inputs render consistently
     fontFamily: ["AvenirLtNextPro", "Helvetica", "Arial", "sans-serif"].join(
       ",",
     ),
   },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: `
-        /* If you prefer to keep your @font-face inside the JS theme 
-           instead of a separate CSS file, paste it here:
-        */
-        @font-face {
-          font-family: 'AvenirLtNextPro';
-          src: url('assets/fonts/avenirLtPro.otf') format('opentype');
-          font-weight: 400;
-          font-style: normal;
-        }
-        @font-face {
-          font-family: 'AvenirLtNextPro';
-          src: url('assets/fonts/avenirLtProItalic.otf') format('opentype');
-          font-weight: 400;
-          font-style: italic;
-        }
-      `,
-    },
+  shape: {
+    // Match the app's --radius: 0.625rem (10 px) for TextFields, selects, etc.
+    borderRadius: 10,
   },
 });
 
