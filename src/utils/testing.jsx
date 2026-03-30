@@ -1,4 +1,4 @@
-import { setupStore } from "@/state/store.js";
+import { setupTestStore } from "@/state/store.js";
 import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
@@ -7,7 +7,7 @@ export function renderWithProviders(ui, extendedRenderOptions = {}) {
   const {
     preloadedState = {},
     // Automatically create a store instance if no store was passed in
-    store = setupStore(preloadedState),
+    store = setupTestStore(preloadedState),
     ...renderOptions
   } = extendedRenderOptions;
 
