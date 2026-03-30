@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import climesTreeTransUrl from "../../assets/logos/climes_logo_trim.png";
+import climesTreeTransUrl from "@/assets/logos/climes_logo_trim.png";
 import Social from "./Social";
 
 function Footer() {

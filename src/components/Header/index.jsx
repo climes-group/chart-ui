@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import climesBannerUrl from "../../assets/logos/climes_group_engineering_high.jpg";
-import climesTreeTransUrl from "../../assets/logos/climes_logo_trim.png"; //Shortened logo
+import climesBannerUrl from "@/assets/logos/climes_group_engineering_high.jpg";
+import climesTreeTransUrl from "@/assets/logos/climes_logo_trim.png"; //Shortened logo
 import OidcLogin from "../Auth/OidcLogin";
 
 /**

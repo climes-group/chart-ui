@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { setupTestStore } from "../../state/store.js";
+import { setupTestStore } from "@/state/store.js";
 import useFlow from "../useFlow";
 
 const wrapper = ({ children }) => (

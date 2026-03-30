@@ -6,8 +6,8 @@ import {
 import { cn } from "@/lib/utils";
 import { GeoCode, lookUpHumanAddress } from "@/utils/geocode";
 import { useDispatch, useSelector } from "react-redux";
-import ChooseLocation from "../../geo/ChooseLocation";
-import SelectedLocation from "../../geo/SelectedLocation";
+import ChooseLocation from "@/components/Chart/geo/ChooseLocation";
+import SelectedLocation from "@/components/Chart/geo/SelectedLocation";
 
 function SiteLocationCard(props) {
   const geoData = useSelector((s) => s.geo.geoData);
