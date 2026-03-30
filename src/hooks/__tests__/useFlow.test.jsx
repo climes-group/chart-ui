@@ -2,11 +2,11 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { setupStore } from "../../state/store.js";
+import { setupTestStore } from "../../state/store.js";
 import useFlow from "../useFlow";
 
 const wrapper = ({ children }) => (
-  <Provider store={setupStore()}>
+  <Provider store={setupTestStore()}>
     <MemoryRouter>{children}</MemoryRouter>
   </Provider>
 );
@@ -82,7 +82,7 @@ describe("useFlow", () => {
       next();
     });
 
-    expect(result.current.error).toBe("Please specify a location.");
+    expect(result.current.error).toBe("Please complete the required fields.");
   });
 
   it("should set error when conditions not met and using jumpTo", () => {
