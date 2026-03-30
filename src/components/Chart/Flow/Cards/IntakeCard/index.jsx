@@ -1,11 +1,13 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
 import {
   clearIntakeForm,
+  selectIntakeForm,
   setIntakeForm,
 } from "@/state/slices/reportReducer";
+import { useTestMode } from "@/context/TestModeContext";
 import { useForm } from "@tanstack/react-form";
 import AssessorInformationSection from "./AssessorInformationSection";
 import BuildingInformationSection from "./BuildingInformationSection";
@@ -14,41 +16,12 @@ import SignatureSection from "./SignatureSection";
 
 export default function IntakeCard({ registerNext }) {
   const dispatch = useDispatch();
+  const { intakeFillRef } = useTestMode();
+  // Use persisted Redux state as default values so autofill (and persistence)
+  // are reflected when the form mounts.
+  const savedForm = useSelector(selectIntakeForm);
   const form = useForm({
-    defaultValues: {
-      // Project Information
-      building_permit: "",
-      project_address: "",
-      municipality: "",
-      postal_code: "",
-      pid_legal: "",
-      unit_model_type: "",
-      total_primary_units: 1,
-      total_secondary_suites: 0,
-      building_plan_date: "",
-      building_plan_author: "",
-      building_plan_version: "",
-      modelling_standard: [],
-      modelling_standard_other: "",
-      // Building Information
-      heated_floor_area: "",
-      number_of_floors: 1,
-      electricity_use: "",
-      fossil_fuel_use: "",
-      meui: "",
-      tedi: "",
-      ghgi: "",
-      // Assessor Information
-      ea_name: "",
-      ea_number: "",
-      ea_phone: "",
-      ea_business: "",
-      so_company_name: "",
-      builder_name: "",
-      builder_phone: "",
-      ea_signature_date: "",
-      builder_signature_date: "",
-    },
+    defaultValues: savedForm,
     onSubmit: async ({ value }) => {
       dispatch(setIntakeForm(value));
     },
@@ -56,6 +29,17 @@ export default function IntakeCard({ registerNext }) {
 
   useEffect(() => {
     registerNext(() => form.handleSubmit());
+    // Register a live field-setter so TestModePanel can autofill the mounted form
+    if (intakeFillRef) {
+      intakeFillRef.current = (data) => {
+        Object.entries(data).forEach(([key, value]) => {
+          form.setFieldValue(key, value);
+        });
+      };
+    }
+    return () => {
+      if (intakeFillRef) intakeFillRef.current = null;
+    };
   }, []);
 
   return (

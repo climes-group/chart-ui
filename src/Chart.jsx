@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useSelector } from "react-redux";
 import SplashCard from "./components/Chart/Flow/Cards/Splash";
 import StepperFlow from "./components/Chart/Flow/StepperFlow";
@@ -9,28 +9,16 @@ function Chart() {
   const targetElement = useRef();
   const splashDismissed = useSelector(selectSplashDismissed);
 
-  const scrollingTop = () => {
-    targetElement.current.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "start",
-    });
-  };
-
-  useEffect(() => {
-    scrollingTop();
-  }, []);
-
   if (!splashDismissed) {
     return (
-      <div ref={targetElement} className="flex justify-center flex-grow">
+      <div ref={targetElement} className="flex flex-grow justify-center">
         <SplashCard />
       </div>
     );
   }
 
   return (
-    <div ref={targetElement} className="flex justify-center flex-grow">
+    <div ref={targetElement} className="flex flex-grow justify-center">
       <StepperFlow steps={steps} />
     </div>
   );
