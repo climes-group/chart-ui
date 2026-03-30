@@ -20,6 +20,7 @@ export default defineConfig({
     environment: "jsdom",
     // global test setup
     setupFiles: "./tests/setup.js",
+    exclude: ["**/node_modules/**", "**/.claude/worktrees/**"],
     // exclude Experimental folder
     coverage: {
       exclude: [

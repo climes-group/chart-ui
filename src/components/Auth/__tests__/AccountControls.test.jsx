@@ -5,11 +5,7 @@ import AccountControls from "../AccountControls";
 
 describe("AccountControls tests", () => {
   it("should render a login button when no profile", async () => {
-    renderWithProviders(<AccountControls />, {
-      preloadedState: {
-        profile: undefined,
-      },
-    });
+    renderWithProviders(<AccountControls />);
     await screen.findByText("Login");
   });
 
