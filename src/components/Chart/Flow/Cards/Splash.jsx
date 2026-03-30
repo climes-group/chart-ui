@@ -1,16 +1,11 @@
-import { dismissSplash } from "@/state/slices/flowReducer";
 import { Fab } from "@mui/material";
 import { NavigationIcon } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export default function SplashCard() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const theme = useSelector((state) => state.flow.theme);
 
   const handleDismiss = () => {
-    dispatch(dismissSplash());
     navigate("/flow/intake");
   };
 

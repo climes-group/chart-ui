@@ -6,9 +6,7 @@ const steps = [
   {
     name: "siteLocation",
     label: "Location",
-    leaveCondition: {
-      hasAddr: false,
-    },
+    leaveCondition: true,
     errorMessage: "Please specify a location.",
   },
   {

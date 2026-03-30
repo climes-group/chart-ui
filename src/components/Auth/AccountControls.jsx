@@ -27,6 +27,7 @@ function AccountControls({ login, logout }) {
             onClick={handleClick}
             title={`Logged in as ${profile.email}`}
             variant="text"
+            color="primary"
           >
             {profile?.given_name}
           </Button>
@@ -44,9 +45,12 @@ function AccountControls({ login, logout }) {
           </Menu>
         </>
       ) : (
-        <Button variant="primary" onClick={login}>
+        <button
+          onClick={login}
+          className="text-sm font-medium text-teal-deep border border-teal-deep/40 hover:bg-teal-deep/5 hover:border-teal-deep/70 transition-colors rounded-md px-3 py-1.5"
+        >
           Login
-        </Button>
+        </button>
       )}
     </div>
   );
