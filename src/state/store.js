@@ -1,16 +1,56 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers } from "redux";
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  persistReducer,
+  persistStore,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
 import flowReducer from "./slices/flowReducer";
 import geoReducer from "./slices/geoReducer";
 import reportReducer from "./slices/reportReducer";
 import userReducer from "./slices/userReducer";
 
-export const setupStore = (preloadedState) =>
-  configureStore({
-    reducer: {
-      geo: geoReducer,
-      flow: flowReducer,
-      user: userReducer,
-      report: reportReducer,
-    },
+const geoPersistConfig = {
+  key: "geo",
+  storage,
+};
+
+const flowPersistConfig = {
+  key: "flow",
+  storage,
+  blacklist: ["error"],
+};
+
+const reportPersistConfig = {
+  key: "report",
+  storage,
+  whitelist: ["intakeForm", "selectedSystems"],
+};
+
+const rootReducer = combineReducers({
+  geo: persistReducer(geoPersistConfig, geoReducer),
+  flow: persistReducer(flowPersistConfig, flowReducer),
+  user: userReducer,
+  report: persistReducer(reportPersistConfig, reportReducer),
+});
+
+export const setupStore = (preloadedState) => {
+  const store = configureStore({
+    reducer: rootReducer,
     preloadedState,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        },
+      }),
   });
+  const persistor = persistStore(store);
+  return { store, persistor };
+};

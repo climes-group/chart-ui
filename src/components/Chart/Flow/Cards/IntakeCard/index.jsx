@@ -1,5 +1,4 @@
-import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 import { Button } from "@/components/ui/button";
@@ -13,10 +12,8 @@ import BuildingInformationSection from "./BuildingInformationSection";
 import ProjectInformationSection from "./ProjectInformationSection";
 import SignatureSection from "./SignatureSection";
 
-export default function IntakeCard({ onSubmit }) {
+export default function IntakeCard({ registerNext }) {
   const dispatch = useDispatch();
-  const [saved, setSaved] = useState(false);
-
   const form = useForm({
     defaultValues: {
       // Project Information
@@ -53,14 +50,31 @@ export default function IntakeCard({ onSubmit }) {
       builder_signature_date: "",
     },
     onSubmit: async ({ value }) => {
-      setSaved(true);
       dispatch(setIntakeForm(value));
     },
   });
 
+  useEffect(() => {
+    registerNext(() => form.handleSubmit());
+  }, []);
+
   return (
     <div>
-      <h2 className="heading-card mb-1">Intake</h2>
+      <div className="flex items-start justify-between mb-1">
+        <h2 className="heading-card">Intake</h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          type="button"
+          className="text-muted-foreground hover:text-destructive -mt-1"
+          onClick={() => {
+            form.reset();
+            dispatch(clearIntakeForm());
+          }}
+        >
+          Clear
+        </Button>
+      </div>
       <p className="body-muted mb-6">
         Provide the project, building, and assessor information.
       </p>
@@ -88,39 +102,6 @@ export default function IntakeCard({ onSubmit }) {
         {/* Signature */}
         <div className="border-t border-warm-gold/30 mt-6 pt-6">
           <SignatureSection form={form} />
-        </div>
-
-        {/* Footer actions */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-warm-gold/30 mt-6">
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => {
-              form.reset();
-              dispatch(clearIntakeForm());
-              setSaved(false);
-            }}
-          >
-            Clear
-          </Button>
-
-          <form.Subscribe
-            selector={(state) => [
-              state.canSubmit,
-              state.isSubmitting,
-              state.isDirty,
-            ]}
-            children={([canSubmit, isSubmitting, isDirty]) => (
-              <Button
-                type="submit"
-                disabled={!canSubmit || (saved && !isDirty)}
-                className="bg-moss-primary text-white hover:bg-moss-primary/90 disabled:opacity-50"
-              >
-                {isSubmitting ? "Saving…" : "Save"}
-                <ArrowRight className="size-4" />
-              </Button>
-            )}
-          />
         </div>
       </form>
     </div>

@@ -4,6 +4,7 @@ import { enableMapSet } from "immer";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 import {
   createBrowserRouter,
   Navigate,
@@ -14,6 +15,8 @@ import Chart from "./Chart.jsx";
 import Design from "./components/Design/index.jsx";
 import "./index.css";
 import { setupStore } from "./state/store.js";
+
+const { store, persistor } = setupStore();
 
 enableMapSet();
 
@@ -72,10 +75,12 @@ const theme = createTheme({
 ReactDOM.createRoot(document.getElementById("root")).render(
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <React.StrictMode>
-      <Provider store={setupStore()}>
-        <ThemeProvider theme={theme}>
-          <RouterProvider router={router} />
-        </ThemeProvider>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <ThemeProvider theme={theme}>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </PersistGate>
       </Provider>
     </React.StrictMode>
   </GoogleOAuthProvider>,
