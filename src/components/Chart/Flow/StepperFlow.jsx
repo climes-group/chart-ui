@@ -31,7 +31,7 @@ function StepperFlow({ steps = [] }) {
         </CardHeader>
       )}
       <div className="flex flex-col min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-24rem)] justify-between">
-        <CardContent className="p-8 flex flex-col flex-grow md:pt-6">
+        <CardContent className="p-4 md:p-8 md:pt-6 flex flex-col flex-grow">
           {!currentStep ? (
             <div className="mt-4 mb-2">
               <p className="text-foreground mb-4">

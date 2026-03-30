@@ -36,7 +36,6 @@ function useFlow(initialSteps = []) {
   }
 
   function reset() {
-    console.log("Resetting");
     dispatch(setSteps(initialSteps));
     navigate("/flow/intake");
   }

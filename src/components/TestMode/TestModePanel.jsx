@@ -2,7 +2,7 @@ import { meetCondition, setTheme } from "@/state/slices/flowReducer";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import { setIntakeForm } from "@/state/slices/reportReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { useTestMode } from "@/context/TestModeContext";
+import { useTestMode, VARIANTS } from "@/context/TestModeContext";
 
 const TEST_INTAKE = {
   building_permit: "BP-2024-TEST-001",
@@ -40,7 +40,7 @@ const TEST_GEO = { lat: 49.2827, lng: -123.1207 };
 const TEST_ADDRESS = "123 Test Street, Vancouver, BC V6B 1A1, Canada";
 
 export default function TestModePanel() {
-  const { isTestMode, intakeFillRef } = useTestMode();
+  const { isTestMode, intakeFillRef, variantIdx, setVariantIdx } = useTestMode();
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.flow.theme);
 
@@ -76,6 +76,24 @@ export default function TestModePanel() {
             ].join(" ")}
           >
             {t}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-1">
+        <span className="text-xs text-muted-foreground mr-1">Accent:</span>
+        {VARIANTS.map((v, i) => (
+          <button
+            key={v.label}
+            onClick={() => setVariantIdx(i)}
+            className={[
+              "px-2.5 py-1 rounded-full text-xs font-medium transition-colors",
+              i === variantIdx
+                ? "bg-moss-primary text-white"
+                : "text-muted-foreground hover:bg-muted",
+            ].join(" ")}
+          >
+            {v.label.split(" · ")[0]}
           </button>
         ))}
       </div>

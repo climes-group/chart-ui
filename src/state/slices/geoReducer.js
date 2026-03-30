@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  hasAcceptedTerms: undefined,
   geoData: undefined,
   humanAddress: undefined,
 };
@@ -20,6 +19,6 @@ export const geoSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { acceptTerms, setGeoData, setHumanAddress } = geoSlice.actions;
+export const { setGeoData, setHumanAddress } = geoSlice.actions;
 
 export default geoSlice.reducer;

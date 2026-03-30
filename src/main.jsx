@@ -13,6 +13,7 @@ import {
 import App from "./App.jsx";
 import Chart from "./Chart.jsx";
 import Design from "./components/Design/index.jsx";
+import SplashCard from "./components/Chart/Flow/Cards/Splash.jsx";
 import "./index.css";
 import { setupStore } from "./state/store.js";
 
@@ -27,13 +28,13 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
+        index: true,
+        element: <SplashCard />,
+      },
+      {
         exact: true,
         path: "/design",
         element: <Design />,
-      },
-      {
-        index: true,
-        element: <Navigate to="/flow/intake" replace />,
       },
       {
         exact: true,
@@ -42,7 +43,7 @@ const router = createBrowserRouter([
       },
       {
         path: "*",
-        element: <Navigate to="/flow/intake" replace />,
+        element: <Navigate to="/" replace />,
       },
     ],
   },
