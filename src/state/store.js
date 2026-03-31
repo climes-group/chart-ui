@@ -40,6 +40,20 @@ const rootReducer = combineReducers({
   report: persistReducer(reportPersistConfig, reportReducer),
 });
 
+// Use in tests to avoid the async REHYDRATE dispatch that persistStore fires,
+// which causes React act() warnings.
+export const setupTestStore = (preloadedState) =>
+  configureStore({
+    reducer: rootReducer,
+    preloadedState,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        },
+      }),
+  });
+
 export const setupStore = (preloadedState) => {
   const store = configureStore({
     reducer: rootReducer,

@@ -1,7 +1,7 @@
 import { useGoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
 
-import { setProfile } from "@/state/slices/userReducer";
+import { logout as logoutAction, setProfile } from "@/state/slices/userReducer";
 import { useDispatch } from "react-redux";
 import AccountControls from "./AccountControls";
 
@@ -16,7 +16,7 @@ function OidcLogin() {
 
   const logout = () => {
     setUser(undefined);
-    logout();
+    dispatch(logoutAction());
   };
 
   useEffect(() => {

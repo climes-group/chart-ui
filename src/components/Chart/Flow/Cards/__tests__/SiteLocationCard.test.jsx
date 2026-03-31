@@ -2,40 +2,32 @@ import { GeoCode } from "@/utils/geocode.js";
 import { act, fireEvent, render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { describe, vi } from "vitest";
-import { setupStore } from "../../../../../state/store.js";
+import { setupTestStore } from "@/state/store.js";
 import SiteLocationCard from "../SiteLocationCard";
 
+vi.mock("@/components/Map/MapView", () => ({ default: () => <div data-testid="map-view" /> }));
+vi.mock("@/hooks/useMedia", () => ({ default: () => [false] }));
+
 const wrapper = ({ children }) => (
-  <Provider store={setupStore()}>{children}</Provider>
+  <Provider store={setupTestStore()}>{children}</Provider>
 );
-vi.mock("react-redux", { spy: true });
 
 describe("SiteLocationCard tests", () => {
-  it("should render the SiteLocationCard component", () => {
-    // test code here
+  it("renders the SiteLocationCard component", () => {
     render(<SiteLocationCard />, { wrapper });
   });
 
-  it("should use device location", async () => {
-    // mock navigator.geolocation
-    const mockGeolocation = {
-      getCurrentPosition: vi.fn(),
-    };
-    global.navigator.geolocation = mockGeolocation;
-
+  it("uses device location when button is clicked", async () => {
     const mockPosition = {
-      coords: {
-        latitude: 44.123456,
-        longitude: -77.123456,
-      },
+      coords: { latitude: 44.123456, longitude: -77.123456 },
     };
     const mockGeoCode = new GeoCode(
       mockPosition.coords.latitude,
       mockPosition.coords.longitude,
     );
-    mockGeolocation.getCurrentPosition.mockImplementation((success) =>
-      success(mockPosition),
-    );
+    global.navigator.geolocation = {
+      getCurrentPosition: vi.fn((success) => success(mockPosition)),
+    };
 
     const screen = render(<SiteLocationCard />, { wrapper });
     act(() => {
@@ -44,10 +36,8 @@ describe("SiteLocationCard tests", () => {
     await screen.findByText(mockGeoCode.str);
   });
 
-  it.only("should search an address and then choose it", async () => {
-    // mock fetch
-    global.fetch = vi.fn();
-    fetch.mockResolvedValue({
+  it("searches an address and displays the result", async () => {
+    global.fetch = vi.fn().mockResolvedValue({
       json: async () => [
         {
           place_id: "123456",
@@ -59,13 +49,11 @@ describe("SiteLocationCard tests", () => {
     });
 
     const screen = render(<SiteLocationCard />, { wrapper });
-    act(() => {
-      // find address text field and change value
-      const addressField = screen.getByLabelText(/Search for an address/i);
-      fireEvent.change(addressField, {
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText("Search for an address…"), {
         target: { value: "123 Main St." },
       });
-      screen.getByLabelText("search").click();
+      screen.getByRole("button", { name: "Search" }).click();
     });
   });
 });

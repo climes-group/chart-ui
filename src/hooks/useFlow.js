@@ -13,11 +13,13 @@ function useFlow(initialSteps = []) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const stepsInitialized = useSelector((s) => s.flow.steps.length > 0);
+
   useEffect(() => {
-    if (initialSteps.length > 0) {
+    if (initialSteps.length > 0 && !stepsInitialized) {
       dispatch(setSteps(initialSteps));
     }
-  }, [initialSteps]);
+  }, [initialSteps, stepsInitialized]);
 
   const currentStep = useSelector((s) => s.flow.currentStep);
   const conditions = useSelector((s) => s.flow.conditions);
@@ -41,6 +43,7 @@ function useFlow(initialSteps = []) {
   }
 
   function back() {
+    dispatch(setError(null));
     dispatch(stepBackward());
     navigate(`/flow/${currentStep.prev}`);
   }
@@ -53,10 +56,11 @@ function useFlow(initialSteps = []) {
     while (prevStep) {
       allConditionsMet =
         allConditionsMet && (conditions[prevStep.name] ?? true);
-      prevStep = prevStep.prev;
+      prevStep = steps.find((s) => s.name === prevStep.prev);
     }
 
     if (allConditionsMet) {
+      dispatch(setError(null));
       dispatch(jumpToStep(name));
       navigate(`/flow/${name}`);
     } else {

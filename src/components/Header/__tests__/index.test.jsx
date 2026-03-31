@@ -4,7 +4,7 @@ import { describe } from "vitest";
 import Header from "..";
 
 // mock OidcLogin component
-vitest.mock("@/components/Auth/OidcLogin");
+vi.mock("@/components/Auth/OidcLogin");
 
 describe("Header tests", () => {
   // create a wrapper for React Browser Router

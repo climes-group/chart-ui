@@ -6,6 +6,7 @@ import {
 } from "@/components/BackgroundAccent";
 
 export const VARIANTS = [
+  { label: "None", Component: null },
   { label: "A · Tessellation", Component: TessellationAccent },
   { label: "B · Fractal Branches", Component: FractalBranchAccent },
   { label: "C · Crystalline", Component: CrystallineAccent },

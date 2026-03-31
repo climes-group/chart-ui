@@ -24,12 +24,11 @@ describe("ChooseLocation tests", () => {
     useMedia.mockReturnValue([false]);
   });
 
-  it("should render the ChooseLocation component", () => {
-    // test code here
+  it("renders the ChooseLocation component", () => {
     render(<ChooseLocation />);
   });
 
-  it("should search an address", async () => {
+  it("searches an address and selects a result", async () => {
     const onChooseAddr = vi.fn();
     searchAddress.mockReturnValueOnce({
       items: [mockAddressResult],
@@ -37,70 +36,81 @@ describe("ChooseLocation tests", () => {
 
     const screen = render(<ChooseLocation onChooseAddr={onChooseAddr} />);
 
-    // find address text field and change value
-    const addressField = screen.getByLabelText("Address");
-    fireEvent.change(addressField, {
+    fireEvent.change(screen.getByPlaceholderText("Search for an address…"), {
       target: { value: "123 Main St, Loyalist" },
     });
 
     act(() => {
-      // click search
-      screen.getByText("Search").click();
+      screen.getByRole("button", { name: "Search" }).click();
     });
 
-    // wait for search results
-    await screen.findByText("1 result(s) found.");
+    await screen.findByText("123 Main St, Loyalist");
 
     act(() => {
-      // click on the first result
-      screen.getByLabelText("123 Main St, Loyalist").click();
+      screen.getByRole("button", { name: "123 Main St, Loyalist" }).click();
     });
 
     expect(onChooseAddr).toHaveBeenCalledWith(mockAddressResult);
   });
 
-  it("should search address and clear results", async () => {
-    const onChooseAddr = vi.fn();
-    searchAddress.mockReturnValueOnce({
-      items: [mockAddressResult],
+  it("shows no results message when search returns empty", async () => {
+    searchAddress.mockReturnValueOnce({ items: [] });
+
+    const screen = render(<ChooseLocation />);
+
+    fireEvent.change(screen.getByPlaceholderText("Search for an address…"), {
+      target: { value: "nowhere" },
     });
 
-    const screen = render(<ChooseLocation onChooseAddr={onChooseAddr} />);
+    act(() => {
+      screen.getByRole("button", { name: "Search" }).click();
+    });
 
-    // find address text field and change value
-    const addressField = screen.getByLabelText("Address");
-    fireEvent.change(addressField, {
+    await screen.findByText("No results found.");
+  });
+
+  it("clears search results", async () => {
+    searchAddress.mockReturnValueOnce({ items: [mockAddressResult] });
+
+    const screen = render(<ChooseLocation />);
+
+    fireEvent.change(screen.getByPlaceholderText("Search for an address…"), {
       target: { value: "123 Main St, Loyalist" },
     });
 
     act(() => {
-      // click search
-      screen.getByText("Search").click();
+      screen.getByRole("button", { name: "Search" }).click();
     });
-    // wait for search results
-    await screen.findByText("1 result(s) found.");
+
+    await screen.findByText("123 Main St, Loyalist");
 
     act(() => {
-      // click clear
-      screen.getByText("Clear").click();
+      screen.getByRole("button", { name: "Clear search" }).click();
     });
 
-    expect(screen.queryByText("1 result(s) found.")).toBeNull();
+    expect(screen.queryByText("123 Main St, Loyalist")).toBeNull();
   });
 
-  it(`should call onUseLocSvc when "Use my location" is clicked`, () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue({
-        items: [],
-      }),
-    });
+  it(`calls onUseLocSvc when "Use my location" is clicked`, () => {
     const onUseLocSvc = vi.fn();
     const screen = render(<ChooseLocation onUseLocSvc={onUseLocSvc} />);
     screen.getByText("Use my location").click();
     expect(onUseLocSvc).toHaveBeenCalled();
   });
 
-  it("should render mobile view", () => {
+  it("searches on Enter key press", async () => {
+    searchAddress.mockReturnValueOnce({ items: [mockAddressResult] });
+
+    const screen = render(<ChooseLocation />);
+    const input = screen.getByPlaceholderText("Search for an address…");
+
+    fireEvent.change(input, { target: { value: "123 Main St" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    await screen.findByText("123 Main St, Loyalist");
+  });
+
+  it("renders mobile view", () => {
     useMedia.mockReturnValueOnce([true]);
     render(<ChooseLocation />);
   });

@@ -7,7 +7,7 @@ import TestModePanel from "./components/TestMode/TestModePanel";
 function AppInner() {
   const theme = useSelector((state) => state.flow.theme);
   const { variantIdx } = useTestMode();
-  const { Component: Accent } = VARIANTS[variantIdx];
+  const Accent = VARIANTS[variantIdx]?.Component;
 
   return (
     <>
@@ -21,7 +21,7 @@ function AppInner() {
        * Layer 2 — SVG fractal accent.
        * z-[1]: above background, below card content.
        */}
-      <Accent />
+      {Accent && <Accent />}
 
       {/*
        * Layer 3 — page chrome + content.

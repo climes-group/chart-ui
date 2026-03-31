@@ -6,7 +6,7 @@ import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), viteBasicSslPlugin(), tailwindcss()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -20,6 +20,7 @@ export default defineConfig({
     environment: "jsdom",
     // global test setup
     setupFiles: "./tests/setup.js",
+    exclude: ["**/node_modules/**", "**/.claude/worktrees/**"],
     // exclude Experimental folder
     coverage: {
       exclude: [
