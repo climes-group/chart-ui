@@ -5,6 +5,7 @@ import {
 } from "@/state/slices/geoReducer";
 import { cn } from "@/lib/utils";
 import { GeoCode, lookUpHumanAddress } from "@/utils/geocode";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ChooseLocation from "@/components/Chart/geo/ChooseLocation";
 import SelectedLocation from "@/components/Chart/geo/SelectedLocation";
@@ -13,6 +14,13 @@ function SiteLocationCard(props) {
   const geoData = useSelector((s) => s.geo.geoData);
   const humanAddr = useSelector((s) => s.geo.humanAddress);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    // if already filled, meet the condition to allow leaving the step.
+    if (geoData) {
+      dispatch(meetCondition({ name: props?.activeStep?.name }));
+    }
+  }, [geoData]);
 
   const handleUseDeviceLocation = () => {
     navigator.geolocation.getCurrentPosition(async (pos) => {

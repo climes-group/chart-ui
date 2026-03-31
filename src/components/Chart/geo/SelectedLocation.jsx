@@ -1,6 +1,6 @@
 import useMedia from "@/hooks/useMedia";
 import { GeoCode } from "@/utils/geocode";
-import MapView from "@/components/Chart/Map/MapView";
+import MapView from "@/components/Map/MapView";
 
 function SelectedLocation({ humanAddr, geoData }) {
   const [isSmallDevice] = useMedia();
