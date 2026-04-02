@@ -3,10 +3,18 @@ import { Outlet } from "react-router-dom";
 import OidcLogin from "./components/Auth/OidcLogin";
 import { TestModeProvider, useTestMode, VARIANTS } from "./context/TestModeContext";
 import TestModePanel from "./components/TestMode/TestModePanel";
+import { useIdleTimeout } from "./hooks/useIdleTimeout";
+
+const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
 
 function AppInner() {
   const theme = useSelector((state) => state.flow.theme);
   const { variantIdx } = useTestMode();
+
+  useIdleTimeout(() => {
+    sessionStorage.clear();
+    window.location.reload();
+  }, IDLE_TIMEOUT_MS);
   const Accent = VARIANTS[variantIdx]?.Component;
 
   return (
