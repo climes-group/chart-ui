@@ -15,21 +15,22 @@ import flowReducer from "./slices/flowReducer";
 import geoReducer from "./slices/geoReducer";
 import reportReducer from "./slices/reportReducer";
 import userReducer from "./slices/userReducer";
+import sessionStorage from "redux-persist/lib/storage/session";
 
 const geoPersistConfig = {
   key: "geo",
-  storage,
+  storage: sessionStorage,
 };
 
 const flowPersistConfig = {
   key: "flow",
-  storage,
+  storage: sessionStorage,
   blacklist: ["error"],
 };
 
 const reportPersistConfig = {
   key: "report",
-  storage,
+  storage: sessionStorage,
   whitelist: ["intakeForm", "selectedSystems"],
 };
 
