@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import SystemPill from "./SystemItemCard";
 
 function sanitizeName(name) {
-  if (!name) return "N/A";
+  if (!name || name === "undefined" || name === "null") return "N/A";
   return name.replace(/_/g, " ");
 }
 

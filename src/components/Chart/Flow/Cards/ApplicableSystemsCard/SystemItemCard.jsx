@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
 function sanitizeName(name) {
-  if (!name) return "N/A";
+  if (!name || name === "undefined" || name === "null") return "N/A";
   return name.replace(/_/g, " ");
 }
 

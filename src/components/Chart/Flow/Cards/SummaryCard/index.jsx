@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { formatLatLong } from "./utils";
 
 function sanitizeName(name) {
-  if (!name) return "N/A";
+  if (!name || name === "undefined" || name === "null") return "N/A";
   return name.replace(/_/g, " ");
 }
 
@@ -125,7 +125,9 @@ function SummaryCard() {
                     <SystemPill
                       key={s.key}
                       name={sanitizeName(
-                        s.astmSystemName || s.astmName || s.classification,
+                        [s.astmSystemName, s.astmName, s.classification].find(
+                          (v) => v && v !== "undefined" && v !== "null",
+                        ),
                       )}
                     />
                   ))}
