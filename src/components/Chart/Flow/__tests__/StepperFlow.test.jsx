@@ -1,7 +1,9 @@
 import useMedia from "@/hooks/useMedia.js";
 import steps from "@/steps.js";
+import { meetCondition } from "@/state/slices/flowReducer";
 import { renderWithProviders } from "@/utils/testing";
-import { act, waitFor } from "@testing-library/react";
+import { act, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe } from "vitest";
 import StepperFlow from "../StepperFlow.jsx";
 
@@ -57,5 +59,53 @@ describe("StepperFlow tests", () => {
       getAllByText(steps[0].label)[0].click();
     });
     expect(getAllByText(steps[0].label).length).toBeGreaterThan(0);
+  });
+
+  it("marks a future step as locked when its preceding condition is unmet", async () => {
+    useMedia.mockReturnValue([false]);
+    renderWithProviders(<StepperFlow steps={steps} />);
+    // intake has leaveCondition and starts false → siteLocation (Location) should be locked
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Location/i })).toHaveAttribute("data-locked", "true");
+    });
+  });
+
+  it("does not mark the first step as locked", async () => {
+    useMedia.mockReturnValue([false]);
+    renderWithProviders(<StepperFlow steps={steps} />);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Intake/i })).not.toHaveAttribute("data-locked");
+    });
+  });
+
+  it("unlocks a step once its preceding condition is met", async () => {
+    useMedia.mockReturnValue([false]);
+    const { store } = renderWithProviders(<StepperFlow steps={steps} />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Location/i })).toHaveAttribute("data-locked", "true");
+    });
+
+    act(() => {
+      store.dispatch(meetCondition({ name: "intake" }));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Location/i })).not.toHaveAttribute("data-locked");
+    });
+  });
+
+  it("pulses the blocking step when a locked step header button is clicked", async () => {
+    useMedia.mockReturnValue([false]);
+    renderWithProviders(<StepperFlow steps={steps} />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Location/i })).toHaveAttribute("data-locked", "true");
+    });
+
+    await userEvent.click(screen.getByRole("button", { name: /Location/i }));
+
+    // intake is the blocker — it should be pulsing
+    expect(screen.getByRole("button", { name: /Intake/i })).toHaveAttribute("data-pulsing", "true");
   });
 });

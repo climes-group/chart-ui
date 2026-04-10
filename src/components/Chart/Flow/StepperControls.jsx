@@ -3,32 +3,46 @@ import { cn } from "@/lib/utils";
 import { AlertCircle, ArrowLeftIcon, ArrowRightIcon, Check } from "lucide-react";
 import React from "react";
 
-export function StepperHeader({ steps, currentStep, jumpTo }) {
+export function StepperHeader({ steps, currentStep, jumpTo, isStepLocked, pulsingSteps }) {
   return (
     <div className="flex items-center w-full py-5 px-2">
       {steps.map((stepObj, idx) => {
         const isCompleted = currentStep && currentStep.id > stepObj.id;
         const isActive = currentStep && currentStep.id === stepObj.id;
+        const isLocked = !isActive && !isCompleted && (isStepLocked?.(stepObj.name) ?? false);
+        const isPulsing = pulsingSteps?.has(stepObj.name) ?? false;
 
         return (
           <React.Fragment key={stepObj.name}>
             <button
               onClick={() => jumpTo(stepObj.name)}
               className="flex items-center gap-2 shrink-0 group"
+              data-locked={isLocked ? "true" : undefined}
+              data-pulsing={isPulsing ? "true" : undefined}
             >
-              <div
-                className={cn(
-                  "size-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all border-2",
-                  isActive || isCompleted
-                    ? "bg-moss-primary border-moss-primary text-white"
-                    : "bg-transparent border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60",
+              <div className="relative">
+                {isPulsing && (
+                  <span
+                    className="absolute inset-0 rounded-full border-2 border-warm-brown animate-ping"
+                    aria-hidden="true"
+                  />
                 )}
-              >
-                {isCompleted ? (
-                  <Check className="size-4" strokeWidth={2.5} />
-                ) : (
-                  idx + 1
-                )}
+                <div
+                  className={cn(
+                    "size-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all border-2",
+                    isActive || isCompleted
+                      ? "bg-moss-primary border-moss-primary text-white"
+                      : isLocked
+                        ? "bg-warm-brown border-warm-brown text-white"
+                        : "bg-transparent border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60",
+                  )}
+                >
+                  {isCompleted ? (
+                    <Check className="size-4" strokeWidth={2.5} />
+                  ) : (
+                    idx + 1
+                  )}
+                </div>
               </div>
               <span
                 className={cn(
@@ -37,7 +51,9 @@ export function StepperHeader({ steps, currentStep, jumpTo }) {
                     ? "font-semibold text-foreground"
                     : isCompleted
                       ? "text-foreground"
-                      : "text-muted-foreground group-hover:text-foreground/70",
+                      : isLocked
+                        ? "text-warm-brown"
+                        : "text-muted-foreground group-hover:text-foreground/70",
                 )}
               >
                 {stepObj.label}

@@ -186,4 +186,82 @@ describe("useFlow", () => {
     expect(result.current.error).toBe("Conditions not met");
     expect(result.current.currentStep.id).toBe(1);
   });
+
+  it("jumpTo returns an empty array on success", () => {
+    const store = setupTestStore();
+    const { result } = renderHook(() => useFlow(stepsWithCondition), {
+      wrapper: makeWrapper(store),
+    });
+    act(() => {
+      store.dispatch(meetCondition({ name: "Step 1", condition: true }));
+    });
+    let returned;
+    act(() => {
+      returned = result.current.jumpTo("Step 2");
+    });
+    expect(returned).toEqual([]);
+    expect(result.current.currentStep.id).toBe(2);
+  });
+
+  it("jumpTo returns blocking step names when condition not met", () => {
+    const store = setupTestStore();
+    const { result } = renderHook(() => useFlow(stepsWithCondition), {
+      wrapper: makeWrapper(store),
+    });
+    let returned;
+    act(() => {
+      returned = result.current.jumpTo("Step 2");
+    });
+    expect(returned).toEqual(["Step 1"]);
+    expect(result.current.currentStep.id).toBe(1);
+  });
+
+  describe("isStepLocked", () => {
+    it("returns false for the first step (no preceding steps)", () => {
+      const store = setupTestStore();
+      const { result } = renderHook(() => useFlow(stepsWithCondition), {
+        wrapper: makeWrapper(store),
+      });
+      expect(result.current.isStepLocked("Step 1")).toBe(false);
+    });
+
+    it("returns true when a preceding step has an unmet condition", () => {
+      const store = setupTestStore();
+      const { result } = renderHook(() => useFlow(stepsWithCondition), {
+        wrapper: makeWrapper(store),
+      });
+      // Step 1 condition starts false; Step 2 is locked
+      expect(result.current.isStepLocked("Step 2")).toBe(true);
+    });
+
+    it("returns false when all preceding conditions are met", () => {
+      const store = setupTestStore();
+      const { result } = renderHook(() => useFlow(stepsWithCondition), {
+        wrapper: makeWrapper(store),
+      });
+      act(() => {
+        store.dispatch(meetCondition({ name: "Step 1", condition: true }));
+      });
+      expect(result.current.isStepLocked("Step 2")).toBe(false);
+    });
+
+    it("returns true for a step deep in the chain when an early condition is unmet", () => {
+      const store = setupTestStore();
+      const { result } = renderHook(() => useFlow(stepsWithCondition), {
+        wrapper: makeWrapper(store),
+      });
+      // Step 3 is locked because Step 1's condition is unmet
+      expect(result.current.isStepLocked("Step 3")).toBe(true);
+    });
+
+    it("returns false for a step with no conditions in the chain", () => {
+      const store = setupTestStore();
+      const { result } = renderHook(() => useFlow(testSteps), {
+        wrapper: makeWrapper(store),
+      });
+      // testSteps has no leaveConditions at all
+      expect(result.current.isStepLocked("Step 2")).toBe(false);
+      expect(result.current.isStepLocked("Step 3")).toBe(false);
+    });
+  });
 });

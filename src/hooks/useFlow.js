@@ -26,6 +26,16 @@ function useFlow(initialSteps = []) {
   const steps = useSelector((s) => s.flow.steps);
   const error = useSelector((s) => s.flow.error);
 
+  // Returns true if any step preceding stepName has an unmet leaveCondition.
+  function isStepLocked(stepName) {
+    let prevStep = steps.find((s) => s.next === stepName);
+    while (prevStep) {
+      if (!(conditions[prevStep.name] ?? true)) return true;
+      prevStep = steps.find((s) => s.name === prevStep.prev);
+    }
+    return false;
+  }
+
   function next() {
     const conditionsMet = conditions[currentStep.name] ?? true;
     if (conditionsMet) {
@@ -48,27 +58,27 @@ function useFlow(initialSteps = []) {
     navigate(`/flow/${currentStep.prev}`);
   }
 
+  // Returns an array of step names whose conditions are blocking navigation to `name`.
+  // Returns an empty array on success.
   function jumpTo(name) {
-    // all previous steps in chain should have conditions met
-    let allConditionsMet = true;
+    const blockingSteps = [];
     let prevStep = steps.find((s) => s.next === name);
-
     while (prevStep) {
-      allConditionsMet =
-        allConditionsMet && (conditions[prevStep.name] ?? true);
+      if (!(conditions[prevStep.name] ?? true)) blockingSteps.push(prevStep.name);
       prevStep = steps.find((s) => s.name === prevStep.prev);
     }
 
-    if (allConditionsMet) {
+    if (blockingSteps.length === 0) {
       dispatch(setError(null));
       dispatch(jumpToStep(name));
       navigate(`/flow/${name}`);
     } else {
       dispatch(setError("Conditions not met"));
     }
+    return blockingSteps;
   }
 
-  return { currentStep, next, back, jumpTo, reset, error };
+  return { currentStep, next, back, jumpTo, reset, error, isStepLocked };
 }
 
 export default useFlow;

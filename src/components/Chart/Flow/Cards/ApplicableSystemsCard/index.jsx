@@ -7,6 +7,7 @@ import {
   clearSelectedSystems,
   removeSelectedSystem,
 } from "@/state/slices/reportReducer";
+import { meetCondition } from "@/state/slices/flowReducer";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import SystemPill from "./SystemItemCard";
@@ -41,7 +42,7 @@ function cleanAvailableSystems(systems) {
   return cleanedSystems;
 }
 
-export default function ApplicableSystemsCard() {
+export default function ApplicableSystemsCard({ activeStep }) {
   const [availableSystems, setAvailableSystems] = useState(null);
   const [activeService, setActiveService] = useState(null);
   const [error, setError] = useState(null);
@@ -87,6 +88,14 @@ export default function ApplicableSystemsCard() {
   useEffect(() => {
     fetchSystems();
   }, []);
+
+  useEffect(() => {
+    if (!activeStep?.name) return;
+    dispatch(meetCondition({
+      name: activeStep.name,
+      condition: selectedSystems.length > 0,
+    }));
+  }, [selectedSystems.length, activeStep?.name]);
 
   if (error)
     return (

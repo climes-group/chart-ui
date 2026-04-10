@@ -2,6 +2,8 @@ const steps = [
   {
     name: "intake",
     label: "Intake",
+    leaveCondition: true,
+    errorMessage: "Please complete the intake form.",
   },
   {
     name: "siteLocation",
@@ -12,6 +14,8 @@ const steps = [
   {
     name: "applicableSystems",
     label: "Inventory",
+    leaveCondition: true,
+    errorMessage: "Please select at least one applicable system.",
   },
   { name: "summary", label: "Summary" },
   { name: "report", label: "Report" },
