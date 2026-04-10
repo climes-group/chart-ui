@@ -64,6 +64,13 @@ function ProjectAddressAutocomplete({ field, form }) {
     if (item.address.postcode)
       form.setFieldValue("postal_code", item.address.postcode);
 
+    // Clear error state on all three address fields so validation UI resets
+    // immediately without the user needing to blur each field manually.
+    const clearMeta = (prev) => ({ ...prev, isTouched: false, errors: [], errorMap: {} });
+    form.setFieldMeta("project_address", clearMeta);
+    form.setFieldMeta("municipality", clearMeta);
+    form.setFieldMeta("postal_code", clearMeta);
+
     // Reset search suggestions once a pick is made
     setQuery("");
   }

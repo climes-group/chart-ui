@@ -16,7 +16,7 @@ export default function SplashCard() {
         <h1 className="text-teal-deep mb-2 text-xl font-medium tracking-tight md:text-2xl">
           Welcome to
         </h1>
-        <p className="text-moss-primary mb-4 text-4xl leading-tight font-bold tracking-tight md:text-5xl">
+        <p className="text-teal-deep mb-4 text-4xl leading-tight font-bold tracking-tight md:text-5xl">
           CHART
         </p>
         <p className="body-muted mb-8 max-w-sm text-center">
@@ -37,7 +37,7 @@ export default function SplashCard() {
           Get Started
         </Fab>
       </div>
-      <div className="absolute right-2 bottom-2 text-xs text-charcoal/50">
+      <div className="text-charcoal/50 absolute right-2 bottom-2 text-xs">
         Copyright blurb 2025
       </div>
     </section>

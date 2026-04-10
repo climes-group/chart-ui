@@ -31,10 +31,6 @@
 }
 
 @layer components {
-  .media-icon {
-    @apply text-moss-primary border-golden-accent border-2 hover:border-moss-primary bg-white rounded-full h-16 w-16 m-1;
-  }
-
   /* Card and section headings – use with <h2> / <h3> */
   .heading-card {
     @apply text-foreground font-semibold tracking-tight;
@@ -47,11 +43,11 @@
     line-height: 1.35;
   }
   .heading-label {
-    @apply text-muted-foreground font-medium uppercase tracking-wider;
+    @apply text-muted-foreground font-medium tracking-wider uppercase;
     font-size: var(--heading-label-size, 0.875rem);
   }
   .body-muted {
-    @apply text-sm text-muted-foreground;
+    @apply text-muted-foreground text-sm;
   }
 }
 
@@ -69,21 +65,35 @@
  */
 .page-bg[data-theme="1"] {
   background-image:
-    radial-gradient(ellipse 180vw 55vh at 15% 0%,   #f0efe3 50%, transparent 50.2%),
-    radial-gradient(ellipse 180vw 55vh at 85% 100%, #f0efe3 50%, transparent 50.2%);
-  background-position: top left, bottom right;
+    radial-gradient(
+      ellipse 180vw 55vh at 15% 0%,
+      var(--color-linen-bkg) 50%,
+      transparent 50.2%
+    ),
+    radial-gradient(
+      ellipse 180vw 55vh at 85% 100%,
+      var(--color-linen-bkg) 50%,
+      transparent 50.2%
+    );
+  background-position:
+    top left,
+    bottom right;
   background-size: 100% 50%;
   background-repeat: no-repeat;
-  background-color: #fff;
+  background-color: var(--background);
 }
 .page-bg[data-theme="2"] {
-  background-image: linear-gradient(172deg, #f0efe3 35vh, transparent 35vh);
-  background-color: #fff;
+  background-image: linear-gradient(
+    172deg,
+    var(--color-teal-deep) 35vh,
+    transparent 35vh
+  );
+  background-color: var(--background);
 }
 
 a {
   font-weight: 500;
-  color: var(--color-moss-primary);
+  color: var(--color-teal-deep);
   text-decoration: inherit;
 }
 
@@ -153,8 +163,8 @@ a {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #f0efe3;
+    color: var(--foreground);
+    background-color: var(--color-linen-bkg);
   }
   a:hover {
     color: var(--color-golden-accent);
@@ -221,7 +231,7 @@ a {
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
+  --primary: var(--color-teal-deep);
   --primary-foreground: oklch(0.984 0.003 247.858);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);

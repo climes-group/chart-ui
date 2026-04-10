@@ -2,7 +2,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import useFlow from "@/hooks/useFlow";
 import useMedia from "@/hooks/useMedia";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import { DesktopControls, MobileControls, StepperHeader } from "./StepperControls";
@@ -11,23 +11,36 @@ import StepRenderer from "./StepRenderer";
 function StepperFlow({ steps = [] }) {
   const errorMessage = useSelector((s) => s.flow.error);
   const [isSmallDevice] = useMedia();
-  const { currentStep, next, back, jumpTo, reset } = useFlow(steps);
+  const { currentStep, next, back, jumpTo, reset, isStepLocked } = useFlow(steps);
   const nextRef = useRef(next);
   nextRef.current = next;
+  // Stable wrapper so cards can call the latest next() without a stale closure.
+  const nav = useRef(() => nextRef.current()).current;
+
+  const overrideRef = useRef(null);
+  const [pulsingSteps, setPulsingSteps] = useState(new Set());
 
   function registerNext(fn) {
-    nextRef.current = fn;
+    overrideRef.current = fn;
   }
 
   function handleNext() {
-    nextRef.current();
+    (overrideRef.current ?? nextRef.current)();
+  }
+
+  function handleJumpTo(stepName) {
+    const blocked = jumpTo(stepName);
+    if (blocked.length > 0) {
+      setPulsingSteps(new Set(blocked));
+      setTimeout(() => setPulsingSteps(new Set()), 1500);
+    }
   }
 
   return (
     <Card className="max-w-screen-lg w-full flex-auto">
       {!isSmallDevice && (
         <CardHeader className="bg-gradient-to-b from-linen-bkg to-transparent border-b border-border/50">
-          <StepperHeader steps={steps} currentStep={currentStep} jumpTo={jumpTo} />
+          <StepperHeader steps={steps} currentStep={currentStep} jumpTo={handleJumpTo} isStepLocked={isStepLocked} pulsingSteps={pulsingSteps} />
         </CardHeader>
       )}
       <div className="flex flex-col min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-24rem)] justify-between">
@@ -52,7 +65,7 @@ function StepperFlow({ steps = [] }) {
                       exact
                       key={`route-${step.name}`}
                       path={`/${step.name}`}
-                      element={<StepRenderer step={step} registerNext={registerNext} />}
+                      element={<StepRenderer step={step} registerNext={registerNext} nav={nav} />}
                     />
                   ))}
                   <Route

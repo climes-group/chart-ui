@@ -65,7 +65,7 @@ function SummaryCard() {
       <h2 className="heading-card">Summary</h2>
 
       {/* Project Information */}
-      <div className="rounded-lg border border-border border-l-2 border-l-golden-accent p-4">
+      <div className="rounded-lg border border-border border-l-4 border-l-primary p-4">
         <SectionHeader
           title="Project Information"
           editTo="/flow/intake"
@@ -79,7 +79,7 @@ function SummaryCard() {
       </div>
 
       {/* Site Location */}
-      <div className="rounded-lg border border-border border-l-2 border-l-moss-primary p-4">
+      <div className="rounded-lg border border-border border-l-4 border-l-primary p-4">
         <SectionHeader
           title="Site Location"
           editTo="/flow/siteLocation"
@@ -103,7 +103,7 @@ function SummaryCard() {
       </div>
 
       {/* Selected Systems */}
-      <div className="rounded-lg border border-border border-l-2 border-l-teal-deep p-4">
+      <div className="rounded-lg border border-border border-l-4 border-l-primary p-4">
         <SectionHeader
           title={
             parsedSystems.length > 0

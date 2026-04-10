@@ -7,6 +7,7 @@ import {
   selectIntakeForm,
   setIntakeForm,
 } from "@/state/slices/reportReducer";
+import { meetCondition } from "@/state/slices/flowReducer";
 import { useTestMode } from "@/context/TestModeContext";
 import { useForm } from "@tanstack/react-form";
 import AssessorInformationSection from "./AssessorInformationSection";
@@ -14,7 +15,7 @@ import BuildingInformationSection from "./BuildingInformationSection";
 import ProjectInformationSection from "./ProjectInformationSection";
 import SignatureSection from "./SignatureSection";
 
-export default function IntakeCard({ registerNext }) {
+export default function IntakeCard({ registerNext, nav }) {
   const dispatch = useDispatch();
   const { intakeFillRef } = useTestMode();
   // Use persisted Redux state as default values so autofill (and persistence)
@@ -24,6 +25,8 @@ export default function IntakeCard({ registerNext }) {
     defaultValues: savedForm,
     onSubmit: async ({ value }) => {
       dispatch(setIntakeForm(value));
+      dispatch(meetCondition({ name: "intake" }));
+      nav();
     },
   });
 
@@ -32,12 +35,15 @@ export default function IntakeCard({ registerNext }) {
     // Register a live field-setter so TestModePanel can autofill the mounted form
     if (intakeFillRef) {
       intakeFillRef.current = (data) => {
+        const clearMeta = (prev) => ({ ...prev, isTouched: false, errors: [], errorMap: {} });
         Object.entries(data).forEach(([key, value]) => {
           form.setFieldValue(key, value);
+          form.setFieldMeta(key, clearMeta);
         });
       };
     }
     return () => {
+      registerNext(null);
       if (intakeFillRef) intakeFillRef.current = null;
     };
   }, []);
@@ -54,6 +60,7 @@ export default function IntakeCard({ registerNext }) {
           onClick={() => {
             form.reset();
             dispatch(clearIntakeForm());
+            dispatch(meetCondition({ name: "intake", condition: false }));
           }}
         >
           Clear

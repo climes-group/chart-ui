@@ -3,32 +3,46 @@ import { cn } from "@/lib/utils";
 import { AlertCircle, ArrowLeftIcon, ArrowRightIcon, Check } from "lucide-react";
 import React from "react";
 
-export function StepperHeader({ steps, currentStep, jumpTo }) {
+export function StepperHeader({ steps, currentStep, jumpTo, isStepLocked, pulsingSteps }) {
   return (
     <div className="flex items-center w-full py-5 px-2">
       {steps.map((stepObj, idx) => {
         const isCompleted = currentStep && currentStep.id > stepObj.id;
         const isActive = currentStep && currentStep.id === stepObj.id;
+        const isLocked = !isActive && !isCompleted && (isStepLocked?.(stepObj.name) ?? false);
+        const isPulsing = pulsingSteps?.has(stepObj.name) ?? false;
 
         return (
           <React.Fragment key={stepObj.name}>
             <button
               onClick={() => jumpTo(stepObj.name)}
               className="flex items-center gap-2 shrink-0 group"
+              data-locked={isLocked ? "true" : undefined}
+              data-pulsing={isPulsing ? "true" : undefined}
             >
-              <div
-                className={cn(
-                  "size-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all border-2",
-                  isActive || isCompleted
-                    ? "bg-moss-primary border-moss-primary text-white"
-                    : "bg-transparent border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60",
+              <div className="relative">
+                {isPulsing && (
+                  <span
+                    className="absolute inset-0 rounded-full border-2 border-warm-brown animate-ping"
+                    aria-hidden="true"
+                  />
                 )}
-              >
-                {isCompleted ? (
-                  <Check className="size-4" strokeWidth={2.5} />
-                ) : (
-                  idx + 1
-                )}
+                <div
+                  className={cn(
+                    "size-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all border-2",
+                    isActive || isCompleted
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : isPulsing
+                        ? "bg-warm-brown border-warm-brown text-white"
+                        : "bg-transparent border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60",
+                  )}
+                >
+                  {isCompleted ? (
+                    <Check className="size-4" strokeWidth={2.5} />
+                  ) : (
+                    idx + 1
+                  )}
+                </div>
               </div>
               <span
                 className={cn(
@@ -37,7 +51,9 @@ export function StepperHeader({ steps, currentStep, jumpTo }) {
                     ? "font-semibold text-foreground"
                     : isCompleted
                       ? "text-foreground"
-                      : "text-muted-foreground group-hover:text-foreground/70",
+                      : isPulsing
+                        ? "text-warm-brown"
+                        : "text-muted-foreground group-hover:text-foreground/70",
                 )}
               >
                 {stepObj.label}
@@ -48,7 +64,7 @@ export function StepperHeader({ steps, currentStep, jumpTo }) {
               <div
                 className={cn(
                   "flex-1 h-px mx-3",
-                  isCompleted ? "bg-moss-primary/40" : "bg-border",
+                  isCompleted ? "bg-primary/40" : "bg-border",
                 )}
               />
             )}
@@ -76,7 +92,7 @@ export function DesktopControls({ currentStep, errorMessage, onBack, onNext }) {
         <Button
           disabled={!currentStep}
           onClick={onNext}
-          className="bg-moss-primary text-white hover:bg-moss-primary/90 disabled:opacity-50"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
         >
           {!currentStep?.next ? "Finish" : "Next"}
           <ArrowRightIcon className="size-4" />
@@ -120,7 +136,7 @@ export function MobileControls({ currentStep, steps, errorMessage, onBack, onNex
         disabled={!currentStep}
         onClick={onNext}
         size={currentStep?.next ? "icon" : "default"}
-        className="bg-moss-primary text-white hover:bg-moss-primary/90 disabled:opacity-50"
+        className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
         aria-label={!currentStep?.next ? "Finish" : "Next"}
       >
         {!currentStep?.next && "Finish"}

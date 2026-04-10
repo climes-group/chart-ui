@@ -12,8 +12,8 @@ const STEP_CARDS = {
   report: ReportCard,
 };
 
-export default function StepRenderer({ step, registerNext }) {
+export default function StepRenderer({ step, registerNext, nav }) {
   const StepCard = STEP_CARDS[step.name];
   if (!StepCard) return null;
-  return <StepCard activeStep={step} registerNext={registerNext} />;
+  return <StepCard activeStep={step} registerNext={registerNext} nav={nav} />;
 }

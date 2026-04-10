@@ -17,7 +17,7 @@ function SystemPill({ system, isSelected, onToggle }) {
       className={cn(
         "inline-flex items-center gap-2 px-3 py-1.5 rounded-md border text-sm transition-all select-none text-left",
         isSelected
-          ? "border-moss-primary bg-moss-primary/5 text-moss-primary font-medium"
+          ? "border-primary bg-primary/5 text-primary font-medium"
           : "border-border text-foreground hover:border-golden-accent/50 hover:bg-warm-gold/10",
       )}
     >
@@ -26,7 +26,7 @@ function SystemPill({ system, isSelected, onToggle }) {
         className={cn(
           "size-4 rounded-sm border-[1.5px] flex items-center justify-center shrink-0 transition-colors",
           isSelected
-            ? "bg-moss-primary border-moss-primary"
+            ? "bg-primary border-primary"
             : "border-muted-foreground/30",
         )}
       >
