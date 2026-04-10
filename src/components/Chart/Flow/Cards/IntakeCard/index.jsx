@@ -35,8 +35,10 @@ export default function IntakeCard({ registerNext, nav }) {
     // Register a live field-setter so TestModePanel can autofill the mounted form
     if (intakeFillRef) {
       intakeFillRef.current = (data) => {
+        const clearMeta = (prev) => ({ ...prev, isTouched: false, errors: [], errorMap: {} });
         Object.entries(data).forEach(([key, value]) => {
           form.setFieldValue(key, value);
+          form.setFieldMeta(key, clearMeta);
         });
       };
     }

@@ -38,7 +38,7 @@ function PreflightItem({ label, detail, ok }) {
   return (
     <div className="flex items-start gap-2.5 text-sm">
       {ok ? (
-        <CheckCircle2 className="size-4 shrink-0 mt-0.5 text-moss-primary" />
+        <CheckCircle2 className="size-4 shrink-0 mt-0.5 text-primary" />
       ) : (
         <Circle className="size-4 shrink-0 mt-0.5 text-muted-foreground/35" />
       )}
@@ -128,7 +128,7 @@ export default function ReportCard() {
           <Button
             onClick={handleGenerateReport}
             disabled={isGenerated || isGenerating}
-            className="bg-moss-primary text-white hover:bg-moss-primary/90 disabled:opacity-60 px-5"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60 px-5"
           >
             {isGenerating ? (
               <>
@@ -192,7 +192,7 @@ export default function ReportCard() {
 
         {isGenerating && (
           <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
-            <Loader2 className="size-4 shrink-0 animate-spin text-moss-primary" />
+            <Loader2 className="size-4 shrink-0 animate-spin text-primary" />
             <span>Building your report, this may take a moment…</span>
           </div>
         )}
@@ -221,11 +221,11 @@ export default function ReportCard() {
         )}
 
         {isGenerated && (
-          <div className="rounded-lg border border-moss-primary/20 bg-moss-primary/5 p-5 space-y-4">
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-5 space-y-4">
             {/* Report header */}
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="size-5 shrink-0 text-moss-primary" />
+                <CheckCircle2 className="size-5 shrink-0 text-primary" />
                 <span className="text-sm font-semibold">Report ready</span>
               </div>
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -239,10 +239,10 @@ export default function ReportCard() {
             </div>
 
             {/* Download action */}
-            <div className="pt-3 border-t border-moss-primary/20">
+            <div className="pt-3 border-t border-primary/20">
               <Button
                 onClick={() => openPdfInNewWindow(reportData)}
-                className="bg-moss-primary text-white hover:bg-moss-primary/90 px-5"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 px-5"
               >
                 <Download />
                 Download PDF

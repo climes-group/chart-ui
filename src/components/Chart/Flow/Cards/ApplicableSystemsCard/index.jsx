@@ -182,7 +182,7 @@ export default function ApplicableSystemsCard({ activeStep }) {
               className={cn(
                 "shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap border",
                 activeService === service
-                  ? "bg-moss-primary text-white border-moss-primary"
+                  ? "bg-primary text-primary-foreground border-primary"
                   : "bg-transparent text-muted-foreground border-border hover:text-foreground hover:border-golden-accent/60",
               )}
             >
@@ -192,8 +192,8 @@ export default function ApplicableSystemsCard({ activeStep }) {
                   className={cn(
                     "inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full text-xs font-semibold",
                     activeService === service
-                      ? "bg-white text-moss-primary"
-                      : "bg-moss-primary/10 text-moss-primary",
+                      ? "bg-background text-primary"
+                      : "bg-primary/10 text-primary",
                   )}
                 >
                   {selectedCount}

@@ -52,13 +52,13 @@ const router = createBrowserRouter([
 const theme = createTheme({
   palette: {
     primary: {
-      main: "rgb(52, 88, 0)",
+      main: "#224352", // --color-teal-deep
     },
     secondary: {
-      main: "#e2b046",
+      main: "#e2b046", // --color-golden-accent
     },
     error: {
-      main: "#e3724f",
+      main: "#e3724f", // --color-coral
     },
   },
   typography: {

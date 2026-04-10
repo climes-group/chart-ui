@@ -31,8 +31,8 @@ export function StepperHeader({ steps, currentStep, jumpTo, isStepLocked, pulsin
                   className={cn(
                     "size-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all border-2",
                     isActive || isCompleted
-                      ? "bg-moss-primary border-moss-primary text-white"
-                      : isLocked
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : isPulsing
                         ? "bg-warm-brown border-warm-brown text-white"
                         : "bg-transparent border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60",
                   )}
@@ -51,7 +51,7 @@ export function StepperHeader({ steps, currentStep, jumpTo, isStepLocked, pulsin
                     ? "font-semibold text-foreground"
                     : isCompleted
                       ? "text-foreground"
-                      : isLocked
+                      : isPulsing
                         ? "text-warm-brown"
                         : "text-muted-foreground group-hover:text-foreground/70",
                 )}
@@ -64,7 +64,7 @@ export function StepperHeader({ steps, currentStep, jumpTo, isStepLocked, pulsin
               <div
                 className={cn(
                   "flex-1 h-px mx-3",
-                  isCompleted ? "bg-moss-primary/40" : "bg-border",
+                  isCompleted ? "bg-primary/40" : "bg-border",
                 )}
               />
             )}
@@ -92,7 +92,7 @@ export function DesktopControls({ currentStep, errorMessage, onBack, onNext }) {
         <Button
           disabled={!currentStep}
           onClick={onNext}
-          className="bg-moss-primary text-white hover:bg-moss-primary/90 disabled:opacity-50"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
         >
           {!currentStep?.next ? "Finish" : "Next"}
           <ArrowRightIcon className="size-4" />
@@ -136,7 +136,7 @@ export function MobileControls({ currentStep, steps, errorMessage, onBack, onNex
         disabled={!currentStep}
         onClick={onNext}
         size={currentStep?.next ? "icon" : "default"}
-        className="bg-moss-primary text-white hover:bg-moss-primary/90 disabled:opacity-50"
+        className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
         aria-label={!currentStep?.next ? "Finish" : "Next"}
       >
         {!currentStep?.next && "Finish"}

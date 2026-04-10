@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   jumpToStep,
@@ -12,6 +12,7 @@ import {
 function useFlow(initialSteps = []) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const store = useStore();
 
   const stepsInitialized = useSelector((s) => s.flow.steps.length > 0);
 
@@ -37,7 +38,11 @@ function useFlow(initialSteps = []) {
   }
 
   function next() {
-    const conditionsMet = conditions[currentStep.name] ?? true;
+    // Read conditions directly from the store so a dispatch that happened in the
+    // same synchronous call (e.g. meetCondition inside onSubmit) is visible here
+    // without waiting for a React re-render to refresh the selector closure.
+    const liveConditions = store.getState().flow.conditions;
+    const conditionsMet = liveConditions[currentStep.name] ?? true;
     if (conditionsMet) {
       dispatch(setError(null));
       dispatch(stepForward());
