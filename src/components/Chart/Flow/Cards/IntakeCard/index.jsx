@@ -14,7 +14,7 @@ import BuildingInformationSection from "./BuildingInformationSection";
 import ProjectInformationSection from "./ProjectInformationSection";
 import SignatureSection from "./SignatureSection";
 
-export default function IntakeCard({ registerNext }) {
+export default function IntakeCard({ registerNext, nav }) {
   const dispatch = useDispatch();
   const { intakeFillRef } = useTestMode();
   // Use persisted Redux state as default values so autofill (and persistence)
@@ -24,6 +24,7 @@ export default function IntakeCard({ registerNext }) {
     defaultValues: savedForm,
     onSubmit: async ({ value }) => {
       dispatch(setIntakeForm(value));
+      nav();
     },
   });
 
@@ -38,6 +39,7 @@ export default function IntakeCard({ registerNext }) {
       };
     }
     return () => {
+      registerNext(null);
       if (intakeFillRef) intakeFillRef.current = null;
     };
   }, []);

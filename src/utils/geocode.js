@@ -76,6 +76,7 @@ export async function searchAddress(query) {
     q: query,
     format: "json",
     addressdetails: "1",
+    countrycodes: "ca", // Limit search to Canada
   });
 
   try {

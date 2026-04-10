@@ -14,13 +14,17 @@ function StepperFlow({ steps = [] }) {
   const { currentStep, next, back, jumpTo, reset } = useFlow(steps);
   const nextRef = useRef(next);
   nextRef.current = next;
+  // Stable wrapper so cards can call the latest next() without a stale closure.
+  const nav = useRef(() => nextRef.current()).current;
+
+  const overrideRef = useRef(null);
 
   function registerNext(fn) {
-    nextRef.current = fn;
+    overrideRef.current = fn;
   }
 
   function handleNext() {
-    nextRef.current();
+    (overrideRef.current ?? nextRef.current)();
   }
 
   return (
@@ -52,7 +56,7 @@ function StepperFlow({ steps = [] }) {
                       exact
                       key={`route-${step.name}`}
                       path={`/${step.name}`}
-                      element={<StepRenderer step={step} registerNext={registerNext} />}
+                      element={<StepRenderer step={step} registerNext={registerNext} nav={nav} />}
                     />
                   ))}
                   <Route
