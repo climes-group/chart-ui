@@ -1,20 +1,20 @@
-import { Link } from "react-router-dom";
 import climesTreeTransUrl from "@/assets/logos/climes_logo_trim.png";
+import { Link } from "react-router-dom";
 import Social from "./Social";
 
 function Footer() {
   const linkStyle =
-    "relative pb-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-moss-primary after:transition-all after:duration-300 hover:after:w-full";
+    "relative pb-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-teal-deep after:transition-all after:duration-300 hover:after:w-full";
 
   return (
-    <footer className="bg-linen-bkg text-moss-primary border-t-4 border-golden-accent">
-      <div className="max-w-screen-xl mx-auto p-8 md:p-12 flex flex-col md:flex-row flex-wrap justify-between items-start gap-10">
+    <footer className="bg-linen-bkg text-teal-deep border-golden-accent border-t-4">
+      <div className="mx-auto flex max-w-screen-xl flex-col flex-wrap items-start justify-between gap-10 p-8 md:flex-row md:p-12">
         {/* Column 1: Logo and Copyright */}
-        <div className="w-full text-left md:w-auto md:flex-1 min-w-[250px]">
+        <div className="w-full min-w-[250px] text-left md:w-auto md:flex-1">
           <img
             src={climesTreeTransUrl}
             alt="Climes Logo"
-            className="h-12 mb-4"
+            className="mb-4 h-12"
           />
           <p className="text-sm leading-relaxed text-current">
             &copy; {new Date().getFullYear()} Climes Group Engineering Inc.
@@ -24,9 +24,9 @@ function Footer() {
         </div>
 
         {/* Column 2: Navigation */}
-        <div className="flex-1 min-w-[150px] text-left">
-          <h4 className="text-base font-semibold mb-4">Navigation</h4>
-          <ul className="list-none p-0 m-0 space-y-3">
+        <div className="min-w-[150px] flex-1 text-left">
+          <h4 className="mb-4 text-base font-semibold">Navigation</h4>
+          <ul className="m-0 list-none space-y-3 p-0">
             <li>
               <Link to="/" className={linkStyle}>
                 Home
@@ -46,9 +46,9 @@ function Footer() {
         </div>
 
         {/* Column 3: Legal */}
-        <div className="flex-1 min-w-[150px] text-left">
-          <h4 className="text-base font-semibold mb-4">Legal</h4>
-          <ul className="list-none p-0 m-0 space-y-3">
+        <div className="min-w-[150px] flex-1 text-left">
+          <h4 className="mb-4 text-base font-semibold">Legal</h4>
+          <ul className="m-0 list-none space-y-3 p-0">
             <li>
               <a href="#" className={linkStyle}>
                 Privacy Policy
@@ -63,8 +63,8 @@ function Footer() {
         </div>
 
         {/* Column 4: Social */}
-        <div className="flex-1 min-w-[150px] text-left">
-          <h4 className="text-base font-semibold mb-4">Connect</h4>
+        <div className="min-w-[150px] flex-1 text-left">
+          <h4 className="mb-4 text-base font-semibold">Connect</h4>
           <Social />
         </div>
       </div>
