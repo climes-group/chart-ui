@@ -19,13 +19,15 @@ function AppInner() {
     <>
       <div className="page-bg fixed inset-0 z-0" data-theme={theme} />
 
-      <header className="absolute top-2 right-2 z-[3]">
-        <OidcLogin />
-      </header>
+      <div className="relative z-[2] flex flex-col min-h-full">
+        <header className="flex justify-end px-4 pt-3 pb-2 sm:px-8 sm:pt-4">
+          <OidcLogin />
+        </header>
 
-      <main className="relative z-[2] h-full px-4 pt-14 pb-4 sm:p-8">
-        <Outlet />
-      </main>
+        <main className="flex-1 px-4 pb-4 sm:px-8 sm:pb-8">
+          <Outlet />
+        </main>
+      </div>
 
       <TestModePanel />
     </>

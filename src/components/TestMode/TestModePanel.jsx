@@ -58,7 +58,7 @@ export default function TestModePanel() {
   };
 
   return (
-    <div className="border-border fixed right-4 bottom-4 z-50 flex min-w-[170px] flex-col gap-2 rounded-xl border bg-white/90 px-4 py-3 shadow-md backdrop-blur">
+    <div className="border-border fixed left-4 bottom-4 z-50 flex min-w-[170px] flex-col gap-2 rounded-xl border bg-white/90 px-4 py-3 shadow-md backdrop-blur">
       <span className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
         Test Mode
       </span>
