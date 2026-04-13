@@ -1,43 +1,37 @@
-import { useGoogleLogin } from "@react-oauth/google";
-import { useEffect, useState } from "react";
-
-import { logout as logoutAction, setProfile } from "@/state/slices/userReducer";
-import { useDispatch } from "react-redux";
+import { GoogleLogin } from "@react-oauth/google";
+import { logout as logoutAction, setProfile, setToken } from "@/state/slices/userReducer";
+import { useDispatch, useSelector } from "react-redux";
 import AccountControls from "./AccountControls";
 
-function OidcLogin() {
-  const [user, setUser] = useState(undefined);
-  const dispatch = useDispatch();
+function decodeJwt(token) {
+  const payload = token.split(".")[1];
+  return JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+}
 
-  const login = useGoogleLogin({
-    onSuccess: (codeResponse) => setUser(codeResponse),
-    onError: (error) => console.log("Login Failed:", error),
-  });
+function OidcLogin() {
+  const dispatch = useDispatch();
+  const profile = useSelector((state) => state.user.profile);
+
+  const handleSuccess = (credentialResponse) => {
+    const idToken = credentialResponse.credential;
+    const claims = decodeJwt(idToken);
+    dispatch(setProfile(claims));
+    dispatch(setToken(idToken));
+  };
 
   const logout = () => {
-    setUser(undefined);
     dispatch(logoutAction());
   };
 
-  useEffect(() => {
-    if (user) {
-      fetch(
-        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
-        {
-          headers: {
-            Authorization: `Bearer ${user.access_token}`,
-            Accept: "application/json",
-          },
-        },
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          dispatch(setProfile(data));
-        })
-        .catch((err) => console.log(err));
-    }
-  }, [user]);
+  if (profile) {
+    return <AccountControls logout={logout} />;
+  }
 
-  return <AccountControls login={login} logout={logout} />;
+  return (
+    <GoogleLogin
+      onSuccess={handleSuccess}
+      onError={() => console.log("Login Failed")}
+    />
+  );
 }
 export default OidcLogin;

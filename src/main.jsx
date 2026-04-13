@@ -14,6 +14,7 @@ import App from "./App.jsx";
 import Chart from "./Chart.jsx";
 import Design from "./components/Design/index.jsx";
 import SplashCard from "./components/Chart/Flow/Cards/Splash.jsx";
+import SavedReports from "./components/SavedReports/index.jsx";
 import "./index.css";
 import { setupStore } from "./state/store.js";
 
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
         exact: true,
         path: "/flow/*",
         element: <Chart />,
+      },
+      {
+        path: "/reports",
+        element: <SavedReports />,
       },
       {
         path: "*",
