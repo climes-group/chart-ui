@@ -1,8 +1,8 @@
+import { useTestMode } from "@/context/TestModeContext";
 import { meetCondition, setTheme } from "@/state/slices/flowReducer";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import { setIntakeForm } from "@/state/slices/reportReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { useTestMode, VARIANTS } from "@/context/TestModeContext";
 
 const TEST_INTAKE = {
   building_permit: "BP-2024-TEST-001",
@@ -40,7 +40,8 @@ const TEST_GEO = { lat: 49.2827, lng: -123.1207 };
 const TEST_ADDRESS = "123 Test Street, Vancouver, BC V6B 1A1, Canada";
 
 export default function TestModePanel() {
-  const { isTestMode, intakeFillRef, variantIdx, setVariantIdx } = useTestMode();
+  const { isTestMode, intakeFillRef, variantIdx, setVariantIdx } =
+    useTestMode();
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.flow.theme);
 
@@ -57,21 +58,21 @@ export default function TestModePanel() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 bg-white/90 backdrop-blur border border-border rounded-xl px-4 py-3 shadow-md min-w-[170px]">
-      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+    <div className="border-border fixed left-4 bottom-4 z-50 flex min-w-[170px] flex-col gap-2 rounded-xl border bg-white/90 px-4 py-3 shadow-md backdrop-blur">
+      <span className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
         Test Mode
       </span>
 
       <div className="flex items-center gap-1">
-        <span className="text-xs text-muted-foreground mr-1">Theme:</span>
+        <span className="text-muted-foreground mr-1 text-xs">Theme:</span>
         {[1, 2].map((t) => (
           <button
             key={t}
             onClick={() => dispatch(setTheme(t))}
             className={[
-              "px-2.5 py-1 rounded-full text-xs font-medium transition-colors",
+              "rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
               theme === t
-                ? "bg-moss-primary text-white"
+                ? "bg-teal-deep text-white"
                 : "text-muted-foreground hover:bg-muted",
             ].join(" ")}
           >
@@ -80,27 +81,9 @@ export default function TestModePanel() {
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center gap-1">
-        <span className="text-xs text-muted-foreground mr-1">Accent:</span>
-        {VARIANTS.map((v, i) => (
-          <button
-            key={v.label}
-            onClick={() => setVariantIdx(i)}
-            className={[
-              "px-2.5 py-1 rounded-full text-xs font-medium transition-colors",
-              i === variantIdx
-                ? "bg-moss-primary text-white"
-                : "text-muted-foreground hover:bg-muted",
-            ].join(" ")}
-          >
-            {v.label.split(" · ")[0]}
-          </button>
-        ))}
-      </div>
-
       <button
         onClick={handleAutofill}
-        className="px-3 py-1.5 rounded-full text-xs font-medium bg-golden-accent/20 text-warm-brown hover:bg-golden-accent/40 transition-colors text-left"
+        className="bg-golden-accent/20 text-warm-brown hover:bg-golden-accent/40 rounded-full px-3 py-1.5 text-left text-xs font-medium transition-colors"
       >
         Autofill All Data
       </button>

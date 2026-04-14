@@ -10,7 +10,6 @@ import {
   REGISTER,
   REHYDRATE,
 } from "redux-persist";
-import storage from "redux-persist/lib/storage";
 import flowReducer from "./slices/flowReducer";
 import geoReducer from "./slices/geoReducer";
 import reportReducer from "./slices/reportReducer";
@@ -34,10 +33,15 @@ const reportPersistConfig = {
   whitelist: ["intakeForm", "selectedSystems"],
 };
 
+const userPersistConfig = {
+  key: "user",
+  storage: sessionStorage,
+};
+
 const rootReducer = combineReducers({
   geo: persistReducer(geoPersistConfig, geoReducer),
   flow: persistReducer(flowPersistConfig, flowReducer),
-  user: userReducer,
+  user: persistReducer(userPersistConfig, userReducer),
   report: persistReducer(reportPersistConfig, reportReducer),
 });
 

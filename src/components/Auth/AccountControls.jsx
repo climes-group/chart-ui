@@ -3,10 +3,12 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-function AccountControls({ login, logout }) {
+function AccountControls({ logout }) {
   const profile = useSelector((state) => state.user.profile);
 
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -40,18 +42,11 @@ function AccountControls({ login, logout }) {
               "aria-labelledby": "basic-button",
             }}
           >
-            <MenuItem disabled>My account (TBD)</MenuItem>
+            <MenuItem onClick={() => { navigate("/reports"); handleClose(); }}>Saved Reports</MenuItem>
             <MenuItem onClick={logout}>Logout</MenuItem>
           </Menu>
         </>
-      ) : (
-        <button
-          onClick={login}
-          className="text-sm font-medium text-teal-deep border border-teal-deep/40 hover:bg-teal-deep/5 hover:border-teal-deep/70 transition-colors rounded-md px-3 py-1.5"
-        >
-          Login
-        </button>
-      )}
+      ) : null}
     </div>
   );
 }

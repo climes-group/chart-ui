@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { MapPin, Pencil } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -12,13 +11,13 @@ function sanitizeName(name) {
 
 function SectionHeader({ title, editTo, editLabel }) {
   return (
-    <div className="flex items-center justify-between mb-3">
+    <div className="mb-3 flex items-center justify-between">
       <h3 className="heading-section">{title}</h3>
       <Link
         to={editTo}
         aria-label={editLabel}
         title={editLabel}
-        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-moss-primary transition-colors"
+        className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 text-xs transition-colors"
       >
         <Pencil className="size-3" />
         Edit
@@ -29,7 +28,7 @@ function SectionHeader({ title, editTo, editLabel }) {
 
 function SystemPill({ name }) {
   return (
-    <span className="inline-flex items-center px-2.5 py-1 rounded-md border border-moss-primary bg-moss-primary/5 text-sm text-moss-primary font-medium">
+    <span className="border-teal-deep bg-teal-deep/5 text-teal-deep inline-flex items-center rounded-md border px-2.5 py-1 text-sm font-medium">
       {name}
     </span>
   );
@@ -65,7 +64,7 @@ function SummaryCard() {
       <h2 className="heading-card">Summary</h2>
 
       {/* Project Information */}
-      <div className="rounded-lg border border-border border-l-4 border-l-primary p-4">
+      <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
           title="Project Information"
           editTo="/flow/intake"
@@ -79,7 +78,7 @@ function SummaryCard() {
       </div>
 
       {/* Site Location */}
-      <div className="rounded-lg border border-border border-l-4 border-l-primary p-4">
+      <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
           title="Site Location"
           editTo="/flow/siteLocation"
@@ -87,11 +86,11 @@ function SummaryCard() {
         />
         {humanAddress || geoData ? (
           <div className="flex items-start gap-2">
-            <MapPin className="size-4 text-muted-foreground mt-0.5 shrink-0" />
+            <MapPin className="text-muted-foreground mt-0.5 size-4 shrink-0" />
             <div>
-              <p className="text-sm text-foreground">{humanAddress || "N/A"}</p>
+              <p className="text-foreground text-sm">{humanAddress || "N/A"}</p>
               {geoData && (
-                <p className="text-xs text-warm-brown font-mono mt-0.5">
+                <p className="text-warm-brown mt-0.5 font-mono text-xs">
                   {formatLatLong(geoData?.lat, geoData?.lng)}
                 </p>
               )}
@@ -103,7 +102,7 @@ function SummaryCard() {
       </div>
 
       {/* Selected Systems */}
-      <div className="rounded-lg border border-border border-l-4 border-l-primary p-4">
+      <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
           title={
             parsedSystems.length > 0

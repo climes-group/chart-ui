@@ -65,6 +65,7 @@ export default function ReportCard() {
   const { reportStatus, reportGenAt, reportGenTime } = useSelector(
     (s) => s.report,
   );
+  const token = useSelector((s) => s.user.token);
   const dispatch = useDispatch();
 
   async function handleGenerateReport() {
@@ -76,7 +77,10 @@ export default function ReportCard() {
         `${import.meta.env.VITE_API_HOST}/generate_report`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
           body: JSON.stringify({
             geo: { lat: geoData.lat, lon: geoData.lng },
             systems: selectedSystems ? Array.from(selectedSystems) : [],
