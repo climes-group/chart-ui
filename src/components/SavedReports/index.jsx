@@ -70,7 +70,8 @@ function SavedReports() {
         return res.json();
       })
       .then((data) => {
-        setReports(Array.isArray(data) ? data : []);
+        const items = Array.isArray(data?.data) ? data.data : [];
+        setReports(items);
         setStatus("ready");
       })
       .catch(() => setStatus("error"));
@@ -130,15 +131,15 @@ function SavedReports() {
             <ul className="divide-border divide-y">
               {reports.map((report) => (
                 <li
-                  key={report.filename}
+                  key={report.name}
                   className="flex flex-col gap-1 py-4 sm:flex-row sm:items-center sm:gap-4"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="text-teal-deep truncate font-medium">
-                      {report.filename}
+                      {report.name}
                     </p>
                     <p className="body-muted">
-                      Generated {formatGeneratedAt(report.generated_at)}
+                      Generated {formatGeneratedAt(report.created)}
                     </p>
                   </div>
                   <div className="flex shrink-0 gap-2">
@@ -156,7 +157,7 @@ function SavedReports() {
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => setPendingDelete(report.filename)}
+                      onClick={() => setPendingDelete(report.name)}
                     >
                       <Trash2 />
                       Delete
