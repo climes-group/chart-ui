@@ -132,7 +132,7 @@ export default function ReportCard() {
           <Button
             onClick={handleGenerateReport}
             disabled={isGenerated || isGenerating}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60 px-5"
+            className="disabled:opacity-60 px-5"
           >
             {isGenerating ? (
               <>
@@ -246,7 +246,7 @@ export default function ReportCard() {
             <div className="pt-3 border-t border-primary/20">
               <Button
                 onClick={() => openPdfInNewWindow(reportData)}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 px-5"
+                className="px-5"
               >
                 <Download />
                 Download PDF
