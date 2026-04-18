@@ -54,6 +54,28 @@
   }
 }
 
+@layer utilities {
+  /* Expand-in: animate content from collapsed to full height.
+     Uses CSS grid row trick — no JS measurement needed.
+     Toggle via data-expanded="true" on the container. */
+  .expand-in {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.35s ease-out,
+      opacity 0.3s ease-out 0.05s;
+  }
+  .expand-in[data-expanded="true"] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .expand-in > * {
+    overflow: hidden;
+    min-height: 0;
+  }
+}
+
 #root {
   width: 100%;
   height: 100%;

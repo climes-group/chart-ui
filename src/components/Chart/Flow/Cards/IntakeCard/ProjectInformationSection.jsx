@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Autocomplete,
   Checkbox,
@@ -7,10 +8,15 @@ import {
   FormControlLabel,
   FormGroup,
   FormLabel,
+  IconButton,
   MenuItem,
   TextField,
+  Tooltip,
 } from "@mui/material";
-import { searchAddress } from "@/utils/geocode";
+import { LocateFixedIcon, XIcon } from "lucide-react";
+import { GeoCode, lookUpHumanAddress, searchAddress } from "@/utils/geocode";
+import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
+import MapView from "@/components/Map/MapView";
 
 // ─── Debounced address search ─────────────────────────────────────────────────
 // Fires after the user stops typing for `delay` ms.
@@ -44,12 +50,17 @@ function useAddressSearch(delay = 380) {
 // ─── Autocomplete field ───────────────────────────────────────────────────────
 // Keeps TanStack Form as the source of truth for project_address.
 // On selection it also pushes city → municipality and postcode → postal_code.
-function ProjectAddressAutocomplete({ field, form }) {
+function ProjectAddressAutocomplete({ field, form, dispatch, onLocate }) {
   const { setQuery, options, loading } = useAddressSearch();
 
   function handleInputChange(_, newVal, reason) {
     field.handleChange(newVal);
-    if (reason === "input") setQuery(newVal);
+    if (reason === "input") {
+      setQuery(newVal);
+      // Clear stale geo when the user edits the address manually
+      dispatch(setGeoData(undefined));
+      dispatch(setHumanAddress(undefined));
+    }
   }
 
   function handleSelect(_, item) {
@@ -63,6 +74,12 @@ function ProjectAddressAutocomplete({ field, form }) {
       form.setFieldValue("municipality", item.address.city);
     if (item.address.postcode)
       form.setFieldValue("postal_code", item.address.postcode);
+
+    // Populate geo data from the Nominatim response
+    if (item.position) {
+      dispatch(setGeoData(item.position));
+      dispatch(setHumanAddress(item.address.label));
+    }
 
     // Clear error state on all three address fields so validation UI resets
     // immediately without the user needing to blur each field manually.
@@ -120,6 +137,16 @@ function ProjectAddressAutocomplete({ field, form }) {
                 {loading ? (
                   <CircularProgress color="inherit" size={16} sx={{ mr: 0.5 }} />
                 ) : null}
+                <Tooltip title="Use my location">
+                  <IconButton
+                    size="small"
+                    onClick={onLocate}
+                    aria-label="Use my location"
+                    sx={{ mr: -0.5 }}
+                  >
+                    <LocateFixedIcon className="size-4" />
+                  </IconButton>
+                </Tooltip>
                 {params.InputProps.endAdornment}
               </>
             ),
@@ -130,8 +157,64 @@ function ProjectAddressAutocomplete({ field, form }) {
   );
 }
 
+// ─── Inline map preview ──────────────────────────────────────────────────────
+function SiteLocationPreview({ geoData, humanAddress, onClear }) {
+  const geoCode = new GeoCode(geoData.lat, geoData.lng);
+  return (
+    <div className="space-y-3 pt-2">
+      <div className="rounded-lg border border-golden-accent/40 bg-background p-3 flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-xs text-muted-foreground mb-0.5">Site Location</p>
+          <p className="text-sm text-foreground font-medium truncate">
+            {humanAddress || "—"}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <p className="text-warm-brown font-mono text-xs whitespace-nowrap">
+            {geoCode.str}
+          </p>
+          <button
+            type="button"
+            onClick={onClear}
+            aria-label="Clear site location"
+            className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
+          >
+            <XIcon className="size-3.5" />
+          </button>
+        </div>
+      </div>
+      <div className="rounded-lg overflow-hidden border border-border">
+        <MapView geoData={geoData} compact />
+      </div>
+    </div>
+  );
+}
+
 // ─── Section ──────────────────────────────────────────────────────────────────
 export default function ProjectInformationSection({ form }) {
+  const dispatch = useDispatch();
+  const geoData = useSelector((s) => s.geo.geoData);
+  const humanAddress = useSelector((s) => s.geo.humanAddress);
+
+  function handleUseDeviceLocation() {
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { coords } = pos;
+      const geoCode = new GeoCode(coords.latitude, coords.longitude);
+      dispatch(setGeoData(geoCode.obj));
+
+      const addressLabel = await lookUpHumanAddress(geoCode);
+      dispatch(setHumanAddress(addressLabel || "Current Location"));
+
+      // Fill the project address field so the user doesn't have to type it
+      if (addressLabel) {
+        form.setFieldValue("project_address", addressLabel);
+        form.setFieldMeta("project_address", (prev) => ({
+          ...prev, isTouched: false, errors: [], errorMap: {},
+        }));
+      }
+    });
+  }
+
   return (
     <div className="space-y-4">
       <h3 className="heading-section">Project Information</h3>
@@ -159,10 +242,33 @@ export default function ProjectInformationSection({ form }) {
         >
           {(field) => (
             <div className="md:col-span-2">
-              <ProjectAddressAutocomplete field={field} form={form} />
+              <ProjectAddressAutocomplete
+                field={field}
+                form={form}
+                dispatch={dispatch}
+                onLocate={handleUseDeviceLocation}
+              />
             </div>
           )}
         </form.Field>
+
+        {/* Inline map — expands when geo data is available */}
+        <div className="md:col-span-2">
+          <div className="expand-in" data-expanded={!!geoData || undefined}>
+            <div>
+              {geoData && (
+                <SiteLocationPreview
+                  geoData={geoData}
+                  humanAddress={humanAddress}
+                  onClear={() => {
+                    dispatch(setGeoData(undefined));
+                    dispatch(setHumanAddress(undefined));
+                  }}
+                />
+              )}
+            </div>
+          </div>
+        </div>
 
         <form.Field
           name="municipality"

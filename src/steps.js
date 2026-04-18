@@ -6,12 +6,6 @@ const steps = [
     errorMessage: "Please complete the intake form.",
   },
   {
-    name: "siteLocation",
-    label: "Location",
-    leaveCondition: true,
-    errorMessage: "Please specify a location.",
-  },
-  {
     name: "applicableSystems",
     label: "Inventory",
     leaveCondition: true,

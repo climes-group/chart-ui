@@ -1,12 +1,10 @@
 import ApplicableSystemsCard from "./Cards/ApplicableSystemsCard";
 import IntakeCard from "./Cards/IntakeCard";
 import ReportCard from "./Cards/ReportCard";
-import SiteLocationCard from "./Cards/SiteLocationCard";
 import SummaryCard from "./Cards/SummaryCard";
 
 const STEP_CARDS = {
   intake: IntakeCard,
-  siteLocation: SiteLocationCard,
   applicableSystems: ApplicableSystemsCard,
   summary: SummaryCard,
   report: ReportCard,

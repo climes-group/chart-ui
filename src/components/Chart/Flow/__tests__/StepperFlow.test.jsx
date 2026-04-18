@@ -64,9 +64,9 @@ describe("StepperFlow tests", () => {
   it("marks a future step as locked when its preceding condition is unmet", async () => {
     useMedia.mockReturnValue([false]);
     renderWithProviders(<StepperFlow steps={steps} />);
-    // intake has leaveCondition and starts false → siteLocation (Location) should be locked
+    // intake has leaveCondition and starts false → applicableSystems (Inventory) should be locked
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Location/i })).toHaveAttribute("data-locked", "true");
+      expect(screen.getByRole("button", { name: /Inventory/i })).toHaveAttribute("data-locked", "true");
     });
   });
 
@@ -83,7 +83,7 @@ describe("StepperFlow tests", () => {
     const { store } = renderWithProviders(<StepperFlow steps={steps} />);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Location/i })).toHaveAttribute("data-locked", "true");
+      expect(screen.getByRole("button", { name: /Inventory/i })).toHaveAttribute("data-locked", "true");
     });
 
     act(() => {
@@ -91,7 +91,7 @@ describe("StepperFlow tests", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Location/i })).not.toHaveAttribute("data-locked");
+      expect(screen.getByRole("button", { name: /Inventory/i })).not.toHaveAttribute("data-locked");
     });
   });
 
@@ -100,10 +100,10 @@ describe("StepperFlow tests", () => {
     renderWithProviders(<StepperFlow steps={steps} />);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Location/i })).toHaveAttribute("data-locked", "true");
+      expect(screen.getByRole("button", { name: /Inventory/i })).toHaveAttribute("data-locked", "true");
     });
 
-    await userEvent.click(screen.getByRole("button", { name: /Location/i }));
+    await userEvent.click(screen.getByRole("button", { name: /Inventory/i }));
 
     // intake is the blocker — it should be pulsing
     expect(screen.getByRole("button", { name: /Intake/i })).toHaveAttribute("data-pulsing", "true");
