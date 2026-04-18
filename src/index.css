@@ -13,6 +13,9 @@
   --color-coral: #e3724f;
   --color-warm-brown: #9b592e;
   --color-teal-deep: #224352;
+  /* Accessible variants – pass WCAG AA on white & linen backgrounds */
+  --color-golden-accent-dark: #8d6517;
+  --color-coral-dark: #c85a3a;
 }
 
 @font-face {
@@ -167,7 +170,7 @@ a {
     background-color: var(--color-linen-bkg);
   }
   a:hover {
-    color: var(--color-golden-accent);
+    color: var(--color-golden-accent-dark);
   }
 }
 

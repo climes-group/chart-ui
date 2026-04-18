@@ -154,9 +154,8 @@ function SavedReports() {
                       </a>
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
-                      className="text-coral border-coral/40 hover:bg-coral/5 hover:border-coral/70"
                       onClick={() => setPendingDelete(report.filename)}
                     >
                       <Trash2 />

@@ -92,7 +92,7 @@ export function DesktopControls({ currentStep, errorMessage, onBack, onNext }) {
         <Button
           disabled={!currentStep}
           onClick={onNext}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          className="disabled:opacity-50"
         >
           {!currentStep?.next ? "Finish" : "Next"}
           <ArrowRightIcon className="size-4" />
@@ -136,7 +136,7 @@ export function MobileControls({ currentStep, steps, errorMessage, onBack, onNex
         disabled={!currentStep}
         onClick={onNext}
         size={currentStep?.next ? "icon" : "default"}
-        className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+        className="disabled:opacity-50"
         aria-label={!currentStep?.next ? "Finish" : "Next"}
       >
         {!currentStep?.next && "Finish"}

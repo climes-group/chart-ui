@@ -1,0 +1,138 @@
+/* ─── Shared base for all hover demo buttons ─── */
+.base {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.baseOutline {
+  composes: base;
+  background: transparent;
+  color: var(--color-teal-deep);
+  border: 2px solid var(--color-teal-deep);
+}
+
+.baseFilled {
+  composes: base;
+  background: var(--color-teal-deep);
+  color: #fff;
+  border: 2px solid var(--color-teal-deep);
+}
+
+/* ─── 1. Scale + Shadow Lift ─── */
+.scaleLift {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease, color 0.2s ease;
+}
+
+.scaleLift:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 16px rgba(34, 67, 82, 0.18);
+  border-color: var(--color-golden-accent-dark);
+  color: var(--color-golden-accent-dark);
+}
+
+.baseFilled.scaleLift:hover {
+  box-shadow: 0 6px 16px rgba(34, 67, 82, 0.35);
+  border-color: var(--color-teal-deep);
+  color: #fff;
+}
+
+.scaleLift:active {
+  transform: translateY(0) scale(1);
+  box-shadow: 0 2px 4px rgba(34, 67, 82, 0.12);
+}
+
+/* ─── 2. Border Glow ─── */
+.borderGlow {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.borderGlow:hover {
+  border-color: var(--color-golden-accent-dark);
+  color: var(--color-golden-accent-dark);
+  box-shadow:
+    0 0 0 3px var(--color-golden-accent-dark),
+    0 0 16px rgba(141, 101, 23, 0.25);
+}
+
+.baseFilled.borderGlow:hover {
+  border-color: var(--color-golden-accent-dark);
+  color: #fff;
+  box-shadow:
+    0 0 0 3px var(--color-golden-accent-dark),
+    0 0 16px rgba(141, 101, 23, 0.3);
+}
+
+/* ─── 3. Teal-to-Gold Gradient Shift ─── */
+.gradientShift {
+  background-size: 200% 100%;
+  background-position: left center;
+  transition: background-position 0.4s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.baseOutline.gradientShift {
+  background-image: linear-gradient(
+    to right,
+    transparent 0%,
+    transparent 50%,
+    var(--color-golden-accent-dark) 50%,
+    var(--color-golden-accent-dark) 100%
+  );
+}
+
+.baseOutline.gradientShift:hover {
+  background-position: right center;
+  color: #fff;
+  border-color: var(--color-golden-accent-dark);
+}
+
+.baseFilled.gradientShift {
+  background-image: linear-gradient(
+    to right,
+    var(--color-teal-deep) 0%,
+    var(--color-teal-deep) 50%,
+    var(--color-golden-accent-dark) 50%,
+    var(--color-golden-accent-dark) 100%
+  );
+}
+
+.baseFilled.gradientShift:hover {
+  background-position: right center;
+  color: #fff;
+  border-color: var(--color-golden-accent-dark);
+}
+
+/* ─── 4. Subtle Press ─── */
+.subtlePress {
+  transition: filter 0.15s ease, transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.subtlePress:hover {
+  filter: brightness(1.1);
+  border-color: var(--color-golden-accent-dark);
+  color: var(--color-golden-accent-dark);
+}
+
+.subtlePress:active {
+  transform: scale(0.96);
+  filter: brightness(0.95);
+}
+
+.baseFilled.subtlePress:hover {
+  filter: brightness(1.15);
+  border-color: var(--color-teal-deep);
+  color: #fff;
+}
+
+.baseFilled.subtlePress:active {
+  transform: scale(0.96);
+  filter: brightness(0.9);
+}
