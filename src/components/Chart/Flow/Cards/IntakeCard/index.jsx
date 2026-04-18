@@ -8,6 +8,7 @@ import {
   setIntakeForm,
 } from "@/state/slices/reportReducer";
 import { meetCondition } from "@/state/slices/flowReducer";
+import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import { useTestMode } from "@/context/TestModeContext";
 import { useForm } from "@tanstack/react-form";
 import AssessorInformationSection from "./AssessorInformationSection";
@@ -60,6 +61,8 @@ export default function IntakeCard({ registerNext, nav }) {
           onClick={() => {
             form.reset();
             dispatch(clearIntakeForm());
+            dispatch(setGeoData(undefined));
+            dispatch(setHumanAddress(undefined));
             dispatch(meetCondition({ name: "intake", condition: false }));
           }}
         >

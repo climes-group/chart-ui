@@ -81,8 +81,8 @@ function SummaryCard() {
       <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
           title="Site Location"
-          editTo="/flow/siteLocation"
-          editLabel="Edit site location"
+          editTo="/flow/intake"
+          editLabel="Edit project information"
         />
         {humanAddress || geoData ? (
           <div className="flex items-start gap-2">

@@ -52,7 +52,6 @@ export default function TestModePanel() {
     dispatch(setIntakeForm(TEST_INTAKE));
     dispatch(setGeoData(TEST_GEO));
     dispatch(setHumanAddress(TEST_ADDRESS));
-    dispatch(meetCondition({ name: "siteLocation" }));
     // If IntakeCard is currently mounted, update the live form too
     intakeFillRef?.current?.(TEST_INTAKE);
   };
