@@ -55,6 +55,7 @@ function SavedReports() {
   const [status, setStatus] = useState("loading"); // loading | error | ready
   const [pendingDelete, setPendingDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [downloadError, setDownloadError] = useState(null);
 
   useEffect(() => {
     if (!token) return;
@@ -77,6 +78,26 @@ function SavedReports() {
       .catch(() => setStatus("error"));
   }, [token]);
 
+  async function handleDownload(filename) {
+    setDownloadError(null);
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_HOST}/reports/${encodeURIComponent(filename)}/download`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setDownloadError(filename);
+    }
+  }
+
   async function handleDelete() {
     if (!pendingDelete) return;
     setDeleting(true);
@@ -89,7 +110,7 @@ function SavedReports() {
         },
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setReports((prev) => prev.filter((r) => r.filename !== pendingDelete));
+      setReports((prev) => prev.filter((r) => r.name !== pendingDelete));
     } catch {
       // keep list unchanged on error; dialog will close
     } finally {
@@ -113,6 +134,12 @@ function SavedReports() {
               <Loader2 className="size-5 animate-spin" />
               <span>Loading reports…</span>
             </div>
+          )}
+
+          {downloadError && (
+            <p className="text-coral bg-coral/10 rounded-md px-3 py-2 text-sm">
+              Failed to download {downloadError}. Please try again.
+            </p>
           )}
 
           {status === "error" && (
@@ -143,16 +170,13 @@ function SavedReports() {
                     </p>
                   </div>
                   <div className="flex shrink-0 gap-2">
-                    <Button variant="primary" size="sm" asChild>
-                      <a
-                        href={report.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download
-                      >
-                        <Download />
-                        Download
-                      </a>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleDownload(report.name)}
+                    >
+                      <Download />
+                      Download
                     </Button>
                     <Button
                       variant="destructive"
