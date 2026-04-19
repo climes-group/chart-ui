@@ -103,7 +103,7 @@ function SavedReports() {
     setDeleting(true);
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_HOST}/reports/${encodeURIComponent(pendingDelete)}`,
+        `${import.meta.env.VITE_API_HOST}/reports/${encodeURIComponent(pendingDelete)}/delete`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
