@@ -42,6 +42,82 @@ function SystemPill({ name, code }) {
   );
 }
 
+function pluralize(count, singular, plural) {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
+function formatHeadline(intake) {
+  const type = intake.unit_model_type;
+  const primary = Number(intake.total_primary_units);
+  const secondary = Number(intake.total_secondary_suites);
+
+  const counts = [];
+  if (Number.isFinite(primary) && primary > 0) {
+    counts.push(pluralize(primary, "primary unit", "primary units"));
+  }
+  if (Number.isFinite(secondary) && secondary > 0) {
+    counts.push(pluralize(secondary, "secondary suite", "secondary suites"));
+  }
+
+  if (!type) return counts.join(" + ") || null;
+  if (counts.length === 0) return type;
+  return `${type} — ${counts.join(" + ")}`;
+}
+
+function formatStandards(intake) {
+  const list = intake.modelling_standard || [];
+  const other = intake.modelling_standard_other;
+  return list.map((s) => (s === "Other" && other ? other : s));
+}
+
+function formatPlanLine(intake) {
+  const parts = [];
+  if (intake.building_plan_version) parts.push(intake.building_plan_version);
+  if (intake.building_plan_date) parts.push(intake.building_plan_date);
+  if (intake.building_plan_author) parts.push(intake.building_plan_author);
+  if (parts.length === 0) return null;
+  return `Plan ${parts.join(" · ")}`;
+}
+
+function ProjectInformation({ intake }) {
+  const headline = formatHeadline(intake);
+  const standards = formatStandards(intake);
+  const planLine = formatPlanLine(intake);
+  const permit = intake.building_permit;
+  const pid = intake.pid_legal;
+
+  const hasAnything =
+    headline || standards.length > 0 || planLine || permit || pid;
+  if (!hasAnything) {
+    return <p className="body-muted">No project information entered.</p>;
+  }
+
+  return (
+    <div className="space-y-3">
+      {headline && <p className="text-foreground text-sm">{headline}</p>}
+
+      {standards.length > 0 && (
+        <div>
+          <p className="heading-label mb-2">Modelling Standard</p>
+          <div className="flex flex-wrap gap-2">
+            {standards.map((s) => (
+              <SystemPill key={s} name={s} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(planLine || permit || pid) && (
+        <div className="space-y-1">
+          {planLine && <p className="body-muted">{planLine}</p>}
+          {permit && <p className="body-muted">Permit #{permit}</p>}
+          {pid && <p className="body-muted">PID: {pid}</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function SummaryCard() {
   const selectedSystems = useSelector((state) => state.report.selectedSystems);
   const { geoData, humanAddress } = useSelector((state) => state.geo);
@@ -77,7 +153,7 @@ function SummaryCard() {
           editLabel="Edit project information"
         />
         {hasIntakeData ? (
-          <p className="body-muted">TBD</p>
+          <ProjectInformation intake={intakeForm} />
         ) : (
           <p className="body-muted">No project information entered.</p>
         )}
