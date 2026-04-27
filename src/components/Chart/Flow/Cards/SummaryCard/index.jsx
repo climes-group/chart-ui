@@ -2,11 +2,16 @@ import { MapPin, Pencil } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
+import { selectedSystemCode } from "@/state/slices/reportReducer";
 import { formatLatLong } from "./utils";
 
 function sanitizeName(name) {
   if (!name || name === "undefined" || name === "null") return "N/A";
   return name.replace(/_/g, " ");
+}
+
+function getSystemDisplayName(system) {
+  return system["ASTM.Name"] || system["Classification"];
 }
 
 function SectionHeader({ title, editTo, editLabel }) {
@@ -26,11 +31,90 @@ function SectionHeader({ title, editTo, editLabel }) {
   );
 }
 
-function SystemPill({ name }) {
+function SystemPill({ name, code }) {
   return (
-    <span className="border-teal-deep bg-teal-deep/5 text-teal-deep inline-flex items-center rounded-md border px-2.5 py-1 text-sm font-medium">
-      {name}
+    <span className="border-teal-deep bg-teal-deep/10 text-teal-deep inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-sm font-medium">
+      <span>{name}</span>
+      {code && (
+        <span className="text-warm-brown font-mono text-xs">{code}</span>
+      )}
     </span>
+  );
+}
+
+function pluralize(count, singular, plural) {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
+function formatHeadline(intake) {
+  const type = intake.unit_model_type;
+  const primary = Number(intake.total_primary_units);
+  const secondary = Number(intake.total_secondary_suites);
+
+  const counts = [];
+  if (Number.isFinite(primary) && primary > 0) {
+    counts.push(pluralize(primary, "primary unit", "primary units"));
+  }
+  if (Number.isFinite(secondary) && secondary > 0) {
+    counts.push(pluralize(secondary, "secondary suite", "secondary suites"));
+  }
+
+  if (!type) return counts.join(" + ") || null;
+  if (counts.length === 0) return type;
+  return `${type} — ${counts.join(" + ")}`;
+}
+
+function formatStandards(intake) {
+  const list = intake.modelling_standard || [];
+  const other = intake.modelling_standard_other;
+  return list.map((s) => (s === "Other" && other ? other : s));
+}
+
+function formatPlanLine(intake) {
+  const parts = [];
+  if (intake.building_plan_version) parts.push(intake.building_plan_version);
+  if (intake.building_plan_date) parts.push(intake.building_plan_date);
+  if (intake.building_plan_author) parts.push(intake.building_plan_author);
+  if (parts.length === 0) return null;
+  return `Plan ${parts.join(" · ")}`;
+}
+
+function ProjectInformation({ intake }) {
+  const headline = formatHeadline(intake);
+  const standards = formatStandards(intake);
+  const planLine = formatPlanLine(intake);
+  const permit = intake.building_permit;
+  const pid = intake.pid_legal;
+
+  const hasAnything =
+    headline || standards.length > 0 || planLine || permit || pid;
+  if (!hasAnything) {
+    return <p className="body-muted">No project information entered.</p>;
+  }
+
+  return (
+    <div className="space-y-3">
+      {headline && <p className="text-foreground text-sm">{headline}</p>}
+
+      {standards.length > 0 && (
+        <div>
+          <p className="heading-label mb-2">Modelling Standard</p>
+          <div className="flex flex-wrap gap-2">
+            {standards.map((s) => (
+              <SystemPill key={s} name={s} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(planLine || permit || pid) && (
+        <div className="space-y-1">
+          {planLine && <p className="body-muted">{planLine}</p>}
+          {permit && <p className="body-muted">Permit #{permit}</p>}
+          {pid && <p className="body-muted">PID: {pid}</p>}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -45,16 +129,14 @@ function SummaryCard() {
       Array.isArray(v) ? v.length > 0 : v !== "",
     );
 
-  // Parse system key strings: "Service-Classification-ASTMName-ASTMSystemName"
-  const parsedSystems = (selectedSystems || []).map((key) => {
-    const [service, classification, astmName, astmSystemName] = key.split("-");
-    return { service, classification, astmName, astmSystemName, key };
-  });
+  const validSelectedSystems = (selectedSystems || []).filter(
+    (s) => s && typeof s === "object" && selectedSystemCode(s),
+  );
 
-  // Group by service, sorted alphabetically
-  const systemsByService = parsedSystems.reduce((acc, s) => {
-    if (!acc[s.service]) acc[s.service] = [];
-    acc[s.service].push(s);
+  const systemsByService = validSelectedSystems.reduce((acc, s) => {
+    const service = s["Services"] || "Other";
+    if (!acc[service]) acc[service] = [];
+    acc[service].push(s);
     return acc;
   }, {});
   const services = Object.keys(systemsByService).sort();
@@ -71,7 +153,7 @@ function SummaryCard() {
           editLabel="Edit project information"
         />
         {hasIntakeData ? (
-          <p className="body-muted">TBD</p>
+          <ProjectInformation intake={intakeForm} />
         ) : (
           <p className="body-muted">No project information entered.</p>
         )}
@@ -105,14 +187,14 @@ function SummaryCard() {
       <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
           title={
-            parsedSystems.length > 0
-              ? `Selected Systems (${parsedSystems.length})`
+            validSelectedSystems.length > 0
+              ? `Selected Systems (${validSelectedSystems.length})`
               : "Selected Systems"
           }
           editTo="/flow/applicableSystems"
           editLabel="Edit selected systems"
         />
-        {parsedSystems.length === 0 ? (
+        {validSelectedSystems.length === 0 ? (
           <p className="body-muted">No systems selected.</p>
         ) : (
           <div className="space-y-4">
@@ -120,16 +202,16 @@ function SummaryCard() {
               <div key={service}>
                 <p className="heading-label mb-2">{sanitizeName(service)}</p>
                 <div className="flex flex-wrap gap-2">
-                  {systemsByService[service].map((s) => (
-                    <SystemPill
-                      key={s.key}
-                      name={sanitizeName(
-                        [s.astmSystemName, s.astmName, s.classification].find(
-                          (v) => v && v !== "undefined" && v !== "null",
-                        ),
-                      )}
-                    />
-                  ))}
+                  {systemsByService[service].map((s) => {
+                    const code = selectedSystemCode(s);
+                    return (
+                      <SystemPill
+                        key={code}
+                        name={sanitizeName(getSystemDisplayName(s))}
+                        code={code}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             ))}

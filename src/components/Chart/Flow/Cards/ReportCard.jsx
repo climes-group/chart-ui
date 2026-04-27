@@ -1,4 +1,5 @@
 import {
+  selectedSystemCode,
   setReportData,
   setReportGenAt,
   setReportGenTime,
@@ -83,7 +84,9 @@ export default function ReportCard() {
           },
           body: JSON.stringify({
             geo: { lat: geoData.lat, lon: geoData.lng },
-            systems: selectedSystems ? Array.from(selectedSystems) : [],
+            systems: (selectedSystems ?? [])
+              .map(selectedSystemCode)
+              .filter(Boolean),
             intakeForm: intakeForm ?? {},
           }),
         },
@@ -168,7 +171,7 @@ export default function ReportCard() {
 
             {/* Pre-flight checklist */}
             <div className="rounded-lg border border-warm-gold/40 bg-warm-gold/10 p-4 space-y-2.5">
-              <p className="text-xs font-semibold text-warm-brown/70 uppercase tracking-wide mb-3">
+              <p className="text-xs font-semibold text-warm-brown uppercase tracking-wide mb-3">
                 Checklist
               </p>
               <PreflightItem

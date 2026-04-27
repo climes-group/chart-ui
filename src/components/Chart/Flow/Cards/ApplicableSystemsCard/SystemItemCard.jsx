@@ -8,8 +8,8 @@ function sanitizeName(name) {
 
 /** Compact toggleable pill for a single building system. */
 function SystemPill({ system, isSelected, onToggle }) {
-  const name =
-    system.ASTMSystemName ?? system.ASTMName ?? system.Classification;
+  const name = system["ASTM.Name"] ?? system["Classification"];
+  const code = system["ASTM.System.Code"] ?? system["ASTM.Code"];
 
   return (
     <button
@@ -35,9 +35,9 @@ function SystemPill({ system, isSelected, onToggle }) {
 
       <span className="leading-snug">{sanitizeName(name)}</span>
 
-      {system.ASTMSystemCode && (
-        <span className="text-xs text-warm-brown/70 shrink-0 font-mono">
-          {system.ASTMSystemCode}
+      {code && (
+        <span className="text-xs text-warm-brown shrink-0 font-mono">
+          {code}
         </span>
       )}
     </button>

@@ -32,8 +32,8 @@ describe("ReportCard tests", () => {
   it("shows selected system count in checklist", async () => {
     const { store } = renderWithProviders(<ReportCard />);
     await act(async () => {
-      store.dispatch(addSelectedSystem("sys-1"));
-      store.dispatch(addSelectedSystem("sys-2"));
+      store.dispatch(addSelectedSystem({ "ASTM.System.Code": "sys-1" }));
+      store.dispatch(addSelectedSystem({ "ASTM.System.Code": "sys-2" }));
     });
     expect(screen.getByText(/2 systems/)).toBeInTheDocument();
   });

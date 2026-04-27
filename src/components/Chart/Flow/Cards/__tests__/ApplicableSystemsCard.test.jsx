@@ -8,22 +8,22 @@ const mockSystems = [
   {
     "Services": "Mechanical",
     "Classification": "Heating",
+    "ASTM.Code": "D3010",
     "ASTM.Name": "Boiler",
-    "ASTM.System.Name": "Hot Water Boiler",
     "ASTM.System.Code": "HW-01",
   },
   {
     "Services": "Mechanical",
     "Classification": "Heating",
-    "ASTM.Name": "Boiler",
-    "ASTM.System.Name": "Steam Boiler",
+    "ASTM.Code": "D3010",
+    "ASTM.Name": "Furnace",
     "ASTM.System.Code": "ST-01",
   },
   {
     "Services": "Electrical",
     "Classification": "Lighting",
+    "ASTM.Code": "D5020",
     "ASTM.Name": "LED",
-    "ASTM.System.Name": "LED Panel",
     "ASTM.System.Code": "LP-01",
   },
 ];
@@ -51,7 +51,7 @@ describe("ApplicableSystemsCard tests", () => {
     setupFetch();
     renderWithProviders(<ApplicableSystemsCard />);
     await screen.findByText("Applicable Systems");
-    expect(screen.getByText("Hot Water Boiler")).toBeInTheDocument();
+    expect(screen.getByText("Boiler")).toBeInTheDocument();
   });
 
   it("renders service tabs for each unique service", async () => {
@@ -68,15 +68,15 @@ describe("ApplicableSystemsCard tests", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Electrical" }));
 
-    expect(screen.getByText("LED Panel")).toBeInTheDocument();
+    expect(screen.getByText("LED")).toBeInTheDocument();
   });
 
   it("toggles a system selection", async () => {
     setupFetch();
     const { store } = renderWithProviders(<ApplicableSystemsCard />);
-    await screen.findByText("Hot Water Boiler");
+    await screen.findByText("Boiler");
 
-    await userEvent.click(screen.getByRole("button", { name: /Hot Water Boiler/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
 
     const selected = store.getState().report.selectedSystems;
     expect(selected.length).toBe(1);
@@ -85,21 +85,21 @@ describe("ApplicableSystemsCard tests", () => {
   it("deselects a system when toggled again", async () => {
     setupFetch();
     const { store } = renderWithProviders(<ApplicableSystemsCard />);
-    await screen.findByText("Hot Water Boiler");
+    await screen.findByText("Boiler");
 
-    await userEvent.click(screen.getByRole("button", { name: /Hot Water Boiler/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
     expect(store.getState().report.selectedSystems.length).toBe(1);
 
-    await userEvent.click(screen.getByRole("button", { name: /Hot Water Boiler/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
     expect(store.getState().report.selectedSystems.length).toBe(0);
   });
 
   it("clears all selections with the clear all button", async () => {
     setupFetch();
     const { store } = renderWithProviders(<ApplicableSystemsCard />);
-    await screen.findByText("Hot Water Boiler");
+    await screen.findByText("Boiler");
 
-    await userEvent.click(screen.getByRole("button", { name: /Hot Water Boiler/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
     await screen.findByText(/Clear all/);
     await userEvent.click(screen.getByText(/Clear all/));
 
@@ -109,9 +109,9 @@ describe("ApplicableSystemsCard tests", () => {
   it("clears selections by classification", async () => {
     setupFetch();
     const { store } = renderWithProviders(<ApplicableSystemsCard />);
-    await screen.findByText("Hot Water Boiler");
+    await screen.findByText("Boiler");
 
-    await userEvent.click(screen.getByRole("button", { name: /Hot Water Boiler/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
     await screen.findByRole("button", { name: /Clear 1/ });
     await userEvent.click(screen.getByRole("button", { name: /Clear 1/ }));
 
@@ -134,7 +134,24 @@ describe("ApplicableSystemsCard tests", () => {
     ];
     setupFetch(withDuplicate);
     renderWithProviders(<ApplicableSystemsCard />);
-    await screen.findByText("Hot Water Boiler");
-    expect(screen.getAllByText("Hot Water Boiler").length).toBe(1);
+    await screen.findByText("Boiler");
+    // mock has two distinct mechanical systems ("Boiler" and "Furnace") plus
+    // one duplicate of Boiler — after dedupe, only one Boiler pill renders
+    expect(screen.getAllByText("Boiler").length).toBe(1);
+  });
+
+  it("stores the full system record in redux on selection", async () => {
+    setupFetch();
+    const { store } = renderWithProviders(<ApplicableSystemsCard />);
+    await screen.findByText("Boiler");
+
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
+
+    const [stored] = store.getState().report.selectedSystems;
+    expect(stored).toMatchObject({
+      "ASTM.System.Code": "HW-01",
+      "ASTM.Name": "Boiler",
+      Services: "Mechanical",
+    });
   });
 });

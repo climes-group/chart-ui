@@ -57,21 +57,35 @@ describe("reportReducer", () => {
   });
 
   describe("selectedSystems", () => {
+    const sys1 = {
+      Services: "Structure",
+      Classification: "Substructure",
+      "ASTM.Code": "A10",
+      "ASTM.Name": "Foundation",
+      "ASTM.System.Code": "A101001",
+    };
+    const sys2 = {
+      Services: "Structure",
+      Classification: "Superstructure",
+      "ASTM.Code": "B1020",
+      "ASTM.Name": "Roof",
+    };
+
     it("adds a system", () => {
-      const state = reducer(initialState, addSelectedSystem("sys-1"));
-      expect(state.selectedSystems).toContain("sys-1");
+      const state = reducer(initialState, addSelectedSystem(sys1));
+      expect(state.selectedSystems).toEqual([sys1]);
     });
 
     it("does not add duplicate systems", () => {
-      const s1 = reducer(initialState, addSelectedSystem("sys-1"));
-      const s2 = reducer(s1, addSelectedSystem("sys-1"));
-      expect(s2.selectedSystems.filter((s) => s === "sys-1")).toHaveLength(1);
+      const s1 = reducer(initialState, addSelectedSystem(sys1));
+      const s2 = reducer(s1, addSelectedSystem(sys1));
+      expect(s2.selectedSystems).toHaveLength(1);
     });
 
-    it("removes a system", () => {
-      const s1 = reducer(initialState, addSelectedSystem("sys-1"));
-      const s2 = reducer(s1, removeSelectedSystem("sys-1"));
-      expect(s2.selectedSystems).not.toContain("sys-1");
+    it("removes a system by code", () => {
+      const s1 = reducer(initialState, addSelectedSystem(sys1));
+      const s2 = reducer(s1, removeSelectedSystem("A101001"));
+      expect(s2.selectedSystems).toEqual([]);
     });
 
     it("removing a non-existent system is a no-op", () => {
@@ -80,10 +94,21 @@ describe("reportReducer", () => {
     });
 
     it("clears all selected systems", () => {
-      const s1 = reducer(initialState, addSelectedSystem("sys-1"));
-      const s2 = reducer(s1, addSelectedSystem("sys-2"));
+      const s1 = reducer(initialState, addSelectedSystem(sys1));
+      const s2 = reducer(s1, addSelectedSystem(sys2));
       const s3 = reducer(s2, clearSelectedSystems());
       expect(s3.selectedSystems).toEqual([]);
+    });
+
+    it("falls back to ASTM.Code when ASTM.System.Code is missing", () => {
+      const s1 = reducer(initialState, addSelectedSystem(sys2));
+      const s2 = reducer(s1, removeSelectedSystem("B1020"));
+      expect(s2.selectedSystems).toEqual([]);
+    });
+
+    it("ignores systems without a usable code", () => {
+      const state = reducer(initialState, addSelectedSystem({ Services: "X" }));
+      expect(state.selectedSystems).toEqual([]);
     });
   });
 

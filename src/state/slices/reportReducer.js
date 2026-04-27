@@ -1,11 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export function selectedSystemCode(system) {
+  if (!system) return undefined;
+  return system["ASTM.System.Code"] || system["ASTM.Code"];
+}
+
 const initialState = {
   reportData: null,
   reportStatus: "not_generated", // can be 'not_generated', 'generating', 'generated'
   reportGenAt: null,
   reportGenTime: null,
-  selectedSystems: [], // Array of selected system identifiers
+  selectedSystems: [], // Array of selected system records (raw API shape)
   intakeForm: {
     // Project Information
     building_permit: "",
@@ -59,14 +64,19 @@ export const reportSlice = createSlice({
       state.reportGenTime = action.payload;
     },
     addSelectedSystem: (state, action) => {
-      state.selectedSystems = [
-        ...new Set([...state.selectedSystems, action.payload]),
-      ];
+      const system = action.payload;
+      const code = selectedSystemCode(system);
+      if (!code) return;
+      const exists = state.selectedSystems.some(
+        (s) => selectedSystemCode(s) === code,
+      );
+      if (!exists) state.selectedSystems.push(system);
     },
     removeSelectedSystem: (state, action) => {
-      const newSet = new Set(state.selectedSystems);
-      newSet.delete(action.payload);
-      state.selectedSystems = [...newSet];
+      const code = action.payload;
+      state.selectedSystems = state.selectedSystems.filter(
+        (s) => selectedSystemCode(s) !== code,
+      );
     },
     clearSelectedSystems: (state) => {
       state.selectedSystems = [];
