@@ -7,6 +7,7 @@ export function selectedSystemCode(system) {
 
 const initialState = {
   reportData: null,
+  reportDebugData: null,
   reportStatus: "not_generated", // can be 'not_generated', 'generating', 'generated'
   reportGenAt: null,
   reportGenTime: null,
@@ -53,6 +54,9 @@ export const reportSlice = createSlice({
   reducers: {
     setReportData: (state, action) => {
       state.reportData = action.payload;
+    },
+    setReportDebugData: (state, action) => {
+      state.reportDebugData = action.payload;
     },
     setReportStatus: (state, action) => {
       state.reportStatus = action.payload;
@@ -104,6 +108,7 @@ export const reportSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   setReportData,
+  setReportDebugData,
   setReportStatus,
   setReportGenAt,
   setReportGenTime,

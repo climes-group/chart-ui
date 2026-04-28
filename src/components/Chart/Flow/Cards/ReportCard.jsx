@@ -1,12 +1,14 @@
 import {
   selectedSystemCode,
   setReportData,
+  setReportDebugData,
   setReportGenAt,
   setReportGenTime,
   setReportStatus,
 } from "@/state/slices/reportReducer";
 import { Button } from "@/components/ui/button";
 import {
+  Bug,
   CheckCircle2,
   Circle,
   Download,
@@ -15,7 +17,10 @@ import {
   RefreshCw,
   XCircle,
 } from "lucide-react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useDebugMode } from "@/context/TestModeContext";
+import DebugDataModal from "./DebugDataModal";
 
 const openPdfInNewWindow = async (result) => {
   const byteCharacters = atob(result);
@@ -63,11 +68,14 @@ export default function ReportCard() {
   const selectedSystems = useSelector((state) => state.report.selectedSystems);
   const intakeForm = useSelector((state) => state.report.intakeForm);
   const reportData = useSelector((state) => state.report.reportData);
+  const reportDebugData = useSelector((state) => state.report.reportDebugData);
   const { reportStatus, reportGenAt, reportGenTime } = useSelector(
     (s) => s.report,
   );
   const token = useSelector((s) => s.user.token);
   const dispatch = useDispatch();
+  const isDebugMode = useDebugMode();
+  const [showDebug, setShowDebug] = useState(false);
 
   async function handleGenerateReport() {
     dispatch(setReportStatus("generating"));
@@ -88,6 +96,7 @@ export default function ReportCard() {
               .map(selectedSystemCode)
               .filter(Boolean),
             intakeForm: intakeForm ?? {},
+            ...(isDebugMode && { debug: true }),
           }),
         },
       );
@@ -97,6 +106,7 @@ export default function ReportCard() {
         dispatch(setReportGenAt(new Date().toLocaleTimeString()));
         dispatch(setReportGenTime(Date.now() - startTime));
         dispatch(setReportData(responseData.data));
+        dispatch(setReportDebugData(responseData.debugData ?? null));
         dispatch(setReportStatus("generated"));
       } else {
         dispatch(setReportStatus("error"));
@@ -112,6 +122,8 @@ export default function ReportCard() {
     dispatch(setReportGenAt(null));
     dispatch(setReportGenTime(null));
     dispatch(setReportData(null));
+    dispatch(setReportDebugData(null));
+    setShowDebug(false);
   }
 
   const isGenerating = reportStatus === "generating";
@@ -246,7 +258,7 @@ export default function ReportCard() {
             </div>
 
             {/* Download action */}
-            <div className="pt-3 border-t border-primary/20">
+            <div className="pt-3 border-t border-primary/20 flex items-center gap-3 flex-wrap">
               <Button
                 onClick={() => openPdfInNewWindow(reportData)}
                 className="px-5"
@@ -254,10 +266,28 @@ export default function ReportCard() {
                 <Download />
                 Download PDF
               </Button>
+
+              {isDebugMode && reportDebugData && (
+                <Button
+                  variant="link"
+                  onClick={() => setShowDebug(true)}
+                  className="text-warm-brown hover:text-warm-brown/80 underline decoration-warm-gold/60 decoration-dashed underline-offset-4"
+                >
+                  <Bug />
+                  View debug data
+                </Button>
+              )}
             </div>
           </div>
         )}
       </div>
+
+      {showDebug && reportDebugData && (
+        <DebugDataModal
+          data={reportDebugData}
+          onClose={() => setShowDebug(false)}
+        />
+      )}
     </>
   );
 }
