@@ -1,11 +1,11 @@
-import ApplicableSystemsCard from "./Cards/ApplicableSystemsCard";
 import IntakeCard from "./Cards/IntakeCard";
 import ReportCard from "./Cards/ReportCard";
+import SelectedSystemsCard from "./Cards/SelectedSystemsCard";
 import SummaryCard from "./Cards/SummaryCard";
 
 const STEP_CARDS = {
   intake: IntakeCard,
-  applicableSystems: ApplicableSystemsCard,
+  selectedSystems: SelectedSystemsCard,
   summary: SummaryCard,
   report: ReportCard,
 };

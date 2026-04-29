@@ -6,10 +6,10 @@ const steps = [
     errorMessage: "Please complete the intake form.",
   },
   {
-    name: "applicableSystems",
+    name: "selectedSystems",
     label: "Inventory",
     leaveCondition: true,
-    errorMessage: "Please select at least one applicable system.",
+    errorMessage: "Please select at least one system.",
   },
   { name: "summary", label: "Summary" },
   { name: "report", label: "Report" },

@@ -8,14 +8,14 @@ function sanitizeName(name) {
 
 /** Compact toggleable pill for a single building system. */
 function SystemPill({ system, isSelected, onToggle }) {
-  const name = system["ASTM.Name"] ?? system["Classification"];
+  const name = system["ASTM.System.Name"];
   const code = system["ASTM.System.Code"] ?? system["ASTM.Code"];
 
   return (
     <button
       onClick={onToggle}
       className={cn(
-        "inline-flex items-center gap-2 px-3 py-1.5 rounded-md border text-sm transition-all select-none text-left",
+        "inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-left text-sm transition-all select-none",
         isSelected
           ? "border-primary bg-primary/5 text-primary font-medium"
           : "border-border text-foreground hover:border-golden-accent/50 hover:bg-warm-gold/10",
@@ -24,19 +24,21 @@ function SystemPill({ system, isSelected, onToggle }) {
       {/* Checkbox indicator */}
       <span
         className={cn(
-          "size-4 rounded-sm border-[1.5px] flex items-center justify-center shrink-0 transition-colors",
+          "flex size-4 shrink-0 items-center justify-center rounded-sm border-[1.5px] transition-colors",
           isSelected
             ? "bg-primary border-primary"
             : "border-muted-foreground/30",
         )}
       >
-        {isSelected && <Check className="size-2.5 text-white" strokeWidth={3} />}
+        {isSelected && (
+          <Check className="size-2.5 text-white" strokeWidth={3} />
+        )}
       </span>
 
       <span className="leading-snug">{sanitizeName(name)}</span>
 
       {code && (
-        <span className="text-xs text-warm-brown shrink-0 font-mono">
+        <span className="text-warm-brown shrink-0 font-mono text-xs">
           {code}
         </span>
       )}
