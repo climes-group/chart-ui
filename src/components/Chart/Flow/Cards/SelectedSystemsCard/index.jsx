@@ -30,7 +30,7 @@ function dedupeSystems(systems) {
   return unique;
 }
 
-export default function ApplicableSystemsCard({ activeStep }) {
+export default function SelectedSystemsCard({ activeStep }) {
   const [availableSystems, setAvailableSystems] = useState(null);
   const [activeService, setActiveService] = useState(null);
   const [error, setError] = useState(null);
