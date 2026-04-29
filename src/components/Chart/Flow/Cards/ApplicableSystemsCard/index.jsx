@@ -93,7 +93,7 @@ export default function ApplicableSystemsCard({ activeStep }) {
   if (error)
     return (
       <div>
-        <h2 className="heading-card mb-2">Applicable Systems</h2>
+        <h2 className="heading-card mb-2">Selected Systems</h2>
         <p className="text-destructive text-sm">
           Error loading systems: {error}
         </p>
@@ -163,7 +163,7 @@ export default function ApplicableSystemsCard({ activeStep }) {
     <div>
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="heading-card">Applicable Systems</h2>
+        <h2 className="heading-card">Selected Systems</h2>
         {selectedSystems.length > 0 && (
           <button
             onClick={clearAllSelections}

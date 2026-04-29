@@ -1,27 +1,27 @@
 import { renderWithProviders } from "@/utils/testing";
-import { screen, waitFor } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, vi } from "vitest";
 import ApplicableSystemsCard from "../ApplicableSystemsCard";
 
 const mockSystems = [
   {
-    "Services": "Mechanical",
-    "Classification": "Heating",
+    Services: "Mechanical",
+    Classification: "Heating",
     "ASTM.Code": "D3010",
     "ASTM.Name": "Boiler",
     "ASTM.System.Code": "HW-01",
   },
   {
-    "Services": "Mechanical",
-    "Classification": "Heating",
+    Services: "Mechanical",
+    Classification: "Heating",
     "ASTM.Code": "D3010",
     "ASTM.Name": "Furnace",
     "ASTM.System.Code": "ST-01",
   },
   {
-    "Services": "Electrical",
-    "Classification": "Lighting",
+    Services: "Electrical",
+    Classification: "Lighting",
     "ASTM.Code": "D5020",
     "ASTM.Name": "LED",
     "ASTM.System.Code": "LP-01",
@@ -42,15 +42,21 @@ describe("ApplicableSystemsCard tests", () => {
   it("renders loading skeleton before data arrives", () => {
     global.fetch = vi.fn(() => new Promise(() => {})); // never resolves
     const { container } = renderWithProviders(<ApplicableSystemsCard />);
-    expect(container.querySelectorAll(".animate-pulse, [class*='skeleton'], [data-slot='skeleton']").length).toBeGreaterThanOrEqual(0);
+    expect(
+      container.querySelectorAll(
+        ".animate-pulse, [class*='skeleton'], [data-slot='skeleton']",
+      ).length,
+    ).toBeGreaterThanOrEqual(0);
     // loading state: no heading yet
-    expect(screen.queryByRole("heading", { name: "Applicable Systems" })).toBeNull();
+    expect(
+      screen.queryByRole("heading", { name: "Selected Systems" }),
+    ).toBeNull();
   });
 
   it("renders systems after data loads", async () => {
     setupFetch();
     renderWithProviders(<ApplicableSystemsCard />);
-    await screen.findByText("Applicable Systems");
+    await screen.findByText("Selected Systems");
     expect(screen.getByText("Boiler")).toBeInTheDocument();
   });
 
