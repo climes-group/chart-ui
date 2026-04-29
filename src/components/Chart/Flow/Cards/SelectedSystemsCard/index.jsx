@@ -156,7 +156,7 @@ export default function SelectedSystemsCard({ activeStep }) {
     : [];
 
   const classificationsForService = [
-    ...new Set(systemsForService.map((s) => s.Classification)),
+    ...new Set(systemsForService.map((s) => s["ASTM.Name"])),
   ];
 
   return (
@@ -213,23 +213,23 @@ export default function SelectedSystemsCard({ activeStep }) {
 
       {/* Systems grouped by Classification */}
       <div className="space-y-5">
-        {classificationsForService.map((classification) => {
+        {classificationsForService.map((astmName) => {
           const systemsInClass = systemsForService.filter(
-            (s) => s.Classification === classification,
+            (s) => s["ASTM.Name"] === astmName,
           );
           const selectedCount = systemsInClass.filter((s) =>
             selectedCodes.has(selectedSystemCode(s)),
           ).length;
 
           return (
-            <div key={classification}>
+            <div key={astmName}>
               <div className="mb-2 flex items-center justify-between">
                 <h3 className="text-teal-deep text-xs font-semibold tracking-wide uppercase">
-                  {sanitizeName(classification)}
+                  {sanitizeName(astmName)}
                 </h3>
                 {selectedCount > 0 && (
                   <button
-                    onClick={clearForClassification(classification)}
+                    onClick={clearForClassification(astmName)}
                     className="text-muted-foreground hover:text-destructive text-xs transition-colors"
                   >
                     Clear {selectedCount}
