@@ -45,6 +45,8 @@ const initialState = {
     builder_phone: "",
     ea_signature_date: "",
     builder_signature_date: "",
+    ea_signature: "",
+    builder_signature: "",
   },
 };
 

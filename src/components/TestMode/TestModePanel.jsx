@@ -34,6 +34,10 @@ const TEST_INTAKE = {
   builder_phone: "604-555-0200",
   ea_signature_date: "2024-01-20",
   builder_signature_date: "2024-01-20",
+  ea_signature:
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkAAIAAAoAAv/lxKUAAAAASUVORK5CYII=",
+  builder_signature:
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkAAIAAAoAAv/lxKUAAAAASUVORK5CYII=",
 };
 
 const TEST_GEO = { lat: 49.2827, lng: -123.1207 };
