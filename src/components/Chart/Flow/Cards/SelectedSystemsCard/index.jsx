@@ -123,7 +123,7 @@ export default function SelectedSystemsCard({ activeStep }) {
       const data = await response.json();
       const unique = dedupeSiteFeatures(data);
       setSiteFeatures(unique);
-      setActiveSiteFeature(unique[0]?.Services ?? null);
+      setActiveSiteFeature(unique[0]?.Category ?? null);
     } catch (err) {
       setError(err.message);
     }
@@ -220,11 +220,11 @@ export default function SelectedSystemsCard({ activeStep }) {
   ];
 
   const siteFeaturesGroupingLevel1 = [
-    ...new Set(siteFeatures.map((s) => s.Services)),
+    ...new Set(siteFeatures.map((s) => s.Category)),
   ].sort();
 
-  const featuresForService = activeSiteFeature
-    ? siteFeatures.filter((s) => s.Services === activeSiteFeature)
+  const featuresForCategory = activeSiteFeature
+    ? siteFeatures.filter((s) => s.Category === activeSiteFeature)
     : [];
 
   return (
@@ -341,28 +341,30 @@ export default function SelectedSystemsCard({ activeStep }) {
 
       {/* Site Features tabs */}
       <div className="border-golden-accent/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
-        {siteFeaturesGroupingLevel1?.map((siteFeatureService) => {
+        {siteFeaturesGroupingLevel1?.map((siteFeatureCategory) => {
           const selectedCount = siteFeatures
-            .filter((s) => s.Services === siteFeatureService)
-            .filter((s) => selectedSystemCodes.has(getSystemCodeFor(s))).length;
+            .filter((f) => f.Category === siteFeatureCategory)
+            .filter((f) =>
+              selectedFeatureCodes.has(getFeatureKeyFor(f)),
+            ).length;
 
           return (
             <button
-              key={siteFeatureService}
-              onClick={() => setActiveSiteFeature(siteFeatureService)}
+              key={siteFeatureCategory}
+              onClick={() => setActiveSiteFeature(siteFeatureCategory)}
               className={cn(
                 "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors",
-                activeSiteFeature === siteFeatureService
+                activeSiteFeature === siteFeatureCategory
                   ? "bg-primary text-primary-foreground border-primary"
                   : "text-muted-foreground border-border hover:text-foreground hover:border-golden-accent/60 bg-transparent",
               )}
             >
-              {sanitizeName(siteFeatureService)}
+              {sanitizeName(siteFeatureCategory)}
               {selectedCount > 0 && (
                 <span
                   className={cn(
                     "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1 text-xs font-semibold",
-                    activeSiteFeature === siteFeatureService
+                    activeSiteFeature === siteFeatureCategory
                       ? "bg-background text-primary"
                       : "bg-primary/10 text-primary",
                   )}
@@ -378,7 +380,7 @@ export default function SelectedSystemsCard({ activeStep }) {
       {/* Site Features grouped by Service */}
       <div className="space-y-5">
         <div className="flex flex-wrap gap-2">
-          {featuresForService.map((feature) => {
+          {featuresForCategory.map((feature) => {
             const code = getFeatureKeyFor(feature);
             return (
               <SiteFeaturePill

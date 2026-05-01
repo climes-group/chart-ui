@@ -156,7 +156,7 @@ function SummaryCard() {
   const services = Object.keys(systemsByService).sort();
 
   const featuresByService = validSelectedSiteFeatures.reduce((acc, f) => {
-    const service = f["Services"] || "Other";
+    const service = f["Category"] || "Other";
     if (!acc[service]) acc[service] = [];
     acc[service].push(f);
     return acc;
