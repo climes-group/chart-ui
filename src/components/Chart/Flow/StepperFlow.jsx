@@ -1,5 +1,4 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import useFlow from "@/hooks/useFlow";
 import useMedia from "@/hooks/useMedia";
 import React, { useRef, useState } from "react";
@@ -7,6 +6,7 @@ import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import { DesktopControls, MobileControls, StepperHeader } from "./StepperControls";
 import StepRenderer from "./StepRenderer";
+import FinishCard from "./Cards/FinishCard";
 
 function StepperFlow({ steps = [] }) {
   const errorMessage = useSelector((s) => s.flow.error);
@@ -46,44 +46,38 @@ function StepperFlow({ steps = [] }) {
       <div className="flex flex-col min-h-[calc(100vh-18rem)] md:min-h-[calc(100vh-24rem)] justify-between">
         <CardContent className="p-4 md:p-8 md:pt-6 flex flex-col flex-grow">
           {!currentStep ? (
-            <div className="mt-4 mb-2">
-              <p className="text-foreground mb-4">
-                All steps completed — you&apos;re finished
-              </p>
-              <div className="flex justify-end">
-                <Button onClick={reset} variant="outline">
-                  Reset
-                </Button>
-              </div>
-            </div>
+            <FinishCard
+              onReset={reset}
+              onBackToReport={() => jumpTo("report")}
+            />
           ) : (
-            <React.Fragment>
-              <div className="flex-grow relative">
-                <Routes>
-                  {steps.map((step) => (
-                    <Route
-                      exact
-                      key={`route-${step.name}`}
-                      path={`/${step.name}`}
-                      element={<StepRenderer step={step} registerNext={registerNext} nav={nav} />}
-                    />
-                  ))}
+            <div className="flex-grow relative">
+              <Routes>
+                {steps.map((step) => (
                   <Route
-                    path="/*"
-                    element={<StepRenderer step={steps[0]} registerNext={registerNext} />}
+                    exact
+                    key={`route-${step.name}`}
+                    path={`/${step.name}`}
+                    element={<StepRenderer step={step} registerNext={registerNext} nav={nav} />}
                   />
-                </Routes>
-              </div>
-            </React.Fragment>
+                ))}
+                <Route
+                  path="/*"
+                  element={<StepRenderer step={steps[0]} registerNext={registerNext} />}
+                />
+              </Routes>
+            </div>
           )}
         </CardContent>
 
-        <CardFooter>
-          {isSmallDevice
-            ? <MobileControls currentStep={currentStep} steps={steps} errorMessage={errorMessage} onBack={back} onNext={handleNext} />
-            : <DesktopControls currentStep={currentStep} errorMessage={errorMessage} onBack={back} onNext={handleNext} />
-          }
-        </CardFooter>
+        {currentStep && (
+          <CardFooter>
+            {isSmallDevice
+              ? <MobileControls currentStep={currentStep} steps={steps} errorMessage={errorMessage} onBack={back} onNext={handleNext} />
+              : <DesktopControls currentStep={currentStep} errorMessage={errorMessage} onBack={back} onNext={handleNext} />
+            }
+          </CardFooter>
+        )}
       </div>
     </Card>
   );

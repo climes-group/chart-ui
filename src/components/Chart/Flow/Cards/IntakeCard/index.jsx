@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import {
   selectIntakeForm,
   setIntakeForm,
 } from "@/state/slices/reportReducer";
-import { meetCondition } from "@/state/slices/flowReducer";
+import { meetCondition, setError } from "@/state/slices/flowReducer";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import { useTestMode } from "@/context/TestModeContext";
 import { useForm } from "@tanstack/react-form";
@@ -16,23 +16,32 @@ import BuildingInformationSection from "./BuildingInformationSection";
 import ProjectInformationSection from "./ProjectInformationSection";
 import SignatureSection from "./SignatureSection";
 
-export default function IntakeCard({ registerNext, nav }) {
+export default function IntakeCard({ activeStep, registerNext, nav }) {
   const dispatch = useDispatch();
   const { intakeFillRef } = useTestMode();
+  const submitSucceeded = useRef(false);
   // Use persisted Redux state as default values so autofill (and persistence)
   // are reflected when the form mounts.
   const savedForm = useSelector(selectIntakeForm);
   const form = useForm({
     defaultValues: savedForm,
     onSubmit: async ({ value }) => {
+      submitSucceeded.current = true;
       dispatch(setIntakeForm(value));
       dispatch(meetCondition({ name: "intake" }));
-      nav();
     },
   });
 
   useEffect(() => {
-    registerNext(() => form.handleSubmit());
+    registerNext(async () => {
+      submitSucceeded.current = false;
+      await form.handleSubmit();
+      if (submitSucceeded.current) {
+        nav();
+      } else {
+        dispatch(setError(activeStep?.errorMessage ?? "Please complete the intake form."));
+      }
+    });
     // Register a live field-setter so TestModePanel can autofill the mounted form
     if (intakeFillRef) {
       intakeFillRef.current = (data) => {
@@ -64,6 +73,7 @@ export default function IntakeCard({ registerNext, nav }) {
             dispatch(setGeoData(undefined));
             dispatch(setHumanAddress(undefined));
             dispatch(meetCondition({ name: "intake", condition: false }));
+            dispatch(setError(null));
           }}
         >
           Clear

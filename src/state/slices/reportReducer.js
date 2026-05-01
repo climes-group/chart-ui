@@ -128,6 +128,13 @@ export const reportSlice = createSlice({
     clearIntakeForm: (state) => {
       state.intakeForm = initialState.intakeForm;
     },
+    resetReport: (state) => {
+      state.reportData = null;
+      state.reportDebugData = null;
+      state.reportStatus = "not_generated";
+      state.reportGenAt = null;
+      state.reportGenTime = null;
+    },
   },
 });
 
@@ -147,6 +154,7 @@ export const {
   setIntakeField,
   setIntakeForm,
   clearIntakeForm,
+  resetReport,
 } = reportSlice.actions;
 
 export const selectIntakeForm = (state) => state.report.intakeForm;
