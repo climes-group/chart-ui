@@ -1,12 +1,13 @@
+import { Button } from "@/components/ui/button";
+import { useDebugMode } from "@/context/TestModeContext";
 import {
-  selectedSystemCode,
+  getSystemCodeFor,
   setReportData,
   setReportDebugData,
   setReportGenAt,
   setReportGenTime,
   setReportStatus,
 } from "@/state/slices/reportReducer";
-import { Button } from "@/components/ui/button";
 import {
   Bug,
   CheckCircle2,
@@ -19,7 +20,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useDebugMode } from "@/context/TestModeContext";
 import DebugDataModal from "./DebugDataModal";
 
 const openPdfInNewWindow = async (result) => {
@@ -44,16 +44,16 @@ function PreflightItem({ label, detail, ok }) {
   return (
     <div className="flex items-start gap-2.5 text-sm">
       {ok ? (
-        <CheckCircle2 className="size-4 shrink-0 mt-0.5 text-primary" />
+        <CheckCircle2 className="text-primary mt-0.5 size-4 shrink-0" />
       ) : (
-        <Circle className="size-4 shrink-0 mt-0.5 text-muted-foreground/35" />
+        <Circle className="text-muted-foreground/35 mt-0.5 size-4 shrink-0" />
       )}
       <div>
         <span className={ok ? "text-foreground" : "text-muted-foreground"}>
           {label}
         </span>
         {detail && (
-          <span className="ml-1.5 text-xs text-muted-foreground">
+          <span className="text-muted-foreground ml-1.5 text-xs">
             — {detail}
           </span>
         )}
@@ -93,7 +93,7 @@ export default function ReportCard() {
           body: JSON.stringify({
             geo: { lat: geoData.lat, lon: geoData.lng },
             systems: (selectedSystems ?? [])
-              .map(selectedSystemCode)
+              .map(getSystemCodeFor)
               .filter(Boolean),
             intakeForm: intakeForm ?? {},
             ...(isDebugMode && { debug: true }),
@@ -143,11 +143,11 @@ export default function ReportCard() {
 
       <div className="flex flex-col gap-5">
         {/* Primary action row */}
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex flex-wrap items-center gap-3">
           <Button
             onClick={handleGenerateReport}
             disabled={isGenerated || isGenerating}
-            className="disabled:opacity-60 px-5"
+            className="px-5 disabled:opacity-60"
           >
             {isGenerating ? (
               <>
@@ -178,12 +178,13 @@ export default function ReportCard() {
         {reportStatus === "not_generated" && (
           <div className="space-y-4">
             <p className="body-muted">
-              Generate a PDF report based on the selected systems and building location.
+              Generate a PDF report based on the selected systems and building
+              location.
             </p>
 
             {/* Pre-flight checklist */}
-            <div className="rounded-lg border border-warm-gold/40 bg-warm-gold/10 p-4 space-y-2.5">
-              <p className="text-xs font-semibold text-warm-brown uppercase tracking-wide mb-3">
+            <div className="border-warm-gold/40 bg-warm-gold/10 space-y-2.5 rounded-lg border p-4">
+              <p className="text-warm-brown mb-3 text-xs font-semibold tracking-wide uppercase">
                 Checklist
               </p>
               <PreflightItem
@@ -210,17 +211,17 @@ export default function ReportCard() {
         )}
 
         {isGenerating && (
-          <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
-            <Loader2 className="size-4 shrink-0 animate-spin text-primary" />
+          <div className="border-border bg-muted/20 text-muted-foreground flex items-center gap-3 rounded-lg border px-4 py-3 text-sm">
+            <Loader2 className="text-primary size-4 shrink-0 animate-spin" />
             <span>Building your report, this may take a moment…</span>
           </div>
         )}
 
         {isError && (
-          <div className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
-            <XCircle className="mt-0.5 size-5 shrink-0 text-destructive" />
+          <div className="border-destructive/30 bg-destructive/5 flex items-start gap-3 rounded-lg border p-4">
+            <XCircle className="text-destructive mt-0.5 size-5 shrink-0" />
             <div className="flex flex-col gap-2">
-              <p className="text-sm font-medium text-destructive">
+              <p className="text-destructive text-sm font-medium">
                 Report generation failed
               </p>
               <p className="body-muted">
@@ -240,14 +241,14 @@ export default function ReportCard() {
         )}
 
         {isGenerated && (
-          <div className="rounded-lg border border-primary/20 bg-primary/5 p-5 space-y-4">
+          <div className="border-primary/20 bg-primary/5 space-y-4 rounded-lg border p-5">
             {/* Report header */}
-            <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="size-5 shrink-0 text-primary" />
+                <CheckCircle2 className="text-primary size-5 shrink-0" />
                 <span className="text-sm font-semibold">Report ready</span>
               </div>
-              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <div className="text-muted-foreground flex items-center gap-3 text-xs">
                 {reportGenAt && <span>Generated at {reportGenAt}</span>}
                 {reportGenTime && (
                   <span className="text-muted-foreground/60">
@@ -258,7 +259,7 @@ export default function ReportCard() {
             </div>
 
             {/* Download action */}
-            <div className="pt-3 border-t border-primary/20 flex items-center gap-3 flex-wrap">
+            <div className="border-primary/20 flex flex-wrap items-center gap-3 border-t pt-3">
               <Button
                 onClick={() => openPdfInNewWindow(reportData)}
                 className="px-5"
@@ -271,7 +272,7 @@ export default function ReportCard() {
                 <Button
                   variant="link"
                   onClick={() => setShowDebug(true)}
-                  className="text-warm-brown hover:text-warm-brown/80 underline decoration-warm-gold/60 decoration-dashed underline-offset-4"
+                  className="text-warm-brown hover:text-warm-brown/80 decoration-warm-gold/60 underline decoration-dashed underline-offset-4"
                 >
                   <Bug />
                   View debug data

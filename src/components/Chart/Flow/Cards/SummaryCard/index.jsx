@@ -2,7 +2,10 @@ import { MapPin, Pencil } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import { selectedSystemCode } from "@/state/slices/reportReducer";
+import {
+  getFeatureKeyFor,
+  getSystemCodeFor,
+} from "@/state/slices/reportReducer";
 import { formatLatLong } from "./utils";
 
 function sanitizeName(name) {
@@ -12,6 +15,10 @@ function sanitizeName(name) {
 
 function getSystemDisplayName(system) {
   return system["ASTM.Name"] || system["Classification"];
+}
+
+function getSiteFeatureDisplayName(feature) {
+  return feature["Site.Feature.Name"] || feature["Classification"];
 }
 
 function SectionHeader({ title, editTo, editLabel }) {
@@ -120,6 +127,9 @@ function ProjectInformation({ intake }) {
 
 function SummaryCard() {
   const selectedSystems = useSelector((state) => state.report.selectedSystems);
+  const selectedSiteFeatures = useSelector(
+    (state) => state.report.selectedSiteFeatures,
+  );
   const { geoData, humanAddress } = useSelector((state) => state.geo);
   const intakeForm = useSelector((state) => state.report.intakeForm);
 
@@ -130,7 +140,11 @@ function SummaryCard() {
     );
 
   const validSelectedSystems = (selectedSystems || []).filter(
-    (s) => s && typeof s === "object" && selectedSystemCode(s),
+    (s) => s && typeof s === "object" && getSystemCodeFor(s),
+  );
+
+  const validSelectedSiteFeatures = (selectedSiteFeatures || []).filter(
+    (f) => f && typeof f === "object" && getFeatureKeyFor(f),
   );
 
   const systemsByService = validSelectedSystems.reduce((acc, s) => {
@@ -140,6 +154,14 @@ function SummaryCard() {
     return acc;
   }, {});
   const services = Object.keys(systemsByService).sort();
+
+  const featuresByService = validSelectedSiteFeatures.reduce((acc, f) => {
+    const service = f["Services"] || "Other";
+    if (!acc[service]) acc[service] = [];
+    acc[service].push(f);
+    return acc;
+  }, {});
+  const featureServices = Object.keys(featuresByService).sort();
 
   return (
     <div className="space-y-4">
@@ -191,7 +213,7 @@ function SummaryCard() {
               ? `Selected Systems (${validSelectedSystems.length})`
               : "Selected Systems"
           }
-          editTo="/flow/applicableSystems"
+          editTo="/flow/selectedSystems#systems"
           editLabel="Edit selected systems"
         />
         {validSelectedSystems.length === 0 ? (
@@ -203,11 +225,48 @@ function SummaryCard() {
                 <p className="heading-label mb-2">{sanitizeName(service)}</p>
                 <div className="flex flex-wrap gap-2">
                   {systemsByService[service].map((s) => {
-                    const code = selectedSystemCode(s);
+                    const code = getSystemCodeFor(s);
                     return (
                       <SystemPill
                         key={code}
                         name={sanitizeName(getSystemDisplayName(s))}
+                        code={code}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Selected Site Features */}
+      <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
+        <SectionHeader
+          title={
+            validSelectedSiteFeatures.length > 0
+              ? `Selected Site Features (${validSelectedSiteFeatures.length})`
+              : "Selected Site Features"
+          }
+          editTo="/flow/selectedSystems#site-features"
+          editLabel="Edit selected features"
+        />
+        {validSelectedSiteFeatures.length === 0 ? (
+          <p className="body-muted">No features selected.</p>
+        ) : (
+          <div className="space-y-4">
+            {featureServices.map((service) => (
+              <div key={service}>
+                <p className="heading-label mb-2">{sanitizeName(service)}</p>
+                <div className="flex flex-wrap gap-2">
+                  {featuresByService[service].map((f) => {
+                    const code = getFeatureKeyFor(f);
+
+                    return (
+                      <SystemPill
+                        key={code}
+                        name={sanitizeName(getSiteFeatureDisplayName(f))}
                         code={code}
                       />
                     );

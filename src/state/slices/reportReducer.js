@@ -1,8 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export function selectedSystemCode(system) {
+export function getSystemCodeFor(system) {
   if (!system) return undefined;
   return system["ASTM.System.Code"] || system["ASTM.Code"];
+}
+
+export function getFeatureKeyFor(feature) {
+  if (!feature) return undefined;
+  return feature["ID"];
 }
 
 const initialState = {
@@ -12,6 +17,7 @@ const initialState = {
   reportGenAt: null,
   reportGenTime: null,
   selectedSystems: [], // Array of selected system records (raw API shape)
+  selectedSiteFeatures: [], // Array of selected site feature records (raw API shape)
   intakeForm: {
     // Project Information
     building_permit: "",
@@ -71,21 +77,39 @@ export const reportSlice = createSlice({
     },
     addSelectedSystem: (state, action) => {
       const system = action.payload;
-      const code = selectedSystemCode(system);
+      const code = getSystemCodeFor(system);
       if (!code) return;
       const exists = state.selectedSystems.some(
-        (s) => selectedSystemCode(s) === code,
+        (s) => getSystemCodeFor(s) === code,
       );
       if (!exists) state.selectedSystems.push(system);
+    },
+    addSelectedFeature: (state, action) => {
+      const feature = action.payload;
+      const key = getFeatureKeyFor(feature);
+      if (!key) return;
+      const exists = state.selectedSiteFeatures.some(
+        (f) => getFeatureKeyFor(f) === key,
+      );
+      if (!exists) state.selectedSiteFeatures.push(feature);
     },
     removeSelectedSystem: (state, action) => {
       const code = action.payload;
       state.selectedSystems = state.selectedSystems.filter(
-        (s) => selectedSystemCode(s) !== code,
+        (s) => getSystemCodeFor(s) !== code,
+      );
+    },
+    removeSelectedFeature: (state, action) => {
+      const key = action.payload;
+      state.selectedSiteFeatures = state.selectedSiteFeatures.filter(
+        (f) => getFeatureKeyFor(f) !== key,
       );
     },
     clearSelectedSystems: (state) => {
       state.selectedSystems = [];
+    },
+    clearSelectedFeatures: (state) => {
+      state.selectedSiteFeatures = [];
     },
     setIntakeField: (state, action) => {
       const { key, value } = action.payload || {};
@@ -117,6 +141,9 @@ export const {
   addSelectedSystem,
   removeSelectedSystem,
   clearSelectedSystems,
+  addSelectedFeature,
+  removeSelectedFeature,
+  clearSelectedFeatures,
   setIntakeField,
   setIntakeForm,
   clearIntakeForm,

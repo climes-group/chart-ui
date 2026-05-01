@@ -9,7 +9,8 @@ const mockSystems = [
     Services: "Mechanical",
     Classification: "Heating",
     "ASTM.Code": "D3010",
-    "ASTM.Name": "Boiler",
+    "ASTM.Name": "Tank-style",
+    "ASTM.System.Name": "Boiler",
     "ASTM.System.Code": "HW-01",
   },
   {
@@ -17,21 +18,38 @@ const mockSystems = [
     Classification: "Heating",
     "ASTM.Code": "D3010",
     "ASTM.Name": "Furnace",
+    "ASTM.System.Name": "Furnace",
     "ASTM.System.Code": "ST-01",
   },
   {
     Services: "Electrical",
     Classification: "Lighting",
     "ASTM.Code": "D5020",
-    "ASTM.Name": "LED",
+    "ASTM.Name": "Light Emitting Diode",
+    "ASTM.System.Name": "LED",
     "ASTM.System.Code": "LP-01",
   },
 ];
 
-function setupFetch(data = mockSystems, ok = true) {
-  global.fetch = vi.fn().mockResolvedValue({
-    ok,
-    json: async () => data,
+const mockSiteFeatures = [
+  {
+    Services: "Electronical",
+    Classification: "Lighting",
+    ID: "SF-02",
+    "Site.Feature.Name": "Main Panel",
+  },
+];
+
+function setupFetch(
+  systemsData = mockSystems,
+  siteFeaturesData = mockSiteFeatures,
+  ok = true,
+) {
+  global.fetch = vi.fn().mockImplementation((url) => {
+    if (url.includes("site_features")) {
+      return Promise.resolve({ ok, json: async () => siteFeaturesData });
+    }
+    return Promise.resolve({ ok, json: async () => systemsData });
   });
 }
 
@@ -156,7 +174,7 @@ describe("SelectedSystemsCard tests", () => {
     const [stored] = store.getState().report.selectedSystems;
     expect(stored).toMatchObject({
       "ASTM.System.Code": "HW-01",
-      "ASTM.Name": "Boiler",
+      "ASTM.Name": "Tank-style",
       Services: "Mechanical",
     });
   });
