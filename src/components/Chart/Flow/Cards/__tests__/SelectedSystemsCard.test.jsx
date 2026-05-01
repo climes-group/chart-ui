@@ -67,14 +67,14 @@ describe("SelectedSystemsCard tests", () => {
     ).toBeGreaterThanOrEqual(0);
     // loading state: no heading yet
     expect(
-      screen.queryByRole("heading", { name: "Selected Systems" }),
+      screen.queryByRole("heading", { name: "Systems" }),
     ).toBeNull();
   });
 
   it("renders systems after data loads", async () => {
     setupFetch();
     renderWithProviders(<SelectedSystemsCard />);
-    await screen.findByText("Selected Systems");
+    await screen.findByText("Systems");
     expect(screen.getByText("Boiler")).toBeInTheDocument();
   });
 
