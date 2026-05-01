@@ -4,14 +4,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { meetCondition } from "@/state/slices/flowReducer";
 import {
+  addSelectedFeature,
   addSelectedSystem,
+  clearSelectedFeatures,
   clearSelectedSystems,
+  getFeatureKeyFor,
+  getSystemCodeFor,
+  removeSelectedFeature,
   removeSelectedSystem,
-  selectedSystemCode,
 } from "@/state/slices/reportReducer";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import SystemPill from "./SystemItemCard";
+import SystemPill, { SiteFeaturePill } from "./SystemItemCard";
 
 function sanitizeName(name) {
   if (!name || name === "undefined" || name === "null") return "N/A";
@@ -22,7 +26,7 @@ function dedupeSystems(systems) {
   const seen = new Set();
   const unique = [];
   for (const system of systems) {
-    const key = selectedSystemCode(system);
+    const key = getSystemCodeFor(system);
     if (!key || seen.has(key)) continue;
     seen.add(key);
     unique.push(system);
@@ -30,34 +34,68 @@ function dedupeSystems(systems) {
   return unique;
 }
 
+function dedupeSiteFeatures(features) {
+  const seen = new Set();
+  const unique = [];
+  for (const feature of features) {
+    const key = feature["ID"];
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    unique.push(feature);
+  }
+  return unique;
+}
+
 export default function SelectedSystemsCard({ activeStep }) {
   const [availableSystems, setAvailableSystems] = useState(null);
+  const [siteFeatures, setSiteFeatures] = useState(null);
   const [activeService, setActiveService] = useState(null);
+  const [activeSiteFeature, setActiveSiteFeature] = useState(null);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const selectedSystems = useSelector((state) => state.report.selectedSystems);
+  const selectedSiteFeatures = useSelector(
+    (state) => state.report.selectedSiteFeatures,
+  );
 
-  const selectedCodes = new Set(selectedSystems.map(selectedSystemCode));
+  const selectedSystemCodes = new Set(selectedSystems.map(getSystemCodeFor));
 
   const toggleSystem = (system) => {
-    const code = selectedSystemCode(system);
-    if (selectedCodes.has(code)) {
+    const code = getSystemCodeFor(system);
+    if (selectedSystemCodes.has(code)) {
       dispatch(removeSelectedSystem(code));
     } else {
       dispatch(addSelectedSystem(system));
     }
   };
 
-  const clearAllSelections = () => {
+  const selectedFeatureCodes = new Set(
+    selectedSiteFeatures.map(getFeatureKeyFor),
+  );
+  const toggleFeature = (feature) => {
+    const code = getFeatureKeyFor(feature);
+    if (selectedFeatureCodes.has(code)) {
+      dispatch(removeSelectedFeature(code));
+    } else {
+      dispatch(addSelectedFeature(feature));
+    }
+  };
+
+  const clearAllSystemSelections = () => {
     dispatch(clearSelectedSystems());
+  };
+
+  const clearAllFeatureSelections = () => {
+    dispatch(clearSelectedFeatures());
   };
 
   const clearForClassification = (classification) => () => {
     if (!availableSystems) return;
+
     availableSystems
-      .filter((s) => s.Classification === classification)
-      .map(selectedSystemCode)
-      .filter((code) => selectedCodes.has(code))
+      .filter((s) => s["ASTM.Name"] === classification)
+      .map(getSystemCodeFor)
+      .filter((code) => selectedSystemCodes.has(code))
       .forEach((code) => dispatch(removeSelectedSystem(code)));
   };
 
@@ -76,8 +114,27 @@ export default function SelectedSystemsCard({ activeStep }) {
     }
   });
 
+  const fetchSiteFeatures = useEffectEvent(async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_HOST}/codes/site_features/ref`,
+      );
+      if (!response.ok) throw new Error("Failed to fetch site features");
+      const data = await response.json();
+      const unique = dedupeSiteFeatures(data);
+      setSiteFeatures(unique);
+      setActiveSiteFeature(unique[0]?.Services ?? null);
+    } catch (err) {
+      setError(err.message);
+    }
+  });
+
   useEffect(() => {
     fetchSystems();
+  }, []);
+
+  useEffect(() => {
+    fetchSiteFeatures();
   }, []);
 
   useEffect(() => {
@@ -93,14 +150,16 @@ export default function SelectedSystemsCard({ activeStep }) {
   if (error)
     return (
       <div>
-        <h2 className="heading-card mb-2">Selected Systems</h2>
+        <h2 className="heading-card mb-2" id="selected-systems">
+          Selected Systems
+        </h2>
         <p className="text-destructive text-sm">
           Error loading systems: {error}
         </p>
       </div>
     );
 
-  if (!availableSystems)
+  if (!availableSystems || !siteFeatures)
     return (
       <div className="flex flex-col gap-5">
         {/* Heading */}
@@ -147,7 +206,8 @@ export default function SelectedSystemsCard({ activeStep }) {
       </div>
     );
 
-  const uniqueServices = [
+  // First level grouping by Service for Selected Systems
+  const selectedSystemsGroupingLevel1 = [
     ...new Set(availableSystems.map((s) => s.Services)),
   ].sort();
 
@@ -155,18 +215,26 @@ export default function SelectedSystemsCard({ activeStep }) {
     ? availableSystems.filter((s) => s.Services === activeService)
     : [];
 
-  const classificationsForService = [
+  const selectedSystemsGroupingLevel2 = [
     ...new Set(systemsForService.map((s) => s["ASTM.Name"])),
   ];
+
+  const siteFeaturesGroupingLevel1 = [
+    ...new Set(siteFeatures.map((s) => s.Services)),
+  ].sort();
+
+  const featuresForService = activeSiteFeature
+    ? siteFeatures.filter((s) => s.Services === activeSiteFeature)
+    : [];
 
   return (
     <div>
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="heading-card">Selected Systems</h2>
+        <h2 className="heading-card mb-2">Selected Systems</h2>
         {selectedSystems.length > 0 && (
           <button
-            onClick={clearAllSelections}
+            onClick={clearAllSystemSelections}
             className="text-muted-foreground hover:text-destructive flex items-center gap-1 text-xs transition-colors"
           >
             <X className="size-3" />
@@ -177,10 +245,10 @@ export default function SelectedSystemsCard({ activeStep }) {
 
       {/* Service tabs */}
       <div className="border-golden-accent/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
-        {uniqueServices.map((service) => {
+        {selectedSystemsGroupingLevel1.map((service) => {
           const selectedCount = availableSystems
             .filter((s) => s.Services === service)
-            .filter((s) => selectedCodes.has(selectedSystemCode(s))).length;
+            .filter((s) => selectedSystemCodes.has(getSystemCodeFor(s))).length;
 
           return (
             <button
@@ -213,12 +281,12 @@ export default function SelectedSystemsCard({ activeStep }) {
 
       {/* Systems grouped by Classification */}
       <div className="space-y-5">
-        {classificationsForService.map((astmName) => {
+        {selectedSystemsGroupingLevel2.map((astmName) => {
           const systemsInClass = systemsForService.filter(
             (s) => s["ASTM.Name"] === astmName,
           );
           const selectedCount = systemsInClass.filter((s) =>
-            selectedCodes.has(selectedSystemCode(s)),
+            selectedSystemCodes.has(getSystemCodeFor(s)),
           ).length;
 
           return (
@@ -238,12 +306,12 @@ export default function SelectedSystemsCard({ activeStep }) {
               </div>
               <div className="flex flex-wrap gap-2">
                 {systemsInClass.map((system) => {
-                  const code = selectedSystemCode(system);
+                  const code = getSystemCodeFor(system);
                   return (
                     <SystemPill
                       key={code}
                       system={system}
-                      isSelected={selectedCodes.has(code)}
+                      isSelected={selectedSystemCodes.has(code)}
                       onToggle={() => toggleSystem(system)}
                     />
                   );
@@ -252,6 +320,76 @@ export default function SelectedSystemsCard({ activeStep }) {
             </div>
           );
         })}
+      </div>
+
+      {/* Header - Site Features */}
+      <div className="mt-8 mb-4 flex items-center justify-between">
+        <h2 className="heading-card" id="site-features">
+          Site Features
+        </h2>
+
+        {selectedSiteFeatures?.length > 0 && (
+          <button
+            onClick={clearAllFeatureSelections}
+            className="text-muted-foreground hover:text-destructive flex items-center gap-1 text-xs transition-colors"
+          >
+            <X className="size-3" />
+            Clear all ({selectedSiteFeatures?.length})
+          </button>
+        )}
+      </div>
+
+      {/* Site Features tabs */}
+      <div className="border-golden-accent/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
+        {siteFeaturesGroupingLevel1?.map((siteFeatureService) => {
+          const selectedCount = siteFeatures
+            .filter((s) => s.Services === siteFeatureService)
+            .filter((s) => selectedSystemCodes.has(getSystemCodeFor(s))).length;
+
+          return (
+            <button
+              key={siteFeatureService}
+              onClick={() => setActiveSiteFeature(siteFeatureService)}
+              className={cn(
+                "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors",
+                activeSiteFeature === siteFeatureService
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "text-muted-foreground border-border hover:text-foreground hover:border-golden-accent/60 bg-transparent",
+              )}
+            >
+              {sanitizeName(siteFeatureService)}
+              {selectedCount > 0 && (
+                <span
+                  className={cn(
+                    "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1 text-xs font-semibold",
+                    activeSiteFeature === siteFeatureService
+                      ? "bg-background text-primary"
+                      : "bg-primary/10 text-primary",
+                  )}
+                >
+                  {selectedCount}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Site Features grouped by Service */}
+      <div className="space-y-5">
+        <div className="flex flex-wrap gap-2">
+          {featuresForService.map((feature) => {
+            const code = getFeatureKeyFor(feature);
+            return (
+              <SiteFeaturePill
+                key={code}
+                feature={feature}
+                isSelected={selectedFeatureCodes.has(code)}
+                onToggle={() => toggleFeature(feature)}
+              />
+            );
+          })}
+        </div>
       </div>
     </div>
   );
