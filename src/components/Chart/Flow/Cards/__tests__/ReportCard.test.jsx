@@ -1,5 +1,9 @@
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
-import { addSelectedSystem } from "@/state/slices/reportReducer";
+import {
+  addSelectedFeature,
+  addSelectedSystem,
+  setIntakeForm,
+} from "@/state/slices/reportReducer";
 import { renderWithProviders } from "@/utils/testing";
 import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -12,30 +16,42 @@ describe("ReportCard tests", () => {
     expect(screen.getByText("Report")).toBeInTheDocument();
   });
 
-  it("renders the pre-flight checklist in not_generated state", () => {
-    renderWithProviders(<ReportCard />);
-    expect(screen.getByText("Checklist")).toBeInTheDocument();
-    expect(screen.getByText("Site location selected")).toBeInTheDocument();
-    expect(screen.getByText("Systems selected")).toBeInTheDocument();
-    expect(screen.getByText("Intake form filled")).toBeInTheDocument();
-  });
-
-  it("shows location detail in checklist when geo data is set", async () => {
+  it("renders the address, system count, site feature count, and modelling standard in the context strip", async () => {
     const { store } = renderWithProviders(<ReportCard />);
     await act(async () => {
-      store.dispatch(setGeoData({ lat: 49.28, lng: -123.12 }));
-      store.dispatch(setHumanAddress("123 Main St"));
-    });
-    expect(screen.getByText(/123 Main St/)).toBeInTheDocument();
-  });
-
-  it("shows selected system count in checklist", async () => {
-    const { store } = renderWithProviders(<ReportCard />);
-    await act(async () => {
+      store.dispatch(setHumanAddress("123 Main St, Vancouver"));
       store.dispatch(addSelectedSystem({ "ASTM.System.Code": "sys-1" }));
       store.dispatch(addSelectedSystem({ "ASTM.System.Code": "sys-2" }));
+      store.dispatch(addSelectedFeature({ ID: "feat-1" }));
+      store.dispatch(setIntakeForm({ modelling_standard: ["EnerGuide"] }));
     });
-    expect(screen.getByText(/2 systems/)).toBeInTheDocument();
+    expect(screen.getByText("123 Main St, Vancouver")).toBeInTheDocument();
+    expect(
+      screen.getByText(/2 systems.*1 site feature.*EnerGuide/),
+    ).toBeInTheDocument();
+  });
+
+  it("renders MEUI / TEDI / GHGI from intakeForm", async () => {
+    const { store } = renderWithProviders(<ReportCard />);
+    await act(async () => {
+      store.dispatch(setIntakeForm({ meui: 60, tedi: 40, ghgi: 5 }));
+    });
+    expect(screen.getByText(/MEUI 60/)).toBeInTheDocument();
+    expect(screen.getByText(/TEDI 40/)).toBeInTheDocument();
+    expect(screen.getByText(/GHGI 5/)).toBeInTheDocument();
+  });
+
+  it("shows a warning when no location is set", () => {
+    renderWithProviders(<ReportCard />);
+    expect(
+      screen.getByText(/No location set — generation may fail/),
+    ).toBeInTheDocument();
+  });
+
+  it("renders an edit link back to /flow/summary", () => {
+    renderWithProviders(<ReportCard />);
+    const link = screen.getByRole("link", { name: /edit the summary/i });
+    expect(link).toHaveAttribute("href", "/flow/summary");
   });
 
   it("shows generating state while report is being created", () => {
@@ -69,7 +85,9 @@ describe("ReportCard tests", () => {
       },
     });
     expect(screen.getByText("Report ready")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Download PDF/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Download PDF/ }),
+    ).toBeInTheDocument();
     expect(screen.getByText(/Generated at 12:00:00 PM/)).toBeInTheDocument();
   });
 
@@ -86,7 +104,9 @@ describe("ReportCard tests", () => {
         },
       },
     });
-    expect(screen.getByRole("button", { name: /Regenerate/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Regenerate/ }),
+    ).toBeInTheDocument();
   });
 
   it("shows error state with retry button", () => {
@@ -114,7 +134,9 @@ describe("ReportCard tests", () => {
       store.dispatch(setGeoData({ lat: 49.28, lng: -123.12 }));
     });
 
-    await userEvent.click(screen.getByRole("button", { name: /Generate Report/ }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /Generate Report/ }),
+    );
 
     expect(screen.getByText(/Building your report/)).toBeInTheDocument();
   });
@@ -135,6 +157,8 @@ describe("ReportCard tests", () => {
 
     await userEvent.click(screen.getByRole("button", { name: /Regenerate/ }));
 
-    expect(screen.getByText("Checklist")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /edit the summary/i }),
+    ).toBeInTheDocument();
   });
 });

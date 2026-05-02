@@ -8,6 +8,12 @@ import {
   stepBackward,
   stepForward,
 } from "../state/slices/flowReducer";
+import {
+  clearIntakeForm,
+  clearSelectedSystems,
+  resetReport,
+} from "../state/slices/reportReducer";
+import { setGeoData, setHumanAddress } from "../state/slices/geoReducer";
 
 function useFlow(initialSteps = []) {
   const dispatch = useDispatch();
@@ -46,13 +52,18 @@ function useFlow(initialSteps = []) {
     if (conditionsMet) {
       dispatch(setError(null));
       dispatch(stepForward());
-      navigate(`/flow/${currentStep.next}`);
+      navigate(`/flow/${currentStep.next ?? "finish"}`);
     } else {
       dispatch(setError(currentStep.errorMessage ?? "Please complete the required fields."));
     }
   }
 
   function reset() {
+    dispatch(clearIntakeForm());
+    dispatch(clearSelectedSystems());
+    dispatch(resetReport());
+    dispatch(setGeoData(undefined));
+    dispatch(setHumanAddress(undefined));
     dispatch(setSteps(initialSteps));
     navigate("/flow/intake");
   }

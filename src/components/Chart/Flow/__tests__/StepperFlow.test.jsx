@@ -32,7 +32,7 @@ describe("StepperFlow tests", () => {
     expect(getByRole("button", { name: /Finish/ })).toBeInTheDocument();
   });
 
-  it("shows completed message after finishing the last step", async () => {
+  it("shows the FinishCard after finishing the last step", async () => {
     const oneStep = [{ id: 0, name: "intake", label: "Intake", prev: undefined, next: undefined }];
     const { getByRole, findByText } = renderWithProviders(<StepperFlow steps={oneStep} />);
 
@@ -43,7 +43,8 @@ describe("StepperFlow tests", () => {
       getByRole("button", { name: /Finish/ }).click();
     });
 
-    await findByText(/All steps completed/);
+    await findByText(/All done/);
+    expect(window.location.pathname).toBe("/flow/finish");
   });
 
   it("renders mobile layout on small screens", () => {

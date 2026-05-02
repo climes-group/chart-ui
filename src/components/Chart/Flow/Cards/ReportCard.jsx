@@ -9,17 +9,20 @@ import {
   setReportStatus,
 } from "@/state/slices/reportReducer";
 import {
+  AlertTriangle,
   Bug,
   CheckCircle2,
-  Circle,
   Download,
   FileText,
   Loader2,
+  MapPin,
+  Pencil,
   RefreshCw,
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import DebugDataModal from "./DebugDataModal";
 
 const openPdfInNewWindow = async (result) => {
@@ -40,23 +43,72 @@ const openPdfInNewWindow = async (result) => {
   }
 };
 
-function PreflightItem({ label, detail, ok }) {
+function ReportContext({
+  humanAddress,
+  intakeForm,
+  systemCount,
+  featureCount,
+}) {
+  const standards = (intakeForm?.modelling_standard || []).filter(Boolean);
+  const standardsLabel = standards
+    .map((s) =>
+      s === "Other" && intakeForm?.modelling_standard_other
+        ? intakeForm.modelling_standard_other
+        : s,
+    )
+    .join(", ");
+
+  const energy = [
+    { label: "MEUI", value: intakeForm?.meui },
+    { label: "TEDI", value: intakeForm?.tedi },
+    { label: "GHGI", value: intakeForm?.ghgi },
+  ].filter(
+    (x) => x.value !== "" && x.value !== null && x.value !== undefined,
+  );
+
+  const hasLocation = !!humanAddress;
+  const systemLine = [
+    `${systemCount} system${systemCount !== 1 ? "s" : ""}`,
+    `${featureCount} site feature${featureCount !== 1 ? "s" : ""}`,
+    standardsLabel || null,
+  ]
+    .filter(Boolean)
+    .join("  ·  ");
+
   return (
-    <div className="flex items-start gap-2.5 text-sm">
-      {ok ? (
-        <CheckCircle2 className="text-primary mt-0.5 size-4 shrink-0" />
-      ) : (
-        <Circle className="text-muted-foreground/35 mt-0.5 size-4 shrink-0" />
-      )}
-      <div>
-        <span className={ok ? "text-foreground" : "text-muted-foreground"}>
-          {label}
-        </span>
-        {detail && (
-          <span className="text-muted-foreground ml-1.5 text-xs">
-            — {detail}
-          </span>
+    <div className="border-warm-gold/40 bg-warm-gold/10 space-y-3 rounded-lg border p-4">
+      <div className="flex items-start gap-2.5 text-sm">
+        {hasLocation ? (
+          <MapPin className="text-primary mt-0.5 size-4 shrink-0" />
+        ) : (
+          <AlertTriangle className="text-warm-brown mt-0.5 size-4 shrink-0" />
         )}
+        <div className="flex-1 space-y-1">
+          {hasLocation ? (
+            <p className="text-foreground">{humanAddress}</p>
+          ) : (
+            <p className="text-warm-brown">
+              No location set — generation may fail
+            </p>
+          )}
+          {systemLine && (
+            <p className="text-muted-foreground text-xs">{systemLine}</p>
+          )}
+          {energy.length > 0 && (
+            <p className="text-muted-foreground font-mono text-xs">
+              {energy.map((e) => `${e.label} ${e.value}`).join("  ·  ")}
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="border-warm-gold/30 flex justify-end border-t pt-2.5">
+        <Link
+          to="/flow/summary"
+          className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 text-xs transition-colors"
+        >
+          <Pencil className="size-3" />
+          Edit the summary
+        </Link>
       </div>
     </div>
   );
@@ -66,6 +118,9 @@ export default function ReportCard() {
   const geoData = useSelector((s) => s.geo.geoData);
   const humanAddress = useSelector((s) => s.geo.humanAddress);
   const selectedSystems = useSelector((state) => state.report.selectedSystems);
+  const selectedSiteFeatures = useSelector(
+    (state) => state.report.selectedSiteFeatures,
+  );
   const intakeForm = useSelector((state) => state.report.intakeForm);
   const reportData = useSelector((state) => state.report.reportData);
   const reportDebugData = useSelector((state) => state.report.reportDebugData);
@@ -131,11 +186,7 @@ export default function ReportCard() {
   const isError = reportStatus === "error";
 
   const systemCount = selectedSystems?.length ?? 0;
-  const hasIntake =
-    !!intakeForm &&
-    Object.values(intakeForm).some((v) =>
-      Array.isArray(v) ? v.length > 0 : v !== "" && v !== 0,
-    );
+  const featureCount = selectedSiteFeatures?.length ?? 0;
 
   return (
     <>
@@ -178,35 +229,16 @@ export default function ReportCard() {
         {reportStatus === "not_generated" && (
           <div className="space-y-4">
             <p className="body-muted">
-              Generate a PDF report based on the selected systems and building
-              location.
+              Generate a PDF report for the inputs reviewed on the previous
+              step.
             </p>
 
-            {/* Pre-flight checklist */}
-            <div className="border-warm-gold/40 bg-warm-gold/10 space-y-2.5 rounded-lg border p-4">
-              <p className="text-warm-brown mb-3 text-xs font-semibold tracking-wide uppercase">
-                Checklist
-              </p>
-              <PreflightItem
-                label="Site location selected"
-                detail={humanAddress || null}
-                ok={!!geoData}
-              />
-              <PreflightItem
-                label="Systems selected"
-                detail={
-                  systemCount > 0
-                    ? `${systemCount} system${systemCount !== 1 ? "s" : ""}`
-                    : null
-                }
-                ok={systemCount > 0}
-              />
-              <PreflightItem
-                label="Intake form filled"
-                detail={intakeForm?.project_address || null}
-                ok={hasIntake}
-              />
-            </div>
+            <ReportContext
+              humanAddress={humanAddress}
+              intakeForm={intakeForm}
+              systemCount={systemCount}
+              featureCount={featureCount}
+            />
           </div>
         )}
 

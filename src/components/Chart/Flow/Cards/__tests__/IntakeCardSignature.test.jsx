@@ -167,9 +167,10 @@ describe("IntakeCard signature pads", () => {
       nextFn = fn;
     };
     const nav = vi.fn();
+    const activeStep = { errorMessage: "Please complete the intake form." };
 
-    renderWithProviders(
-      <IntakeCard registerNext={registerNext} nav={nav} />,
+    const { store } = renderWithProviders(
+      <IntakeCard activeStep={activeStep} registerNext={registerNext} nav={nav} />,
       preloadIntake(REQUIRED_TEXT),
     );
 
@@ -178,6 +179,7 @@ describe("IntakeCard signature pads", () => {
     });
 
     expect(nav).not.toHaveBeenCalled();
+    expect(store.getState().flow.error).toBe("Please complete the intake form.");
     await waitFor(() => {
       expect(screen.getByTestId("ea-sig-canvas-error")).toHaveTextContent(
         "Signature required",
@@ -194,9 +196,10 @@ describe("IntakeCard signature pads", () => {
       nextFn = fn;
     };
     const nav = vi.fn();
+    const activeStep = { errorMessage: "Please complete the intake form." };
 
     const { store } = renderWithProviders(
-      <IntakeCard registerNext={registerNext} nav={nav} />,
+      <IntakeCard activeStep={activeStep} registerNext={registerNext} nav={nav} />,
       preloadIntake(REQUIRED_TEXT),
     );
 

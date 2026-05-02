@@ -1,8 +1,15 @@
-import { useTestMode } from "@/context/TestModeContext";
+import {
+  useDebugMode,
+  useSetDebugMode,
+  useTestMode,
+} from "@/context/TestModeContext";
 import { meetCondition, setTheme } from "@/state/slices/flowReducer";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
-import { setIntakeForm } from "@/state/slices/reportReducer";
+import { addSelectedSystem, setIntakeForm } from "@/state/slices/reportReducer";
+import { Bug, Wrench, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 const TEST_INTAKE = {
   building_permit: "BP-2024-TEST-001",
@@ -43,53 +50,137 @@ const TEST_INTAKE = {
 const TEST_GEO = { lat: 49.2827, lng: -123.1207 };
 const TEST_ADDRESS = "123 Test Street, Vancouver, BC V6B 1A1, Canada";
 
+const TEST_SYSTEM = {
+  Services: "Mechanical",
+  Classification: "Heating",
+  "ASTM.Code": "D3010",
+  "ASTM.Name": "Tank-style",
+  "ASTM.System.Name": "Boiler",
+  "ASTM.System.Code": "HW-01",
+};
+
+const PANEL_OPEN_KEY = "CHART_TEST_PANEL_OPEN";
+
 export default function TestModePanel() {
-  const { isTestMode, intakeFillRef, variantIdx, setVariantIdx } =
-    useTestMode();
+  const { isTestMode, intakeFillRef } = useTestMode();
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.flow.theme);
+  const debugMode = useDebugMode();
+  const setDebugMode = useSetDebugMode();
+  const { pathname } = useLocation();
 
-  if (!isTestMode) return null;
+  const [isOpen, setIsOpen] = useState(
+    () => localStorage.getItem(PANEL_OPEN_KEY) === "true",
+  );
+
+  useEffect(() => {
+    localStorage.setItem(PANEL_OPEN_KEY, String(isOpen));
+  }, [isOpen]);
+
+  if (!isTestMode || pathname === "/") return null;
 
   const handleAutofill = () => {
-    // Fill Redux state (covers SiteLocation, and IntakeCard if not yet mounted)
     dispatch(setIntakeForm(TEST_INTAKE));
     dispatch(setGeoData(TEST_GEO));
     dispatch(setHumanAddress(TEST_ADDRESS));
-    // If IntakeCard is currently mounted, update the live form too
+    dispatch(addSelectedSystem(TEST_SYSTEM));
+    dispatch(meetCondition({ name: "intake", condition: true }));
+    dispatch(meetCondition({ name: "selectedSystems", condition: true }));
     intakeFillRef?.current?.(TEST_INTAKE);
   };
 
   return (
-    <div className="border-border fixed left-4 bottom-4 z-50 flex min-w-[170px] flex-col gap-2 rounded-xl border bg-white/90 px-4 py-3 shadow-md backdrop-blur">
-      <span className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
-        Test Mode
-      </span>
+    <div className="fixed top-1/2 left-0 z-50 -translate-y-1/2">
+      {/* Collapsed strip */}
+      <button
+        type="button"
+        aria-label="Open test mode panel"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen(true)}
+        className={[
+          "bg-teal-deep text-warm-gold hover:bg-teal-deep/90 hover:translate-x-0.5",
+          "flex w-7 flex-col items-center gap-2 rounded-r-md py-3 shadow-md",
+          "transition-all duration-200 ease-out",
+          isOpen ? "pointer-events-none opacity-0" : "opacity-100",
+        ].join(" ")}
+      >
+        <Wrench className="size-3.5" />
+        <span className="rotate-180 text-[10px] font-semibold tracking-widest uppercase [writing-mode:vertical-rl]">
+          Test Mode
+        </span>
+      </button>
 
-      <div className="flex items-center gap-1">
-        <span className="text-muted-foreground mr-1 text-xs">Theme:</span>
-        {[1, 2].map((t) => (
+      {/* Expanded panel */}
+      <div
+        className={[
+          "border-border absolute top-1/2 left-0 -translate-y-1/2",
+          "w-48 overflow-hidden rounded-r-xl border border-l-0 bg-white/95 shadow-xl backdrop-blur",
+          "transition-all duration-200 ease-out",
+          isOpen
+            ? "translate-x-0 opacity-100"
+            : "pointer-events-none -translate-x-full opacity-0",
+        ].join(" ")}
+      >
+        <div className="bg-teal-deep text-warm-gold flex items-center justify-between px-4 py-2">
+          <div className="flex items-center gap-2">
+            <Wrench className="size-4" />
+            <span className="text-xs font-semibold tracking-wide uppercase">
+              Test Mode
+            </span>
+          </div>
           <button
-            key={t}
-            onClick={() => dispatch(setTheme(t))}
+            type="button"
+            aria-label="Close test mode panel"
+            onClick={() => setIsOpen(false)}
+            className="rounded p-1 transition-colors hover:bg-white/10"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-4 px-4 py-3">
+          <div className="flex flex-wrap items-center gap-1">
+            <span className="text-muted-foreground mr-1 text-xs">Theme:</span>
+            {[1].map((t) => (
+              <button
+                key={t}
+                onClick={() => dispatch(setTheme(t))}
+                className={[
+                  "rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
+                  theme === t
+                    ? "bg-teal-deep text-white"
+                    : "text-muted-foreground hover:bg-muted",
+                ].join(" ")}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            role="switch"
+            aria-checked={debugMode}
+            onClick={() => setDebugMode(!debugMode)}
             className={[
-              "rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
-              theme === t
-                ? "bg-teal-deep text-white"
-                : "text-muted-foreground hover:bg-muted",
+              "flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+              debugMode
+                ? "bg-coral text-white"
+                : "bg-muted text-muted-foreground hover:bg-muted/80",
             ].join(" ")}
           >
-            {t}
+            <Bug className="size-3.5" />
+            Debug mode {debugMode ? "on" : "off"}
           </button>
-        ))}
-      </div>
 
-      <button
-        onClick={handleAutofill}
-        className="bg-golden-accent/20 text-warm-brown hover:bg-golden-accent/40 rounded-full px-3 py-1.5 text-left text-xs font-medium transition-colors"
-      >
-        Autofill All Data
-      </button>
+          <button
+            onClick={handleAutofill}
+            className="bg-golden-accent/20 text-warm-brown hover:bg-golden-accent/40 rounded-full px-3 py-1.5 text-left text-xs font-medium transition-colors"
+          >
+            Autofill &amp; Unlock Steps
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
