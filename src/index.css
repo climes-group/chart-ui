@@ -107,14 +107,6 @@
   background-repeat: no-repeat;
   background-color: var(--background);
 }
-.page-bg[data-theme="2"] {
-  background-image: linear-gradient(
-    172deg,
-    var(--color-teal-deep) 35vh,
-    transparent 35vh
-  );
-  background-color: var(--background);
-}
 
 a {
   font-weight: 500;

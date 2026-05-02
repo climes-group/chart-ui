@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef } from "react";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
 
 const TestModeContext = createContext(null);
 
@@ -9,8 +9,19 @@ export function TestModeProvider({ children }) {
   // IntakeCard registers this when mounted; TestModePanel calls it on autofill.
   const intakeFillRef = useRef(null);
 
+  const [debugMode, setDebugModeState] = useState(() =>
+    readFlag("CHART_DEBUG_MODE"),
+  );
+
+  const setDebugMode = useCallback((next) => {
+    localStorage.setItem("CHART_DEBUG_MODE", String(next));
+    setDebugModeState(next);
+  }, []);
+
   return (
-    <TestModeContext.Provider value={{ intakeFillRef }}>
+    <TestModeContext.Provider
+      value={{ intakeFillRef, debugMode, setDebugMode }}
+    >
       {children}
     </TestModeContext.Provider>
   );
@@ -25,5 +36,9 @@ export function useTestMode() {
 }
 
 export function useDebugMode() {
-  return readFlag("CHART_DEBUG_MODE");
+  return useContext(TestModeContext)?.debugMode ?? false;
+}
+
+export function useSetDebugMode() {
+  return useContext(TestModeContext)?.setDebugMode ?? (() => {});
 }

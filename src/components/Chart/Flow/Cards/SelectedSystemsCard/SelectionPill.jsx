@@ -1,12 +1,15 @@
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
-export default function SelectionPill({ name, code, isSelected, onToggle, ref, ...props }) {
+export default function SelectionPill({ name, code, isSelected, onToggle, ref, onClick, ...props }) {
   return (
     <button
       ref={ref}
-      onClick={onToggle}
       {...props}
+      onClick={(e) => {
+        onClick?.(e);
+        onToggle?.(e);
+      }}
       className={cn(
         "inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-left text-sm transition-all select-none",
         isSelected
