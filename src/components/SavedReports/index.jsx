@@ -15,7 +15,13 @@ function formatGeneratedAt(value) {
   });
 }
 
-function ConfirmDeleteDialog({ filename, onConfirm, onCancel }) {
+function ConfirmDialog({
+  title,
+  message,
+  confirmLabel = "Delete",
+  onConfirm,
+  onCancel,
+}) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
@@ -23,22 +29,23 @@ function ConfirmDeleteDialog({ filename, onConfirm, onCancel }) {
         onClick={onCancel}
         aria-hidden="true"
       />
-      <Card className="relative z-10 mx-4 w-full max-w-sm shadow-xl">
+      <Card
+        className="relative z-10 mx-4 w-full max-w-sm shadow-xl"
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+      >
         <CardHeader>
-          <CardTitle className="heading-section">Delete report?</CardTitle>
+          <CardTitle className="heading-section">{title}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <p className="body-muted">
-            This will permanently delete{" "}
-            <span className="text-charcoal font-medium">{filename}</span>. This
-            action cannot be undone.
-          </p>
+          <p className="body-muted">{message}</p>
           <div className="flex justify-end gap-2">
             <Button variant="outline" size="sm" onClick={onCancel}>
               Cancel
             </Button>
             <Button variant="destructive" size="sm" onClick={onConfirm}>
-              Delete
+              {confirmLabel}
             </Button>
           </div>
         </CardContent>
@@ -54,8 +61,10 @@ function SavedReports() {
   const [reports, setReports] = useState([]);
   const [status, setStatus] = useState("loading"); // loading | error | ready
   const [pendingDelete, setPendingDelete] = useState(null);
+  const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [downloadError, setDownloadError] = useState(null);
+  const [deleteAllError, setDeleteAllError] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -119,14 +128,48 @@ function SavedReports() {
     }
   }
 
+  async function handleDeleteAll() {
+    setDeleting(true);
+    setDeleteAllError(false);
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_HOST}/reports/delete_all`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setReports([]);
+      setConfirmDeleteAll(false);
+    } catch {
+      setDeleteAllError(true);
+      setConfirmDeleteAll(false);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   if (!profile) return <Navigate to="/" replace />;
+
+  const hasReports = status === "ready" && reports.length > 0;
 
   return (
     <div className="mx-auto max-w-3xl">
       <Card>
         <CardHeader className="flex flex-row items-center gap-3 pb-4">
           <FileText className="text-teal-deep size-6 shrink-0" />
-          <CardTitle className="heading-card">Saved Reports</CardTitle>
+          <CardTitle className="heading-card flex-1">Saved Reports</CardTitle>
+          {hasReports && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setConfirmDeleteAll(true)}
+            >
+              <Trash2 />
+              Delete all reports
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
           {status === "loading" && (
@@ -142,6 +185,12 @@ function SavedReports() {
             </p>
           )}
 
+          {deleteAllError && (
+            <p className="text-coral bg-coral/10 mb-3 rounded-md px-3 py-2 text-sm">
+              Failed to delete all reports. Please try again.
+            </p>
+          )}
+
           {status === "error" && (
             <p className="body-muted text-coral py-12 text-center">
               Failed to load reports. Please try again later.
@@ -154,7 +203,7 @@ function SavedReports() {
             </p>
           )}
 
-          {status === "ready" && reports.length > 0 && (
+          {hasReports && (
             <ul className="divide-border divide-y">
               {reports.map((report) => (
                 <li
@@ -195,10 +244,35 @@ function SavedReports() {
       </Card>
 
       {pendingDelete && (
-        <ConfirmDeleteDialog
-          filename={pendingDelete}
+        <ConfirmDialog
+          title="Delete report?"
+          message={
+            <>
+              This will permanently delete{" "}
+              <span className="text-charcoal font-medium">{pendingDelete}</span>
+              . This action cannot be undone.
+            </>
+          }
           onConfirm={deleting ? undefined : handleDelete}
           onCancel={() => !deleting && setPendingDelete(null)}
+        />
+      )}
+
+      {confirmDeleteAll && (
+        <ConfirmDialog
+          title="Delete all reports?"
+          message={
+            <>
+              This will permanently delete all{" "}
+              <span className="text-charcoal font-medium">
+                {reports.length}
+              </span>{" "}
+              saved reports. This action cannot be undone.
+            </>
+          }
+          confirmLabel="Delete all"
+          onConfirm={deleting ? undefined : handleDeleteAll}
+          onCancel={() => !deleting && setConfirmDeleteAll(false)}
         />
       )}
     </div>
