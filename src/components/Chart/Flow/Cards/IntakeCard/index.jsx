@@ -13,8 +13,19 @@ import { useTestMode } from "@/context/TestModeContext";
 import { useForm } from "@tanstack/react-form";
 import AssessorInformationSection from "./AssessorInformationSection";
 import BuildingInformationSection from "./BuildingInformationSection";
+import FormSection from "./FormSection";
 import ProjectInformationSection from "./ProjectInformationSection";
 import SignatureSection from "./SignatureSection";
+
+const PROJECT_REQUIRED = [
+  "project_address",
+  "municipality",
+  "postal_code",
+  "unit_model_type",
+  "total_primary_units",
+];
+const ASSESSOR_REQUIRED = ["ea_name", "ea_number", "ea_phone", "ea_business"];
+const SIGNATURE_REQUIRED = ["ea_signature", "builder_signature"];
 
 export default function IntakeCard({ activeStep, registerNext, nav }) {
   const dispatch = useDispatch();
@@ -89,24 +100,35 @@ export default function IntakeCard({ activeStep, registerNext, nav }) {
           e.stopPropagation();
           form.handleSubmit();
         }}
+        className="[&>section+section]:border-t [&>section+section]:border-warm-gold/30 [&>section+section]:mt-6 [&>section+section]:pt-6"
       >
-        {/* Project Information */}
-        <ProjectInformationSection form={form} />
+        <FormSection
+          form={form}
+          title="Project Information"
+          requiredFields={PROJECT_REQUIRED}
+        >
+          <ProjectInformationSection form={form} />
+        </FormSection>
 
-        {/* Building Information */}
-        <div className="border-t border-warm-gold/30 mt-6 pt-6">
+        <FormSection form={form} title="Building Information">
           <BuildingInformationSection form={form} />
-        </div>
+        </FormSection>
 
-        {/* Assessor Information */}
-        <div className="border-t border-warm-gold/30 mt-6 pt-6">
+        <FormSection
+          form={form}
+          title="Assessor Information"
+          requiredFields={ASSESSOR_REQUIRED}
+        >
           <AssessorInformationSection form={form} />
-        </div>
+        </FormSection>
 
-        {/* Signature */}
-        <div className="border-t border-warm-gold/30 mt-6 pt-6">
+        <FormSection
+          form={form}
+          title="Signature"
+          requiredFields={SIGNATURE_REQUIRED}
+        >
           <SignatureSection form={form} />
-        </div>
+        </FormSection>
       </form>
     </div>
   );

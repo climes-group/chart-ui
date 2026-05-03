@@ -1,11 +1,10 @@
+import { isValidPhone } from "@/lib/validators";
 import { TextField } from "@mui/material";
 
 export default function AssessorInformationSection({ form }) {
   return (
     <div className="space-y-4">
-      <h3 className="heading-section">Assessor Information</h3>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <form.Field
           name="ea_name"
           validators={{
@@ -53,7 +52,11 @@ export default function AssessorInformationSection({ form }) {
         <form.Field
           name="ea_phone"
           validators={{
-            onBlur: ({ value }) => (!value ? "Required" : undefined),
+            onBlur: ({ value }) => {
+              if (!value) return "Required";
+              if (!isValidPhone(value)) return "Format: 555-555-0100";
+              return undefined;
+            },
           }}
         >
           {(field) => (
@@ -68,6 +71,11 @@ export default function AssessorInformationSection({ form }) {
               onChange={(e) => field.handleChange(e.target.value)}
               error={
                 field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched && field.state.meta.errors.length
+                  ? field.state.meta.errors[0]
+                  : ""
               }
             />
           )}
@@ -119,7 +127,16 @@ export default function AssessorInformationSection({ form }) {
           )}
         </form.Field>
 
-        <form.Field name="builder_phone">
+        <form.Field
+          name="builder_phone"
+          validators={{
+            onBlur: ({ value }) => {
+              if (!value) return undefined;
+              if (!isValidPhone(value)) return "Format: 555-555-0100";
+              return undefined;
+            },
+          }}
+        >
           {(field) => (
             <TextField
               type="tel"
@@ -127,7 +144,16 @@ export default function AssessorInformationSection({ form }) {
               fullWidth
               variant="outlined"
               value={field.state.value}
+              onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
+              error={
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched && field.state.meta.errors.length
+                  ? field.state.meta.errors[0]
+                  : ""
+              }
             />
           )}
         </form.Field>

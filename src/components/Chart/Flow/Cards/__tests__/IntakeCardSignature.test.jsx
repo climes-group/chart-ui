@@ -48,7 +48,7 @@ const REQUIRED_TEXT = {
   total_primary_units: 1,
   ea_name: "Test EA",
   ea_number: "EA-1",
-  ea_phone: "555-0100",
+  ea_phone: "555-555-0100",
   ea_business: "Test Co.",
 };
 
@@ -170,7 +170,11 @@ describe("IntakeCard signature pads", () => {
     const activeStep = { errorMessage: "Please complete the intake form." };
 
     const { store } = renderWithProviders(
-      <IntakeCard activeStep={activeStep} registerNext={registerNext} nav={nav} />,
+      <IntakeCard
+        activeStep={activeStep}
+        registerNext={registerNext}
+        nav={nav}
+      />,
       preloadIntake(REQUIRED_TEXT),
     );
 
@@ -179,7 +183,9 @@ describe("IntakeCard signature pads", () => {
     });
 
     expect(nav).not.toHaveBeenCalled();
-    expect(store.getState().flow.error).toBe("Please complete the intake form.");
+    expect(store.getState().flow.error).toBe(
+      "Please complete the intake form.",
+    );
     await waitFor(() => {
       expect(screen.getByTestId("ea-sig-canvas-error")).toHaveTextContent(
         "Signature required",
@@ -199,7 +205,11 @@ describe("IntakeCard signature pads", () => {
     const activeStep = { errorMessage: "Please complete the intake form." };
 
     const { store } = renderWithProviders(
-      <IntakeCard activeStep={activeStep} registerNext={registerNext} nav={nav} />,
+      <IntakeCard
+        activeStep={activeStep}
+        registerNext={registerNext}
+        nav={nav}
+      />,
       preloadIntake(REQUIRED_TEXT),
     );
 

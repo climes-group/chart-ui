@@ -132,8 +132,6 @@ function SignaturePad({ form, signatureFieldName, dateFieldName, label, testId }
 export default function SignatureSection({ form }) {
   return (
     <div className="space-y-4">
-      <h3 className="heading-section">Signature</h3>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <SignaturePad
           form={form}
