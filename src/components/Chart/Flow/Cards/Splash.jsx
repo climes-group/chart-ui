@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function SplashCard() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleDismiss = () => {
     navigate("/flow/intake");
@@ -13,18 +15,18 @@ export default function SplashCard() {
     <section className="flex min-h-[calc(100vh-5rem)] flex-col py-8">
       <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
         <h1 className="text-teal-deep text-5xl leading-none font-bold tracking-[0.15em] sm:text-6xl md:text-7xl lg:text-8xl">
-          CHART
+          {t("splash.title")}
         </h1>
         <p className="text-teal-deep/75 mt-3 max-w-sm text-sm sm:text-base">
-          Charting your path to resilience
+          {t("splash.tagline")}
         </p>
         <Button onClick={handleDismiss} size="lg" className="mt-8 px-8">
-          Get started
+          {t("splash.getStarted")}
           <ArrowRight />
         </Button>
       </div>
       <footer className="text-charcoal/50 text-center text-xs">
-        © 2026 Climes Group Engineering Inc.
+        {t("splash.copyright", { year: new Date().getFullYear() })}
       </footer>
     </section>
   );

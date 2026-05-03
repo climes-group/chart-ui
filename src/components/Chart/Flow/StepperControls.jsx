@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 import { AlertCircle, ArrowLeftIcon, ArrowRightIcon, Check } from "lucide-react";
 import React from "react";
@@ -76,11 +77,13 @@ export function StepperHeader({ steps, currentStep, jumpTo, isStepLocked, pulsin
 }
 
 export function DesktopControls({ currentStep, errorMessage, onBack, onNext }) {
+  const { t } = useTranslation();
+  const nextLabel = !currentStep?.next ? t("common.finish") : t("common.next");
   return (
     <div className="flex items-center justify-between w-full">
       <Button variant="outline" disabled={!currentStep?.prev} onClick={onBack}>
         <ArrowLeftIcon className="size-4" />
-        Back
+        {t("common.back")}
       </Button>
       <div className="flex items-center gap-3">
         {currentStep && errorMessage && (
@@ -94,7 +97,7 @@ export function DesktopControls({ currentStep, errorMessage, onBack, onNext }) {
           onClick={onNext}
           className="disabled:opacity-50"
         >
-          {!currentStep?.next ? "Finish" : "Next"}
+          {nextLabel}
           <ArrowRightIcon className="size-4" />
         </Button>
       </div>
@@ -103,6 +106,8 @@ export function DesktopControls({ currentStep, errorMessage, onBack, onNext }) {
 }
 
 export function MobileControls({ currentStep, steps, errorMessage, onBack, onNext }) {
+  const { t } = useTranslation();
+  const nextLabel = !currentStep?.next ? t("common.finish") : t("common.next");
   return (
     <div className="flex items-center justify-between w-full">
       <Button
@@ -110,7 +115,7 @@ export function MobileControls({ currentStep, steps, errorMessage, onBack, onNex
         size="icon"
         disabled={!currentStep?.prev}
         onClick={onBack}
-        aria-label="Back"
+        aria-label={t("common.back")}
       >
         <ArrowLeftIcon className="size-4" />
       </Button>
@@ -121,7 +126,10 @@ export function MobileControls({ currentStep, steps, errorMessage, onBack, onNex
             {currentStep.label}
           </span>
           <span className="text-xs text-muted-foreground">
-            {currentStep.id + 1} of {steps.length}
+            {t("flow.stepper.stepCounter", {
+              current: currentStep.id + 1,
+              total: steps.length,
+            })}
           </span>
           {errorMessage && (
             <span className="flex items-center gap-1 text-xs text-destructive mt-0.5">
@@ -137,9 +145,9 @@ export function MobileControls({ currentStep, steps, errorMessage, onBack, onNex
         onClick={onNext}
         size={currentStep?.next ? "icon" : "default"}
         className="disabled:opacity-50"
-        aria-label={!currentStep?.next ? "Finish" : "Next"}
+        aria-label={nextLabel}
       >
-        {!currentStep?.next && "Finish"}
+        {!currentStep?.next && t("common.finish")}
         <ArrowRightIcon className="size-4" />
       </Button>
     </div>

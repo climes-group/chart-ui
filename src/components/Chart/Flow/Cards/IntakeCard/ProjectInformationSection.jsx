@@ -17,6 +17,7 @@ import { LocateFixedIcon, XIcon } from "lucide-react";
 import { GeoCode, lookUpHumanAddress, searchAddress } from "@/utils/geocode";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import MapView from "@/components/Map/MapView";
+import { useTranslation } from "@/i18n";
 
 // ─── Debounced address search ─────────────────────────────────────────────────
 // Fires after the user stops typing for `delay` ms.
@@ -52,6 +53,7 @@ function useAddressSearch(delay = 380) {
 // On selection it also pushes city → municipality and postcode → postal_code.
 function ProjectAddressAutocomplete({ field, form, dispatch, onLocate }) {
   const { setQuery, options, loading } = useAddressSearch();
+  const { t } = useTranslation();
 
   function handleInputChange(_, newVal, reason) {
     field.handleChange(newVal);
@@ -119,7 +121,7 @@ function ProjectAddressAutocomplete({ field, form, dispatch, onLocate }) {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Project Address"
+          label={t("intake.fields.projectAddress")}
           required
           variant="outlined"
           fullWidth
@@ -128,7 +130,7 @@ function ProjectAddressAutocomplete({ field, form, dispatch, onLocate }) {
           helperText={
             field.state.meta.isTouched
               ? field.state.meta.errors[0]
-              : "Start typing to search"
+              : t("intake.fields.projectAddressHelp")
           }
           InputProps={{
             ...params.InputProps,
@@ -137,11 +139,11 @@ function ProjectAddressAutocomplete({ field, form, dispatch, onLocate }) {
                 {loading ? (
                   <CircularProgress color="inherit" size={16} sx={{ mr: 0.5 }} />
                 ) : null}
-                <Tooltip title="Use my location">
+                <Tooltip title={t("intake.fields.useMyLocation")}>
                   <IconButton
                     size="small"
                     onClick={onLocate}
-                    aria-label="Use my location"
+                    aria-label={t("intake.fields.useMyLocation")}
                     sx={{ mr: -0.5 }}
                   >
                     <LocateFixedIcon className="size-4" />
@@ -159,12 +161,13 @@ function ProjectAddressAutocomplete({ field, form, dispatch, onLocate }) {
 
 // ─── Inline map preview ──────────────────────────────────────────────────────
 function SiteLocationPreview({ geoData, humanAddress, onClear }) {
+  const { t } = useTranslation();
   const geoCode = new GeoCode(geoData.lat, geoData.lng);
   return (
     <div className="space-y-3 pt-2">
       <div className="rounded-lg border border-golden-accent/40 bg-background p-3 flex items-center justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-xs text-muted-foreground mb-0.5">Site Location</p>
+          <p className="text-xs text-muted-foreground mb-0.5">{t("intake.fields.siteLocation")}</p>
           <p className="text-sm text-foreground font-medium truncate">
             {humanAddress || "—"}
           </p>
@@ -176,7 +179,7 @@ function SiteLocationPreview({ geoData, humanAddress, onClear }) {
           <button
             type="button"
             onClick={onClear}
-            aria-label="Clear site location"
+            aria-label={t("intake.fields.clearSiteLocation")}
             className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
           >
             <XIcon className="size-3.5" />
@@ -195,6 +198,8 @@ export default function ProjectInformationSection({ form }) {
   const dispatch = useDispatch();
   const geoData = useSelector((s) => s.geo.geoData);
   const humanAddress = useSelector((s) => s.geo.humanAddress);
+  const { t } = useTranslation();
+  const required = t("validators.required");
 
   function handleUseDeviceLocation() {
     navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -221,12 +226,12 @@ export default function ProjectInformationSection({ form }) {
         <form.Field name="building_permit">
           {(field) => (
             <TextField
-              label="Building Permit #"
+              label={t("intake.fields.buildingPermit")}
               fullWidth
               variant="outlined"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
-              helperText="If applicable"
+              helperText={t("intake.fields.buildingPermitHelp")}
             />
           )}
         </form.Field>
@@ -235,7 +240,7 @@ export default function ProjectInformationSection({ form }) {
         <form.Field
           name="project_address"
           validators={{
-            onBlur: ({ value }) => (!value ? "Required" : undefined),
+            onBlur: ({ value }) => (!value ? required : undefined),
           }}
         >
           {(field) => (
@@ -271,12 +276,12 @@ export default function ProjectInformationSection({ form }) {
         <form.Field
           name="municipality"
           validators={{
-            onBlur: ({ value }) => (!value ? "Required" : undefined),
+            onBlur: ({ value }) => (!value ? required : undefined),
           }}
         >
           {(field) => (
             <TextField
-              label="Municipality / District"
+              label={t("intake.fields.municipality")}
               fullWidth
               variant="outlined"
               required
@@ -295,13 +300,13 @@ export default function ProjectInformationSection({ form }) {
           validators={{
             onBlur: ({ value }) =>
               !/^[A-Z]\d[A-Z] \d[A-Z]\d$/i.test(value)
-                ? "Format: A1A 1A1"
+                ? t("validators.postalFormat")
                 : undefined,
           }}
         >
           {(field) => (
             <TextField
-              label="Postal Code"
+              label={t("intake.fields.postalCode")}
               fullWidth
               variant="outlined"
               required
@@ -314,7 +319,7 @@ export default function ProjectInformationSection({ form }) {
               helperText={
                 field.state.meta.isTouched
                   ? field.state.meta.errors[0]
-                  : "A1A 1A1"
+                  : t("intake.fields.postalCodeHelp")
               }
             />
           )}
@@ -323,7 +328,7 @@ export default function ProjectInformationSection({ form }) {
         <form.Field name="pid_legal">
           {(field) => (
             <TextField
-              label="PID or Legal Description"
+              label={t("intake.fields.pidLegal")}
               fullWidth
               variant="outlined"
               value={field.state.value}
@@ -335,13 +340,13 @@ export default function ProjectInformationSection({ form }) {
         <form.Field
           name="unit_model_type"
           validators={{
-            onBlur: ({ value }) => (!value ? "Required" : undefined),
+            onBlur: ({ value }) => (!value ? required : undefined),
           }}
         >
           {(field) => (
             <TextField
               select
-              label="Unit and Model Type"
+              label={t("intake.fields.unitModelType")}
               fullWidth
               variant="outlined"
               required
@@ -374,13 +379,13 @@ export default function ProjectInformationSection({ form }) {
         <form.Field
           name="total_primary_units"
           validators={{
-            onBlur: ({ value }) => (value < 1 ? "Min 1" : undefined),
+            onBlur: ({ value }) => (value < 1 ? t("validators.minOne") : undefined),
           }}
         >
           {(field) => (
             <TextField
               type="number"
-              label="Primary Units"
+              label={t("intake.fields.primaryUnits")}
               fullWidth
               variant="outlined"
               required
@@ -395,7 +400,7 @@ export default function ProjectInformationSection({ form }) {
           {(field) => (
             <TextField
               type="number"
-              label="Secondary Suites"
+              label={t("intake.fields.secondarySuites")}
               fullWidth
               variant="outlined"
               value={field.state.value}
@@ -408,7 +413,7 @@ export default function ProjectInformationSection({ form }) {
           {(field) => (
             <TextField
               type="date"
-              label="Plan Date"
+              label={t("intake.fields.planDate")}
               fullWidth
               variant="outlined"
               InputLabelProps={{ shrink: true }}
@@ -421,7 +426,7 @@ export default function ProjectInformationSection({ form }) {
         <form.Field name="building_plan_author">
           {(field) => (
             <TextField
-              label="Plan Author"
+              label={t("intake.fields.planAuthor")}
               fullWidth
               variant="outlined"
               value={field.state.value}
@@ -433,7 +438,7 @@ export default function ProjectInformationSection({ form }) {
         <form.Field name="building_plan_version">
           {(field) => (
             <TextField
-              label="Plan Version"
+              label={t("intake.fields.planVersion")}
               fullWidth
               variant="outlined"
               placeholder="e.g. v1.0"
@@ -449,7 +454,7 @@ export default function ProjectInformationSection({ form }) {
         <form.Field name="modelling_standard">
           {(field) => (
             <FormControl component="fieldset">
-              <FormLabel component="legend">Modelling Standard</FormLabel>
+              <FormLabel component="legend">{t("intake.fields.modellingStandard")}</FormLabel>
               <FormGroup row>
                 {["EnerGuide", "Passive House", "CHBA Net-Zero", "Other"].map(
                   (opt) => (
@@ -481,7 +486,7 @@ export default function ProjectInformationSection({ form }) {
               <form.Field name="modelling_standard_other">
                 {(field) => (
                   <TextField
-                    label="Specify Other Standard"
+                    label={t("intake.fields.modellingStandardOther")}
                     fullWidth
                     variant="outlined"
                     value={field.state.value}

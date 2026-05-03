@@ -1,6 +1,8 @@
+import { useTranslation } from "@/i18n";
 import { TextField } from "@mui/material";
 
 export default function BuildingInformationSection({ form }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -8,7 +10,7 @@ export default function BuildingInformationSection({ form }) {
           {(field) => (
             <TextField
               type="number"
-              label="Floor Area (m²)"
+              label={t("intake.fields.floorArea")}
               variant="outlined"
               fullWidth
               value={field.state.value}
@@ -21,7 +23,7 @@ export default function BuildingInformationSection({ form }) {
           {(field) => (
             <TextField
               type="number"
-              label="Floors"
+              label={t("intake.fields.floors")}
               fullWidth
               variant="outlined"
               value={field.state.value}
@@ -34,7 +36,7 @@ export default function BuildingInformationSection({ form }) {
           {(field) => (
             <TextField
               type="number"
-              label="Electricity (kWh/y)"
+              label={t("intake.fields.electricity")}
               fullWidth
               variant="outlined"
               value={field.state.value}
@@ -47,7 +49,7 @@ export default function BuildingInformationSection({ form }) {
           {(field) => (
             <TextField
               type="number"
-              label="Fossil Fuel (GJ/y)"
+              label={t("intake.fields.fossilFuel")}
               fullWidth
               variant="outlined"
               value={field.state.value}
@@ -60,7 +62,7 @@ export default function BuildingInformationSection({ form }) {
           {(field) => (
             <TextField
               type="number"
-              label="MEUI (kWh/m²/y)"
+              label={t("intake.fields.meui")}
               fullWidth
               variant="outlined"
               value={field.state.value}
@@ -73,7 +75,7 @@ export default function BuildingInformationSection({ form }) {
           {(field) => (
             <TextField
               type="number"
-              label="TEDI (kWh/m²/y)"
+              label={t("intake.fields.tedi")}
               fullWidth
               variant="outlined"
               value={field.state.value}
@@ -86,7 +88,7 @@ export default function BuildingInformationSection({ form }) {
           {(field) => (
             <TextField
               type="number"
-              label="GHGI (kg CO₂e/m²/y)"
+              label={t("intake.fields.ghgi")}
               fullWidth
               variant="outlined"
               value={field.state.value}

@@ -15,6 +15,7 @@ import Chart from "./Chart.jsx";
 import Design from "./components/Design/index.jsx";
 import SplashCard from "./components/Chart/Flow/Cards/Splash.jsx";
 import SavedReports from "./components/SavedReports/index.jsx";
+import { LocaleProvider } from "./i18n";
 import "./index.css";
 import { setupStore } from "./state/store.js";
 
@@ -81,13 +82,15 @@ const theme = createTheme({
 ReactDOM.createRoot(document.getElementById("root")).render(
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <React.StrictMode>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <ThemeProvider theme={theme}>
-            <RouterProvider router={router} />
-          </ThemeProvider>
-        </PersistGate>
-      </Provider>
+      <LocaleProvider>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <ThemeProvider theme={theme}>
+              <RouterProvider router={router} />
+            </ThemeProvider>
+          </PersistGate>
+        </Provider>
+      </LocaleProvider>
     </React.StrictMode>
   </GoogleOAuthProvider>,
 );

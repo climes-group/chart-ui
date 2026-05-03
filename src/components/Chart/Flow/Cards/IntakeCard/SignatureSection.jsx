@@ -4,6 +4,7 @@ import { useStore } from "@tanstack/react-form";
 import SignatureCanvas from "react-signature-canvas";
 
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
@@ -11,6 +12,7 @@ function todayISO() {
 
 function SignaturePad({ form, signatureFieldName, dateFieldName, label, testId }) {
   const ref = useRef(null);
+  const { t } = useTranslation();
   const value = useStore(form.store, (s) => s.values[signatureFieldName]);
 
   // Restore a persisted signature on mount.
@@ -41,7 +43,7 @@ function SignaturePad({ form, signatureFieldName, dateFieldName, label, testId }
           {(field) => (
             <TextField
               type="date"
-              label={`${label} Date`}
+              label={t("intake.fields.signatureDate", { label })}
               fullWidth
               variant="outlined"
               InputLabelProps={{ shrink: true }}
@@ -55,8 +57,8 @@ function SignaturePad({ form, signatureFieldName, dateFieldName, label, testId }
         <form.Field
           name={signatureFieldName}
           validators={{
-            onChange: ({ value }) => (!value ? "Signature required" : undefined),
-            onSubmit: ({ value }) => (!value ? "Signature required" : undefined),
+            onChange: ({ value }) => (!value ? t("validators.signatureRequired") : undefined),
+            onSubmit: ({ value }) => (!value ? t("validators.signatureRequired") : undefined),
           }}
         >
           {(field) => {
@@ -107,7 +109,7 @@ function SignaturePad({ form, signatureFieldName, dateFieldName, label, testId }
                     </p>
                   ) : (
                     <span className="text-xs text-muted-foreground">
-                      Sign above
+                      {t("intake.fields.signAbove")}
                     </span>
                   )}
                   <Button
@@ -117,7 +119,7 @@ function SignaturePad({ form, signatureFieldName, dateFieldName, label, testId }
                     onClick={handleClear}
                     data-testid={`${testId}-clear`}
                   >
-                    Clear signature
+                    {t("intake.fields.clearSignature")}
                   </Button>
                 </div>
               </div>
@@ -130,6 +132,7 @@ function SignaturePad({ form, signatureFieldName, dateFieldName, label, testId }
 }
 
 export default function SignatureSection({ form }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -137,7 +140,7 @@ export default function SignatureSection({ form }) {
           form={form}
           signatureFieldName="ea_signature"
           dateFieldName="ea_signature_date"
-          label="EA Signature"
+          label={t("intake.fields.eaSignature")}
           testId="ea-sig-canvas"
         />
 
@@ -145,7 +148,7 @@ export default function SignatureSection({ form }) {
           form={form}
           signatureFieldName="builder_signature"
           dateFieldName="builder_signature_date"
-          label="Builder Signature"
+          label={t("intake.fields.builderSignature")}
           testId="builder-sig-canvas"
         />
       </div>

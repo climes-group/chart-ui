@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useStore } from "@tanstack/react-form";
 import { CheckIcon } from "lucide-react";
+import { useTranslation } from "@/i18n";
 
 function isFilled(value) {
   if (Array.isArray(value)) return value.length > 0;
@@ -43,6 +44,7 @@ export default function FormSection({
   children,
 }) {
   const [ref, inView] = useInView();
+  const { t } = useTranslation();
   const { filled, total } = useStore(form.store, (s) => ({
     total: requiredFields.length,
     filled: requiredFields.filter((name) => isFilled(s.values[name])).length,
@@ -67,7 +69,7 @@ export default function FormSection({
                 ? "bg-moss-primary/10 text-moss-primary"
                 : "bg-muted text-muted-foreground"
             }`}
-            aria-label={`${filled} of ${total} required fields completed`}
+            aria-label={t("intake.fieldsCompleted", { filled, total })}
           >
             {complete && <CheckIcon className="h-3 w-3" aria-hidden="true" />}
             {filled}/{total}
