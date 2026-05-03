@@ -1,4 +1,5 @@
 import { render } from "@testing-library/react";
+import { axe } from "jest-axe";
 import { describe } from "vitest";
 import { BrowserRouter } from "react-router-dom";
 import Footer from "..";
@@ -25,5 +26,10 @@ describe("Footer tests", () => {
   it("renders the copyright notice", () => {
     const { getByText } = render(<Footer />, { wrapper });
     expect(getByText(/Climes Group Engineering Inc/)).toBeInTheDocument();
+  });
+
+  it("has no axe violations", async () => {
+    const { container } = render(<Footer />, { wrapper });
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

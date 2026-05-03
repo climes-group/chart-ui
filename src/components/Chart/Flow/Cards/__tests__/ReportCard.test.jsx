@@ -7,6 +7,7 @@ import {
 import { renderWithProviders } from "@/utils/testing";
 import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { axe } from "jest-axe";
 import { describe, vi } from "vitest";
 import ReportCard from "../ReportCard";
 
@@ -160,5 +161,58 @@ describe("ReportCard tests", () => {
     expect(
       screen.getByRole("link", { name: /edit the summary/i }),
     ).toBeInTheDocument();
+  });
+
+  it("has no axe violations in the not_generated state", async () => {
+    const { container } = renderWithProviders(<ReportCard />);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations in the generating state", async () => {
+    const { container } = renderWithProviders(<ReportCard />, {
+      preloadedState: {
+        report: {
+          selectedSystems: [],
+          intakeForm: {},
+          reportStatus: "generating",
+          reportData: null,
+          reportGenAt: null,
+          reportGenTime: null,
+        },
+      },
+    });
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations in the generated state", async () => {
+    const { container } = renderWithProviders(<ReportCard />, {
+      preloadedState: {
+        report: {
+          selectedSystems: [],
+          intakeForm: {},
+          reportStatus: "generated",
+          reportData: "base64data==",
+          reportGenAt: "12:00:00 PM",
+          reportGenTime: 3200,
+        },
+      },
+    });
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations in the error state", async () => {
+    const { container } = renderWithProviders(<ReportCard />, {
+      preloadedState: {
+        report: {
+          selectedSystems: [],
+          intakeForm: {},
+          reportStatus: "error",
+          reportData: null,
+          reportGenAt: null,
+          reportGenTime: null,
+        },
+      },
+    });
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

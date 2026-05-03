@@ -8,6 +8,7 @@ import steps from "@/steps";
 import { renderWithProviders } from "@/utils/testing";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { axe } from "jest-axe";
 import { describe, expect, it } from "vitest";
 import TestModePanel from "../TestModePanel";
 
@@ -169,5 +170,18 @@ describe("TestModePanel", () => {
       building_permit: "BP-2024-TEST-001",
       ea_signature: expect.stringMatching(/^data:image\/png;base64,/),
     });
+  });
+
+  it("has no axe violations when collapsed", async () => {
+    const { container } = renderPanel();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations when expanded", async () => {
+    const { container } = renderPanel();
+    await userEvent.click(
+      screen.getByRole("button", { name: /open test mode panel/i }),
+    );
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

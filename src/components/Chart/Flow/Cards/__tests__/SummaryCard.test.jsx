@@ -1,6 +1,7 @@
 import { setIntakeForm } from "@/state/slices/reportReducer";
 import { renderWithProviders } from "@/utils/testing";
 import { act, screen, within } from "@testing-library/react";
+import { axe } from "jest-axe";
 import { describe } from "vitest";
 import SummaryCard from "../SummaryCard";
 
@@ -138,5 +139,30 @@ describe("SummaryCard — Project Information", () => {
     expect(
       within(card).getByText("No project information entered."),
     ).toBeInTheDocument();
+  });
+
+  it("has no axe violations in the empty state", async () => {
+    const { container } = renderWithProviders(<SummaryCard />);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations when populated", async () => {
+    const { container, store } = renderWithProviders(<SummaryCard />);
+    await act(async () => {
+      store.dispatch(
+        setIntakeForm({
+          unit_model_type: "Single Detached w/Secondary Suite",
+          total_primary_units: "1",
+          total_secondary_suites: "1",
+          modelling_standard: ["EnerGuide", "Passive House"],
+          building_plan_version: "v1.0",
+          building_plan_date: "2026-01-15",
+          building_plan_author: "J. Smith",
+          building_permit: "BP-2026-0042",
+          pid_legal: "012-345-678",
+        }),
+      );
+    });
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

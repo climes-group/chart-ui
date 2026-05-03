@@ -4,6 +4,7 @@ import { meetCondition } from "@/state/slices/flowReducer";
 import { renderWithProviders } from "@/utils/testing";
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { axe } from "jest-axe";
 import { describe } from "vitest";
 import StepperFlow from "../StepperFlow.jsx";
 
@@ -108,5 +109,17 @@ describe("StepperFlow tests", () => {
 
     // intake is the blocker — it should be pulsing
     expect(screen.getByRole("button", { name: /Intake/i })).toHaveAttribute("data-pulsing", "true");
+  });
+
+  it("has no axe violations in the desktop layout", async () => {
+    useMedia.mockReturnValue([false]);
+    const { container } = renderWithProviders(<StepperFlow steps={steps} />);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations in the mobile layout", async () => {
+    useMedia.mockReturnValue([true]);
+    const { container } = renderWithProviders(<StepperFlow steps={steps} />);
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

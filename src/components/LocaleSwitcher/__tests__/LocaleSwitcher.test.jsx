@@ -1,6 +1,7 @@
 import { LocaleProvider, useTranslation } from "@/i18n";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { axe } from "jest-axe";
 import { beforeEach, describe, expect, it } from "vitest";
 import LocaleSwitcher from "../index";
 
@@ -69,5 +70,15 @@ describe("LocaleSwitcher", () => {
   it("exposes a labelled navigation landmark", () => {
     renderSwitcher();
     expect(screen.getByRole("navigation", { name: /Language/i })).toBeInTheDocument();
+  });
+
+  it("has no axe violations in en-CA", async () => {
+    const { container } = renderSwitcher("en-CA");
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations in fr-CA", async () => {
+    const { container } = renderSwitcher("fr-CA");
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

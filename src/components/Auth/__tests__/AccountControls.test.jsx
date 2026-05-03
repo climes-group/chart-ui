@@ -1,5 +1,6 @@
 import { renderWithProviders } from "@/utils/testing";
 import { screen } from "@testing-library/react";
+import { axe } from "jest-axe";
 import { describe } from "vitest";
 import AccountControls from "../AccountControls";
 
@@ -37,5 +38,17 @@ describe("AccountControls tests", () => {
     });
     const button = await screen.findByText("John");
     expect(button).toHaveAttribute("title", `Logged in as ${expectedEmail}`);
+  });
+
+  it("has no axe violations when logged in", async () => {
+    const { container } = renderWithProviders(<AccountControls />, {
+      preloadedState: {
+        user: {
+          profile: { given_name: "John", email: "john@test.com" },
+        },
+      },
+    });
+    await screen.findByText("John");
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

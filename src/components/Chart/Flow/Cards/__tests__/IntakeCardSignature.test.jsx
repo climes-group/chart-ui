@@ -1,6 +1,7 @@
 import { renderWithProviders } from "@/utils/testing";
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { axe } from "jest-axe";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import IntakeCard from "../IntakeCard";
 
@@ -241,6 +242,22 @@ describe("IntakeCard signature pads", () => {
       "data-value",
       "",
     );
+  });
+
+  it("has no axe violations in the empty default state", async () => {
+    const { container } = renderWithProviders(
+      <IntakeCard registerNext={vi.fn()} nav={vi.fn()} />,
+      preloadIntake(),
+    );
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations in fr-CA", async () => {
+    const { container } = renderWithProviders(
+      <IntakeCard registerNext={vi.fn()} nav={vi.fn()} />,
+      { ...preloadIntake(), locale: "fr-CA" },
+    );
+    expect(await axe(container)).toHaveNoViolations();
   });
 
   it("the card-level Clear button wipes both canvases and dates", async () => {

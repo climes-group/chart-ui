@@ -1,5 +1,6 @@
 import useMedia from "@/hooks/useMedia";
 import { render } from "@testing-library/react";
+import { axe } from "jest-axe";
 import { describe, vi } from "vitest";
 import SelectedLocation from "../SelectedLocation";
 
@@ -52,5 +53,21 @@ describe("SelectedLocation tests", () => {
       <SelectedLocation humanAddr="123 Main St" geoData={mockGeoData} />,
     );
     expect(getByText("123 Main St")).toBeInTheDocument();
+  });
+
+  it("has no axe violations on desktop", async () => {
+    useMedia.mockReturnValue([false]);
+    const { container } = render(
+      <SelectedLocation humanAddr="123 Main St" geoData={mockGeoData} />,
+    );
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations on mobile", async () => {
+    useMedia.mockReturnValue([true]);
+    const { container } = render(
+      <SelectedLocation humanAddr="123 Main St" geoData={mockGeoData} />,
+    );
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

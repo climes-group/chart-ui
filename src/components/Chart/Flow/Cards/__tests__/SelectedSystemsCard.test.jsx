@@ -1,6 +1,7 @@
 import { renderWithProviders } from "@/utils/testing";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { axe } from "jest-axe";
 import { describe, vi } from "vitest";
 import SelectedSystemsCard from "../SelectedSystemsCard";
 
@@ -177,5 +178,25 @@ describe("SelectedSystemsCard tests", () => {
       "ASTM.Name": "Tank-style",
       Services: "Mechanical",
     });
+  });
+
+  it("has no axe violations in the loading state", async () => {
+    global.fetch = vi.fn(() => new Promise(() => {}));
+    const { container } = renderWithProviders(<SelectedSystemsCard />);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations after data loads", async () => {
+    setupFetch();
+    const { container } = renderWithProviders(<SelectedSystemsCard />);
+    await screen.findByText("Boiler");
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations in the error state", async () => {
+    global.fetch = vi.fn().mockResolvedValue({ ok: false, json: async () => ({}) });
+    const { container } = renderWithProviders(<SelectedSystemsCard />);
+    await screen.findByText(/Error loading systems/);
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

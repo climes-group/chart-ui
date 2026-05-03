@@ -1,6 +1,7 @@
 import { renderWithProviders } from "@/utils/testing";
 import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { axe } from "jest-axe";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import SavedReports from "../index";
 
@@ -193,5 +194,58 @@ describe("SavedReports", () => {
 
     const dialog = screen.getByRole("dialog", { name: /Delete report/ });
     expect(within(dialog).getByText("only.pdf")).toBeInTheDocument();
+  });
+
+  it("has no axe violations in the loading state", async () => {
+    global.fetch = vi.fn(() => new Promise(() => {}));
+    const { container } = renderWithProviders(<SavedReports />, {
+      preloadedState: loggedInState,
+    });
+    await screen.findByText(/Loading reports/);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations in the empty state", async () => {
+    global.fetch = mockListReports([]);
+    const { container } = renderWithProviders(<SavedReports />, {
+      preloadedState: loggedInState,
+    });
+    await screen.findByText(/No saved reports found/);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations in the ready state", async () => {
+    global.fetch = mockListReports([
+      { name: "report-1.pdf", created: "2026-04-01T10:00:00Z" },
+      { name: "report-2.pdf", created: "2026-04-02T10:00:00Z" },
+    ]);
+    const { container } = renderWithProviders(<SavedReports />, {
+      preloadedState: loggedInState,
+    });
+    await screen.findByText("report-1.pdf");
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations in the error state", async () => {
+    global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
+    const { container } = renderWithProviders(<SavedReports />, {
+      preloadedState: loggedInState,
+    });
+    await screen.findByText(/Failed to load reports/);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations when the delete-all dialog is open", async () => {
+    global.fetch = mockListReports([
+      { name: "a.pdf", created: "2026-04-01T10:00:00Z" },
+    ]);
+    const { container } = renderWithProviders(<SavedReports />, {
+      preloadedState: loggedInState,
+    });
+    await userEvent.click(
+      await screen.findByRole("button", { name: /Delete all reports/ }),
+    );
+    await screen.findByRole("dialog", { name: /Delete all reports/ });
+    expect(await axe(container)).toHaveNoViolations();
   });
 });
