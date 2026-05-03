@@ -34,11 +34,11 @@ const TEST_INTAKE = {
   ghgi: 5,
   ea_name: "Test Energy Advisor",
   ea_number: "EA-12345",
-  ea_phone: "604-555-0100",
+  ea_phone: "555-555-0100",
   ea_business: "Test Energy Consulting Ltd.",
   so_company_name: "Test Builder Corp.",
   builder_name: "Test Builder",
-  builder_phone: "604-555-0200",
+  builder_phone: "555-555-0200",
   ea_signature_date: "2024-01-20",
   builder_signature_date: "2024-01-20",
   ea_signature:

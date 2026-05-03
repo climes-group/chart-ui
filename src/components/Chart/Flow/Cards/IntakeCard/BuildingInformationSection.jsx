@@ -3,8 +3,6 @@ import { TextField } from "@mui/material";
 export default function BuildingInformationSection({ form }) {
   return (
     <div className="space-y-4">
-      <h3 className="heading-section">Building Information</h3>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <form.Field name="heated_floor_area">
           {(field) => (
