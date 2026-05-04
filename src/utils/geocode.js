@@ -3,6 +3,8 @@ const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org";
 // Replace with your actual app name and contact email.
 const USER_AGENT = "chart@climesgroup.ca";
 
+const GEOLOCATOR_BASE_URL = "https://geolocator.api.geo.ca/";
+
 export class GeoCode {
   constructor(lat, lng) {
     this.lat = lat;
@@ -66,29 +68,21 @@ export class GeoCode {
   }
 }
 
-/**
- * Search for an address using Nominatim
- * @param {string} query
- * @returns {Promise<{items: Array}>}
- */
-export async function searchAddress(query) {
+export async function searchAddressGeolocator(query, lang) {
   const params = new URLSearchParams({
     q: query,
-    format: "json",
-    addressdetails: "1",
-    countrycodes: "ca", // Limit search to Canada
+    lang: lang,
   });
 
   try {
-    const resp = await fetch(
-      `${NOMINATIM_BASE_URL}/search?${params.toString()}`,
-      {
-        headers: { "User-Agent": USER_AGENT },
-      },
-    );
+    const resp = await fetch(`${GEOLOCATOR_BASE_URL}/?${params.toString()}`, {
+      headers: { "User-Agent": USER_AGENT },
+    });
     const result = await resp.json();
+
     // Map the Nominatim response to the format your app expects.
     // addressdetails=1 gives us a structured `address` object on each result.
+    /*
     const mappedItems = result.map((item) => {
       const addr = item.address || {};
       const houseNum = addr.house_number ?? "";
@@ -107,6 +101,73 @@ export async function searchAddress(query) {
         id: item.place_id,
         address: {
           label: item.display_name,
+          street,
+          city,
+          province: addr.state ?? "",
+          postcode: addr.postcode ?? "",
+        },
+        position: {
+          lat: parseFloat(item.lat),
+          lng: parseFloat(item.lon),
+        },
+      };
+    });
+    return { items: mappedItems };*/
+  } catch (e) {
+    console.error(e);
+    return { items: [] };
+  }
+}
+
+/**
+ * Search for an address using Nominatim
+ * @param {string} query
+ * @returns {Promise<{items: Array}>}
+ */
+export async function searchAddress(query) {
+  const params = new URLSearchParams({
+    q: query,
+    format: "json",
+    addressdetails: "1",
+    // Limit search to Canadian residential buildings
+    countrycodes: "ca",
+    class: "building",
+    type: "residential",
+  });
+
+  try {
+    const resp = await fetch(
+      `${NOMINATIM_BASE_URL}/search?${params.toString()}`,
+      {
+        headers: { "User-Agent": USER_AGENT },
+      },
+    );
+    const result = await resp.json();
+
+    // Map the Nominatim response to the format your app expects.
+    // addressdetails=1 gives us a structured `address` object on each result.
+    const mappedItems = result.map((item) => {
+      const addr = item.address || {};
+      const houseNum = addr.house_number ?? "";
+      const road =
+        addr.road ?? addr.pedestrian ?? addr.footway ?? addr.path ?? "";
+      const street = [houseNum, road].filter(Boolean).join(" ");
+      const city =
+        addr.city ??
+        addr.town ??
+        addr.village ??
+        addr.hamlet ??
+        addr.municipality ??
+        addr.county ??
+        "";
+
+      // TODO: put it somewhere else to clean up this render function
+      const formattedAddress = `${street ? street + ", " : ""}${city ? city + ", " : ""}${addr.state ? addr.state + ", " : ""}${addr.postcode ? addr.postcode + ", " : ""}${addr.country ?? ""}`;
+
+      return {
+        id: item.place_id,
+        address: {
+          label: formattedAddress,
           street,
           city,
           province: addr.state ?? "",
@@ -153,8 +214,9 @@ export async function lookUpHumanAddress(geoCode) {
       },
     );
     const jsonResp = await resp.json();
+    console.log("Nominatim reverse geocoding response:", jsonResp);
 
-    return jsonResp?.display_name || "";
+    return jsonResp;
   } catch (e) {
     console.error(e);
   }

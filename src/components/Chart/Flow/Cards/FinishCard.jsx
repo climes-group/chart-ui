@@ -3,16 +3,23 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
+import { formatDate, useTranslation } from "@/i18n";
 
 export default function FinishCard({ onReset, onBackToReport }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const intake = useSelector((s) => s.report.intakeForm);
   const selectedSystems = useSelector((s) => s.report.selectedSystems);
   const reportGenAt = useSelector((s) => s.report.reportGenAt);
+  const { t, locale } = useTranslation();
 
-  const date = reportGenAt ? new Date(reportGenAt).toLocaleDateString() : null;
-  const address = intake?.project_address?.trim() || "your project";
+  const date = reportGenAt
+    ? formatDate(reportGenAt, locale, { dateStyle: "medium" })
+    : null;
+  const address = intake?.project_address?.trim() || t("finish.fallbackAddress");
   const count = selectedSystems?.length ?? 0;
+  const systemsSuffix = count === 1
+    ? t("finish.summaryAfterOne")
+    : t("finish.summaryAfterOther");
 
   return (
     <div className="flex flex-col items-center px-4 py-12 text-center">
@@ -21,11 +28,15 @@ export default function FinishCard({ onReset, onBackToReport }) {
         strokeWidth={1.5}
         aria-hidden="true"
       />
-      <h2 className="heading-card mb-3">All done!</h2>
+      <h2 className="heading-card mb-3">{t("finish.title")}</h2>
       <p className="body-muted mb-2 max-w-md">
-        Report generated for <strong>{address}</strong> with{" "}
-        <strong>{count}</strong> system{count === 1 ? "" : "s"}
-        {date ? ` on ${date}` : ""}.
+        {t("finish.summaryBefore")}
+        <strong>{address}</strong>
+        {t("finish.summaryMiddle")}
+        <strong>{count}</strong>
+        {systemsSuffix}
+        {date ? t("finish.summaryDate", { date }) : ""}
+        {t("finish.summaryEnd")}
       </p>
       {onBackToReport && (
         <button
@@ -33,7 +44,7 @@ export default function FinishCard({ onReset, onBackToReport }) {
           onClick={onBackToReport}
           className="text-primary mt-2 mb-8 text-sm underline"
         >
-          ← Back to Report
+          {t("finish.backToReport")}
         </button>
       )}
 
@@ -43,19 +54,17 @@ export default function FinishCard({ onReset, onBackToReport }) {
           variant="outline"
           className="mt-4"
         >
-          Start a new report
+          {t("finish.startNew")}
         </Button>
       ) : (
         <div className="mt-4 flex flex-col items-center gap-3">
-          <p className="text-foreground text-sm">
-            This will clear all your data. Continue?
-          </p>
+          <p className="text-foreground text-sm">{t("finish.confirmReset")}</p>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setConfirmOpen(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button variant="destructive" onClick={onReset}>
-              Yes, start over
+              {t("finish.yesReset")}
             </Button>
           </div>
         </div>

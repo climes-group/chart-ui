@@ -1,41 +1,58 @@
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
-import { AlertCircle, ArrowLeftIcon, ArrowRightIcon, Check } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  Check,
+} from "lucide-react";
 import React from "react";
 
-export function StepperHeader({ steps, currentStep, jumpTo, isStepLocked, pulsingSteps }) {
+export function StepperHeader({
+  steps,
+  currentStep,
+  jumpTo,
+  isStepLocked,
+  pulsingSteps,
+}) {
+  const { t } = useTranslation();
   return (
-    <div className="flex items-center w-full py-5 px-2">
+    <div className="flex w-full items-center px-2 py-5">
       {steps.map((stepObj, idx) => {
         const isCompleted = currentStep && currentStep.id > stepObj.id;
         const isActive = currentStep && currentStep.id === stepObj.id;
-        const isLocked = !isActive && !isCompleted && (isStepLocked?.(stepObj.name) ?? false);
+        const isLocked =
+          !isActive && !isCompleted && (isStepLocked?.(stepObj.name) ?? false);
         const isPulsing = pulsingSteps?.has(stepObj.name) ?? false;
+
+        // get translations for step labels
+
+        const stepLabel = t(`steps.${stepObj.name}`);
 
         return (
           <React.Fragment key={stepObj.name}>
             <button
               onClick={() => jumpTo(stepObj.name)}
-              className="flex items-center gap-2 shrink-0 group"
+              className="group flex shrink-0 items-center gap-2"
               data-locked={isLocked ? "true" : undefined}
               data-pulsing={isPulsing ? "true" : undefined}
             >
               <div className="relative">
                 {isPulsing && (
                   <span
-                    className="absolute inset-0 rounded-full border-2 border-warm-brown animate-ping"
+                    className="border-warm-brown absolute inset-0 animate-ping rounded-full border-2"
                     aria-hidden="true"
                   />
                 )}
                 <div
                   className={cn(
-                    "size-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all border-2",
+                    "flex size-8 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all",
                     isActive || isCompleted
                       ? "bg-primary border-primary text-primary-foreground"
                       : isPulsing
                         ? "bg-warm-brown border-warm-brown text-white"
-                        : "bg-transparent border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60",
+                        : "border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60 bg-transparent",
                   )}
                 >
                   {isCompleted ? (
@@ -49,7 +66,7 @@ export function StepperHeader({ steps, currentStep, jumpTo, isStepLocked, pulsin
                 className={cn(
                   "text-sm transition-colors",
                   isActive
-                    ? "font-semibold text-foreground"
+                    ? "text-foreground font-semibold"
                     : isCompleted
                       ? "text-foreground"
                       : isPulsing
@@ -57,14 +74,14 @@ export function StepperHeader({ steps, currentStep, jumpTo, isStepLocked, pulsin
                         : "text-muted-foreground group-hover:text-foreground/70",
                 )}
               >
-                {stepObj.label}
+                {stepLabel}
               </span>
             </button>
 
             {idx < steps.length - 1 && (
               <div
                 className={cn(
-                  "flex-1 h-px mx-3",
+                  "mx-3 h-px flex-1",
                   isCompleted ? "bg-primary/40" : "bg-border",
                 )}
               />
@@ -80,14 +97,14 @@ export function DesktopControls({ currentStep, errorMessage, onBack, onNext }) {
   const { t } = useTranslation();
   const nextLabel = !currentStep?.next ? t("common.finish") : t("common.next");
   return (
-    <div className="flex items-center justify-between w-full">
+    <div className="flex w-full items-center justify-between">
       <Button variant="outline" disabled={!currentStep?.prev} onClick={onBack}>
         <ArrowLeftIcon className="size-4" />
         {t("common.back")}
       </Button>
       <div className="flex items-center gap-3">
         {currentStep && errorMessage && (
-          <span className="flex items-center gap-1.5 text-sm text-destructive">
+          <span className="text-destructive flex items-center gap-1.5 text-sm">
             <AlertCircle className="size-4 shrink-0" />
             {errorMessage}
           </span>
@@ -105,11 +122,17 @@ export function DesktopControls({ currentStep, errorMessage, onBack, onNext }) {
   );
 }
 
-export function MobileControls({ currentStep, steps, errorMessage, onBack, onNext }) {
+export function MobileControls({
+  currentStep,
+  steps,
+  errorMessage,
+  onBack,
+  onNext,
+}) {
   const { t } = useTranslation();
   const nextLabel = !currentStep?.next ? t("common.finish") : t("common.next");
   return (
-    <div className="flex items-center justify-between w-full">
+    <div className="flex w-full items-center justify-between">
       <Button
         variant="outline"
         size="icon"
@@ -122,17 +145,17 @@ export function MobileControls({ currentStep, steps, errorMessage, onBack, onNex
 
       {currentStep && (
         <div className="flex flex-col items-center">
-          <span className="text-sm font-medium text-foreground">
-            {currentStep.label}
+          <span className="text-foreground text-sm font-medium">
+            {t(`steps.${currentStep.name}`)}
           </span>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-muted-foreground text-xs">
             {t("flow.stepper.stepCounter", {
               current: currentStep.id + 1,
               total: steps.length,
             })}
           </span>
           {errorMessage && (
-            <span className="flex items-center gap-1 text-xs text-destructive mt-0.5">
+            <span className="text-destructive mt-0.5 flex items-center gap-1 text-xs">
               <AlertCircle className="size-3 shrink-0" />
               {errorMessage}
             </span>

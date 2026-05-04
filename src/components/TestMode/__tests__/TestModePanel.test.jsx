@@ -122,7 +122,7 @@ describe("TestModePanel", () => {
 
     store.dispatch(setSteps(steps));
     expect(store.getState().flow.conditions.intake).toBe(false);
-    expect(store.getState().flow.conditions.selectedSystems).toBe(false);
+    expect(store.getState().flow.conditions.inventory).toBe(false);
 
     await user.click(
       screen.getByRole("button", { name: /open test mode panel/i }),
@@ -133,7 +133,7 @@ describe("TestModePanel", () => {
 
     const state = store.getState();
     expect(state.flow.conditions.intake).toBe(true);
-    expect(state.flow.conditions.selectedSystems).toBe(true);
+    expect(state.flow.conditions.inventory).toBe(true);
     expect(state.report.selectedSystems).toHaveLength(1);
     expect(state.report.selectedSystems[0]["ASTM.System.Code"]).toBe("HW-01");
     expect(state.report.intakeForm.building_permit).toBe("BP-2024-TEST-001");

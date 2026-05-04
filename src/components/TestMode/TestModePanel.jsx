@@ -85,7 +85,7 @@ export default function TestModePanel() {
     dispatch(setHumanAddress(TEST_ADDRESS));
     dispatch(addSelectedSystem(TEST_SYSTEM));
     dispatch(meetCondition({ name: "intake", condition: true }));
-    dispatch(meetCondition({ name: "selectedSystems", condition: true }));
+    dispatch(meetCondition({ name: "inventory", condition: true }));
     intakeFillRef?.current?.(TEST_INTAKE);
   };
 

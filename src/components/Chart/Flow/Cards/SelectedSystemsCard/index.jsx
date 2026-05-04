@@ -31,7 +31,9 @@ export default function SelectedSystemsCard({ activeStep }) {
   );
 
   const selectedSystemCodes = new Set(selectedSystems.map(getSystemCodeFor));
-  const selectedFeatureCodes = new Set(selectedSiteFeatures.map(getFeatureKeyFor));
+  const selectedFeatureCodes = new Set(
+    selectedSiteFeatures.map(getFeatureKeyFor),
+  );
 
   const toggleSystem = (system) => {
     const code = getSystemCodeFor(system);
@@ -69,7 +71,13 @@ export default function SelectedSystemsCard({ activeStep }) {
       const data = await response.json();
       const unique = dedupeSystems(data);
       setAvailableSystems(unique);
-      setActiveService(unique[0]?.Services ?? null);
+
+      // sort and get first service alphabetically
+      const services = Array.from(
+        new Set(unique.map((s) => s.Services).filter(Boolean)),
+      ).sort();
+
+      setActiveService(services[0] ?? null);
     } catch (err) {
       setError(err.message);
     }
@@ -84,7 +92,13 @@ export default function SelectedSystemsCard({ activeStep }) {
       const data = await response.json();
       const unique = dedupeSiteFeatures(data);
       setAvailableFeatures(unique);
-      setActiveCategory(unique[0]?.Category ?? null);
+
+      // sort and get first category alphabetically
+      const categories = Array.from(
+        new Set(unique.map((f) => f.Category).filter(Boolean)),
+      ).sort();
+
+      setActiveCategory(categories[0] ?? null);
     } catch (err) {
       setError(err.message);
     }
@@ -112,7 +126,9 @@ export default function SelectedSystemsCard({ activeStep }) {
     return (
       <div>
         <h2 className="heading-card mb-2">Systems</h2>
-        <p className="text-destructive text-sm">Error loading systems: {error}</p>
+        <p className="text-destructive text-sm">
+          Error loading systems: {error}
+        </p>
       </div>
     );
 
@@ -122,14 +138,22 @@ export default function SelectedSystemsCard({ activeStep }) {
         <Skeleton className="h-6 w-44 rounded" />
         <div className="border-border flex flex-wrap gap-2 border-b pb-3">
           {[88, 112, 80].map((w) => (
-            <Skeleton key={w} className="h-9 rounded-full" style={{ width: w }} />
+            <Skeleton
+              key={w}
+              className="h-9 rounded-full"
+              style={{ width: w }}
+            />
           ))}
         </div>
         <div className="space-y-2.5">
           <Skeleton className="h-3 w-20 rounded" />
           <div className="flex flex-wrap gap-2">
             {[96, 124, 80, 144, 100, 116].map((w, i) => (
-              <Skeleton key={i} className="h-8 rounded-md" style={{ width: w }} />
+              <Skeleton
+                key={i}
+                className="h-8 rounded-md"
+                style={{ width: w }}
+              />
             ))}
           </div>
         </div>
@@ -137,7 +161,11 @@ export default function SelectedSystemsCard({ activeStep }) {
           <Skeleton className="h-3 w-28 rounded" />
           <div className="flex flex-wrap gap-2">
             {[108, 76, 130, 92].map((w, i) => (
-              <Skeleton key={i} className="h-8 rounded-md" style={{ width: w }} />
+              <Skeleton
+                key={i}
+                className="h-8 rounded-md"
+                style={{ width: w }}
+              />
             ))}
           </div>
         </div>

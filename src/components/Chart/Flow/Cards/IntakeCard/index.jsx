@@ -52,7 +52,7 @@ export default function IntakeCard({ activeStep, registerNext, nav }) {
       if (submitSucceeded.current) {
         nav();
       } else {
-        dispatch(setError(activeStep?.errorMessage ?? t("intake.errorMessage")));
+        dispatch(setError(t("intake.errorMessage")));
       }
     });
     // Register a live field-setter so TestModePanel can autofill the mounted form

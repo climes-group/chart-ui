@@ -2,14 +2,17 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/i18n";
 import { setupTestStore } from "@/state/store.js";
 import { meetCondition } from "@/state/slices/flowReducer";
 import useFlow from "../useFlow";
 
 const wrapper = ({ children }) => (
-  <Provider store={setupTestStore()}>
-    <MemoryRouter>{children}</MemoryRouter>
-  </Provider>
+  <LocaleProvider initialLocale="en-CA">
+    <Provider store={setupTestStore()}>
+      <MemoryRouter>{children}</MemoryRouter>
+    </Provider>
+  </LocaleProvider>
 );
 vi.mock("react-redux", { spy: true });
 
@@ -32,9 +35,11 @@ const stepsWithCondition = [
 
 function makeWrapper(store) {
   return ({ children }) => (
-    <Provider store={store}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </Provider>
+    <LocaleProvider initialLocale="en-CA">
+      <Provider store={store}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </Provider>
+    </LocaleProvider>
   );
 }
 

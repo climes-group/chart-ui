@@ -58,6 +58,16 @@ describe("SelectedSystemsCard tests", () => {
   beforeEach(() => {
     localStorage.clear();
   });
+
+  // The card sorts services alphabetically and selects the first as the active
+  // tab — "Electrical" comes before "Mechanical". Tests that need to interact
+  // with mechanical systems (Boiler, Furnace) must switch tabs first.
+  async function selectMechanicalTab() {
+    await userEvent.click(
+      await screen.findByRole("button", { name: /Mechanical/ }),
+    );
+    await screen.findByText("Boiler");
+  }
   it("renders loading skeleton before data arrives", () => {
     global.fetch = vi.fn(() => new Promise(() => {})); // never resolves
     const { container } = renderWithProviders(<SelectedSystemsCard />);
@@ -76,6 +86,7 @@ describe("SelectedSystemsCard tests", () => {
     setupFetch();
     renderWithProviders(<SelectedSystemsCard />);
     await screen.findByText("Systems");
+    await selectMechanicalTab();
     expect(screen.getByText("Boiler")).toBeInTheDocument();
   });
 
@@ -99,7 +110,7 @@ describe("SelectedSystemsCard tests", () => {
   it("toggles a system selection", async () => {
     setupFetch();
     const { store } = renderWithProviders(<SelectedSystemsCard />);
-    await screen.findByText("Boiler");
+    await selectMechanicalTab();
 
     await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
 
@@ -110,7 +121,7 @@ describe("SelectedSystemsCard tests", () => {
   it("deselects a system when toggled again", async () => {
     setupFetch();
     const { store } = renderWithProviders(<SelectedSystemsCard />);
-    await screen.findByText("Boiler");
+    await selectMechanicalTab();
 
     await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
     expect(store.getState().report.selectedSystems.length).toBe(1);
@@ -122,7 +133,7 @@ describe("SelectedSystemsCard tests", () => {
   it("clears all selections with the clear all button", async () => {
     setupFetch();
     const { store } = renderWithProviders(<SelectedSystemsCard />);
-    await screen.findByText("Boiler");
+    await selectMechanicalTab();
 
     await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
     await screen.findByText(/Clear all/);
@@ -134,7 +145,7 @@ describe("SelectedSystemsCard tests", () => {
   it("clears selections by classification", async () => {
     setupFetch();
     const { store } = renderWithProviders(<SelectedSystemsCard />);
-    await screen.findByText("Boiler");
+    await selectMechanicalTab();
 
     await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
     await screen.findByRole("button", { name: /Clear 1/ });
@@ -159,7 +170,7 @@ describe("SelectedSystemsCard tests", () => {
     ];
     setupFetch(withDuplicate);
     renderWithProviders(<SelectedSystemsCard />);
-    await screen.findByText("Boiler");
+    await selectMechanicalTab();
     // mock has two distinct mechanical systems ("Boiler" and "Furnace") plus
     // one duplicate of Boiler — after dedupe, only one Boiler pill renders
     expect(screen.getAllByText("Boiler").length).toBe(1);
@@ -168,7 +179,7 @@ describe("SelectedSystemsCard tests", () => {
   it("stores the full system record in redux on selection", async () => {
     setupFetch();
     const { store } = renderWithProviders(<SelectedSystemsCard />);
-    await screen.findByText("Boiler");
+    await selectMechanicalTab();
 
     await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
 
@@ -189,7 +200,7 @@ describe("SelectedSystemsCard tests", () => {
   it("has no axe violations after data loads", async () => {
     setupFetch();
     const { container } = renderWithProviders(<SelectedSystemsCard />);
-    await screen.findByText("Boiler");
+    await selectMechanicalTab();
     expect(await axe(container)).toHaveNoViolations();
   });
 

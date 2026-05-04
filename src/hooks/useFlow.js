@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "../i18n";
 import {
   jumpToStep,
   setError,
@@ -19,6 +20,7 @@ function useFlow(initialSteps = []) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const store = useStore();
+  const { t } = useTranslation();
 
   const stepsInitialized = useSelector((s) => s.flow.steps.length > 0);
 
@@ -54,7 +56,9 @@ function useFlow(initialSteps = []) {
       dispatch(stepForward());
       navigate(`/flow/${currentStep.next ?? "finish"}`);
     } else {
-      dispatch(setError(currentStep.errorMessage ?? "Please complete the required fields."));
+      const errorKey = `steps.errors.${currentStep.name}`;
+      const translated = t(errorKey);
+      dispatch(setError(translated === errorKey ? t("flow.errors.default") : translated));
     }
   }
 
@@ -89,7 +93,7 @@ function useFlow(initialSteps = []) {
       dispatch(jumpToStep(name));
       navigate(`/flow/${name}`);
     } else {
-      dispatch(setError("Conditions not met"));
+      dispatch(setError(t("flow.errors.conditionsNotMet")));
     }
     return blockingSteps;
   }
