@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useDebugMode } from "@/context/TestModeContext";
+import { useTranslation } from "@/i18n";
 import {
   getSystemCodeFor,
   setReportData,
@@ -25,7 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import DebugDataModal from "./DebugDataModal";
 
-const openPdfInNewWindow = async (result) => {
+const openPdfInNewWindow = async (result, popupBlockedMessage) => {
   const byteCharacters = atob(result);
   const byteNumbers = new Array(byteCharacters.length);
 
@@ -39,7 +40,7 @@ const openPdfInNewWindow = async (result) => {
   const pdfWindow = window.open(fileURL, "_blank");
 
   if (!pdfWindow) {
-    alert("Popup blocked! Please allow popups to view the report.");
+    alert(popupBlockedMessage);
   }
 };
 
@@ -49,6 +50,7 @@ function ReportContext({
   systemCount,
   featureCount,
 }) {
+  const { t } = useTranslation();
   const standards = (intakeForm?.modelling_standard || []).filter(Boolean);
   const standardsLabel = standards
     .map((s) =>
@@ -67,9 +69,11 @@ function ReportContext({
   );
 
   const hasLocation = !!humanAddress;
+  const systemsKey = systemCount === 1 ? "report.context.systems.one" : "report.context.systems.other";
+  const featuresKey = featureCount === 1 ? "report.context.features.one" : "report.context.features.other";
   const systemLine = [
-    `${systemCount} system${systemCount !== 1 ? "s" : ""}`,
-    `${featureCount} site feature${featureCount !== 1 ? "s" : ""}`,
+    t(systemsKey, { count: systemCount }),
+    t(featuresKey, { count: featureCount }),
     standardsLabel || null,
   ]
     .filter(Boolean)
@@ -87,9 +91,7 @@ function ReportContext({
           {hasLocation ? (
             <p className="text-foreground">{humanAddress}</p>
           ) : (
-            <p className="text-warm-brown">
-              No location set — generation may fail
-            </p>
+            <p className="text-warm-brown">{t("report.context.noLocation")}</p>
           )}
           {systemLine && (
             <p className="text-muted-foreground text-xs">{systemLine}</p>
@@ -107,7 +109,7 @@ function ReportContext({
           className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 text-xs transition-colors"
         >
           <Pencil className="size-3" />
-          Edit the summary
+          {t("report.context.editSummary")}
         </Link>
       </div>
     </div>
@@ -130,6 +132,7 @@ export default function ReportCard() {
   const token = useSelector((s) => s.user.token);
   const dispatch = useDispatch();
   const isDebugMode = useDebugMode();
+  const { t } = useTranslation();
   const [showDebug, setShowDebug] = useState(false);
 
   async function handleGenerateReport() {
@@ -190,7 +193,7 @@ export default function ReportCard() {
 
   return (
     <>
-      <h2 className="heading-card mb-5">Report</h2>
+      <h2 className="heading-card mb-5">{t("report.heading")}</h2>
 
       <div className="flex flex-col gap-5">
         {/* Primary action row */}
@@ -203,12 +206,12 @@ export default function ReportCard() {
             {isGenerating ? (
               <>
                 <Loader2 className="animate-spin" />
-                Generating…
+                {t("report.generating")}
               </>
             ) : (
               <>
                 <FileText />
-                Generate Report
+                {t("report.generate")}
               </>
             )}
           </Button>
@@ -220,7 +223,7 @@ export default function ReportCard() {
               className="text-muted-foreground"
             >
               <RefreshCw />
-              Regenerate
+              {t("report.regenerate")}
             </Button>
           )}
         </div>
@@ -228,10 +231,7 @@ export default function ReportCard() {
         {/* Status panel */}
         {reportStatus === "not_generated" && (
           <div className="space-y-4">
-            <p className="body-muted">
-              Generate a PDF report for the inputs reviewed on the previous
-              step.
-            </p>
+            <p className="body-muted">{t("report.intro")}</p>
 
             <ReportContext
               humanAddress={humanAddress}
@@ -245,7 +245,7 @@ export default function ReportCard() {
         {isGenerating && (
           <div className="border-border bg-muted/20 text-muted-foreground flex items-center gap-3 rounded-lg border px-4 py-3 text-sm">
             <Loader2 className="text-primary size-4 shrink-0 animate-spin" />
-            <span>Building your report, this may take a moment…</span>
+            <span>{t("report.building")}</span>
           </div>
         )}
 
@@ -254,19 +254,16 @@ export default function ReportCard() {
             <XCircle className="text-destructive mt-0.5 size-5 shrink-0" />
             <div className="flex flex-col gap-2">
               <p className="text-destructive text-sm font-medium">
-                Report generation failed
+                {t("report.failed")}
               </p>
-              <p className="body-muted">
-                Please try again. If the issue persists, check your network
-                connection.
-              </p>
+              <p className="body-muted">{t("report.failedHelp")}</p>
               <Button
                 onClick={handleGenerateReport}
                 variant="outline"
                 size="sm"
                 className="w-fit"
               >
-                Retry
+                {t("report.retry")}
               </Button>
             </div>
           </div>
@@ -278,10 +275,10 @@ export default function ReportCard() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="text-primary size-5 shrink-0" />
-                <span className="text-sm font-semibold">Report ready</span>
+                <span className="text-sm font-semibold">{t("report.ready")}</span>
               </div>
               <div className="text-muted-foreground flex items-center gap-3 text-xs">
-                {reportGenAt && <span>Generated at {reportGenAt}</span>}
+                {reportGenAt && <span>{t("report.generatedAt", { time: reportGenAt })}</span>}
                 {reportGenTime && (
                   <span className="text-muted-foreground/60">
                     {(reportGenTime / 1000).toFixed(1)}s
@@ -293,11 +290,11 @@ export default function ReportCard() {
             {/* Download action */}
             <div className="border-primary/20 flex flex-wrap items-center gap-3 border-t pt-3">
               <Button
-                onClick={() => openPdfInNewWindow(reportData)}
+                onClick={() => openPdfInNewWindow(reportData, t("report.popupBlocked"))}
                 className="px-5"
               >
                 <Download />
-                Download PDF
+                {t("report.downloadPdf")}
               </Button>
 
               {isDebugMode && reportDebugData && (
@@ -307,7 +304,7 @@ export default function ReportCard() {
                   className="text-warm-brown hover:text-warm-brown/80 decoration-warm-gold/60 underline decoration-dashed underline-offset-4"
                 >
                   <Bug />
-                  View debug data
+                  {t("report.viewDebug")}
                 </Button>
               )}
             </div>

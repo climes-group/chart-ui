@@ -1,3 +1,4 @@
+import { useTranslation } from "@/i18n";
 import { Button } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -7,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 function AccountControls({ logout }) {
   const profile = useSelector((state) => state.user.profile);
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -27,7 +29,7 @@ function AccountControls({ logout }) {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
             onClick={handleClick}
-            title={`Logged in as ${profile.email}`}
+            title={t("auth.loggedInAs", { email: profile.email })}
             variant="text"
             color="primary"
           >
@@ -42,8 +44,8 @@ function AccountControls({ logout }) {
               "aria-labelledby": "basic-button",
             }}
           >
-            <MenuItem onClick={() => { navigate("/reports"); handleClose(); }}>Saved Reports</MenuItem>
-            <MenuItem onClick={logout}>Logout</MenuItem>
+            <MenuItem onClick={() => { navigate("/reports"); handleClose(); }}>{t("auth.savedReports")}</MenuItem>
+            <MenuItem onClick={logout}>{t("auth.logout")}</MenuItem>
           </Menu>
         </>
       ) : null}

@@ -8,6 +8,7 @@ import steps from "@/steps";
 import { renderWithProviders } from "@/utils/testing";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { axe } from "jest-axe";
 import { describe, expect, it } from "vitest";
 import TestModePanel from "../TestModePanel";
 
@@ -121,7 +122,7 @@ describe("TestModePanel", () => {
 
     store.dispatch(setSteps(steps));
     expect(store.getState().flow.conditions.intake).toBe(false);
-    expect(store.getState().flow.conditions.selectedSystems).toBe(false);
+    expect(store.getState().flow.conditions.inventory).toBe(false);
 
     await user.click(
       screen.getByRole("button", { name: /open test mode panel/i }),
@@ -132,7 +133,7 @@ describe("TestModePanel", () => {
 
     const state = store.getState();
     expect(state.flow.conditions.intake).toBe(true);
-    expect(state.flow.conditions.selectedSystems).toBe(true);
+    expect(state.flow.conditions.inventory).toBe(true);
     expect(state.report.selectedSystems).toHaveLength(1);
     expect(state.report.selectedSystems[0]["ASTM.System.Code"]).toBe("HW-01");
     expect(state.report.intakeForm.building_permit).toBe("BP-2024-TEST-001");
@@ -169,5 +170,18 @@ describe("TestModePanel", () => {
       building_permit: "BP-2024-TEST-001",
       ea_signature: expect.stringMatching(/^data:image\/png;base64,/),
     });
+  });
+
+  it("has no axe violations when collapsed", async () => {
+    const { container } = renderPanel();
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations when expanded", async () => {
+    const { container } = renderPanel();
+    await userEvent.click(
+      screen.getByRole("button", { name: /open test mode panel/i }),
+    );
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

@@ -4,6 +4,7 @@ import { meetCondition } from "@/state/slices/flowReducer";
 import { renderWithProviders } from "@/utils/testing";
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { axe } from "jest-axe";
 import { describe } from "vitest";
 import StepperFlow from "../StepperFlow.jsx";
 
@@ -18,7 +19,7 @@ describe("StepperFlow tests", () => {
 
   it("renders the stepper with step labels", () => {
     const { getAllByText } = renderWithProviders(<StepperFlow steps={steps} />);
-    expect(getAllByText(steps[0].label).length).toBeGreaterThan(0);
+    expect(getAllByText("Intake").length).toBeGreaterThan(0);
   });
 
   it("renders Next button on desktop for a non-final step", () => {
@@ -34,14 +35,18 @@ describe("StepperFlow tests", () => {
 
   it("shows the FinishCard after finishing the last step", async () => {
     const oneStep = [{ id: 0, name: "intake", label: "Intake", prev: undefined, next: undefined }];
-    const { getByRole, findByText } = renderWithProviders(<StepperFlow steps={oneStep} />);
+    const { getByRole, findByText, store } = renderWithProviders(<StepperFlow steps={oneStep} />);
 
     // wait for currentStep to be set (button becomes enabled)
     await waitFor(() => expect(getByRole("button", { name: /Finish/ })).not.toBeDisabled());
 
+    console.log("BEFORE click - URL:", window.location.pathname, "currentStep:", store.getState().flow.currentStep);
+
     await act(async () => {
       getByRole("button", { name: /Finish/ }).click();
     });
+
+    console.log("AFTER click - URL:", window.location.pathname, "currentStep:", store.getState().flow.currentStep, "error:", store.getState().flow.error);
 
     await findByText(/All done/);
     expect(window.location.pathname).toBe("/flow/finish");
@@ -57,9 +62,9 @@ describe("StepperFlow tests", () => {
     useMedia.mockReturnValue([false]);
     const { getAllByText } = renderWithProviders(<StepperFlow steps={steps} />);
     act(() => {
-      getAllByText(steps[0].label)[0].click();
+      getAllByText("Intake")[0].click();
     });
-    expect(getAllByText(steps[0].label).length).toBeGreaterThan(0);
+    expect(getAllByText("Intake").length).toBeGreaterThan(0);
   });
 
   it("marks a future step as locked when its preceding condition is unmet", async () => {
@@ -108,5 +113,17 @@ describe("StepperFlow tests", () => {
 
     // intake is the blocker — it should be pulsing
     expect(screen.getByRole("button", { name: /Intake/i })).toHaveAttribute("data-pulsing", "true");
+  });
+
+  it("has no axe violations in the desktop layout", async () => {
+    useMedia.mockReturnValue([false]);
+    const { container } = renderWithProviders(<StepperFlow steps={steps} />);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("has no axe violations in the mobile layout", async () => {
+    useMedia.mockReturnValue([true]);
+    const { container } = renderWithProviders(<StepperFlow steps={steps} />);
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

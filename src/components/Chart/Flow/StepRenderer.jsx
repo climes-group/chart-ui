@@ -5,7 +5,7 @@ import SummaryCard from "./Cards/SummaryCard";
 
 const STEP_CARDS = {
   intake: IntakeCard,
-  selectedSystems: SelectedSystemsCard,
+  inventory: SelectedSystemsCard,
   summary: SummaryCard,
   report: ReportCard,
 };

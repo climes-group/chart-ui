@@ -1,19 +1,24 @@
+import { useTranslation } from "@/i18n";
 import { isValidPhone } from "@/lib/validators";
 import { TextField } from "@mui/material";
 
 export default function AssessorInformationSection({ form }) {
+  const { t } = useTranslation();
+  const required = t("validators.required");
+  const phoneFormat = t("validators.phoneFormat");
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <form.Field
           name="ea_name"
           validators={{
-            onBlur: ({ value }) => (!value ? "Required" : undefined),
+            onBlur: ({ value }) => (!value ? required : undefined),
           }}
         >
           {(field) => (
             <TextField
-              label="EA Name"
+              label={t("intake.fields.eaName")}
               fullWidth
               required
               variant="outlined"
@@ -30,12 +35,12 @@ export default function AssessorInformationSection({ form }) {
         <form.Field
           name="ea_number"
           validators={{
-            onBlur: ({ value }) => (!value ? "Required" : undefined),
+            onBlur: ({ value }) => (!value ? required : undefined),
           }}
         >
           {(field) => (
             <TextField
-              label="EA Number"
+              label={t("intake.fields.eaNumber")}
               fullWidth
               required
               variant="outlined"
@@ -53,8 +58,8 @@ export default function AssessorInformationSection({ form }) {
           name="ea_phone"
           validators={{
             onBlur: ({ value }) => {
-              if (!value) return "Required";
-              if (!isValidPhone(value)) return "Format: 555-555-0100";
+              if (!value) return required;
+              if (!isValidPhone(value)) return phoneFormat;
               return undefined;
             },
           }}
@@ -62,7 +67,7 @@ export default function AssessorInformationSection({ form }) {
           {(field) => (
             <TextField
               type="tel"
-              label="EA Phone"
+              label={t("intake.fields.eaPhone")}
               fullWidth
               required
               variant="outlined"
@@ -84,12 +89,12 @@ export default function AssessorInformationSection({ form }) {
         <form.Field
           name="ea_business"
           validators={{
-            onBlur: ({ value }) => (!value ? "Required" : undefined),
+            onBlur: ({ value }) => (!value ? required : undefined),
           }}
         >
           {(field) => (
             <TextField
-              label="EA Business #"
+              label={t("intake.fields.eaBusiness")}
               fullWidth
               required
               variant="outlined"
@@ -106,7 +111,7 @@ export default function AssessorInformationSection({ form }) {
         <form.Field name="so_company_name">
           {(field) => (
             <TextField
-              label="Service Organisation Company Name"
+              label={t("intake.fields.soCompanyName")}
               fullWidth
               variant="outlined"
               value={field.state.value}
@@ -118,7 +123,7 @@ export default function AssessorInformationSection({ form }) {
         <form.Field name="builder_name">
           {(field) => (
             <TextField
-              label="Builder Name"
+              label={t("intake.fields.builderName")}
               fullWidth
               variant="outlined"
               value={field.state.value}
@@ -132,7 +137,7 @@ export default function AssessorInformationSection({ form }) {
           validators={{
             onBlur: ({ value }) => {
               if (!value) return undefined;
-              if (!isValidPhone(value)) return "Format: 555-555-0100";
+              if (!isValidPhone(value)) return phoneFormat;
               return undefined;
             },
           }}
@@ -140,7 +145,7 @@ export default function AssessorInformationSection({ form }) {
           {(field) => (
             <TextField
               type="tel"
-              label="Builder Phone #"
+              label={t("intake.fields.builderPhone")}
               fullWidth
               variant="outlined"
               value={field.state.value}

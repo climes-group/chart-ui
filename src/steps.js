@@ -1,18 +1,12 @@
+// Step labels and error messages are looked up by `name` from the i18n
+// dictionary at render time (keys: `steps.<name>` and `steps.errors.<name>`).
+// `leaveCondition: true` initializes the step's gate as unmet — set when the
+// step requires user action before navigation to the next step is allowed.
 const steps = [
-  {
-    name: "intake",
-    label: "Intake",
-    leaveCondition: true,
-    errorMessage: "Please complete the intake form.",
-  },
-  {
-    name: "selectedSystems",
-    label: "Inventory",
-    leaveCondition: true,
-    errorMessage: "Please select at least one system.",
-  },
-  { name: "summary", label: "Summary" },
-  { name: "report", label: "Report" },
+  { name: "intake", leaveCondition: true },
+  { name: "inventory", leaveCondition: true },
+  { name: "summary" },
+  { name: "report" },
 ];
 
 // add prev and next to steps where next is name of next item in steps array

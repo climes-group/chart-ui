@@ -2,6 +2,7 @@ import { MapPin, Pencil } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
+import { useTranslation } from "@/i18n";
 import {
   getFeatureKeyFor,
   getSystemCodeFor,
@@ -22,6 +23,7 @@ function getSiteFeatureDisplayName(feature) {
 }
 
 function SectionHeader({ title, editTo, editLabel }) {
+  const { t } = useTranslation();
   return (
     <div className="mb-3 flex items-center justify-between">
       <h3 className="heading-section">{title}</h3>
@@ -32,7 +34,7 @@ function SectionHeader({ title, editTo, editLabel }) {
         className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 text-xs transition-colors"
       >
         <Pencil className="size-3" />
-        Edit
+        {t("summary.edit")}
       </Link>
     </div>
   );
@@ -49,21 +51,19 @@ function SystemPill({ name, code }) {
   );
 }
 
-function pluralize(count, singular, plural) {
-  return `${count} ${count === 1 ? singular : plural}`;
-}
-
-function formatHeadline(intake) {
+function formatHeadline(intake, t) {
   const type = intake.unit_model_type;
   const primary = Number(intake.total_primary_units);
   const secondary = Number(intake.total_secondary_suites);
 
   const counts = [];
   if (Number.isFinite(primary) && primary > 0) {
-    counts.push(pluralize(primary, "primary unit", "primary units"));
+    const key = primary === 1 ? "summary.primaryUnits.one" : "summary.primaryUnits.other";
+    counts.push(t(key, { count: primary }));
   }
   if (Number.isFinite(secondary) && secondary > 0) {
-    counts.push(pluralize(secondary, "secondary suite", "secondary suites"));
+    const key = secondary === 1 ? "summary.secondarySuites.one" : "summary.secondarySuites.other";
+    counts.push(t(key, { count: secondary }));
   }
 
   if (!type) return counts.join(" + ") || null;
@@ -77,26 +77,27 @@ function formatStandards(intake) {
   return list.map((s) => (s === "Other" && other ? other : s));
 }
 
-function formatPlanLine(intake) {
+function formatPlanLine(intake, t) {
   const parts = [];
   if (intake.building_plan_version) parts.push(intake.building_plan_version);
   if (intake.building_plan_date) parts.push(intake.building_plan_date);
   if (intake.building_plan_author) parts.push(intake.building_plan_author);
   if (parts.length === 0) return null;
-  return `Plan ${parts.join(" · ")}`;
+  return t("summary.plan", { value: parts.join(" · ") });
 }
 
 function ProjectInformation({ intake }) {
-  const headline = formatHeadline(intake);
+  const { t } = useTranslation();
+  const headline = formatHeadline(intake, t);
   const standards = formatStandards(intake);
-  const planLine = formatPlanLine(intake);
+  const planLine = formatPlanLine(intake, t);
   const permit = intake.building_permit;
   const pid = intake.pid_legal;
 
   const hasAnything =
     headline || standards.length > 0 || planLine || permit || pid;
   if (!hasAnything) {
-    return <p className="body-muted">No project information entered.</p>;
+    return <p className="body-muted">{t("summary.empty.project")}</p>;
   }
 
   return (
@@ -105,7 +106,7 @@ function ProjectInformation({ intake }) {
 
       {standards.length > 0 && (
         <div>
-          <p className="heading-label mb-2">Modelling Standard</p>
+          <p className="heading-label mb-2">{t("intake.fields.modellingStandard")}</p>
           <div className="flex flex-wrap gap-2">
             {standards.map((s) => (
               <SystemPill key={s} name={s} />
@@ -117,8 +118,8 @@ function ProjectInformation({ intake }) {
       {(planLine || permit || pid) && (
         <div className="space-y-1">
           {planLine && <p className="body-muted">{planLine}</p>}
-          {permit && <p className="body-muted">Permit #{permit}</p>}
-          {pid && <p className="body-muted">PID: {pid}</p>}
+          {permit && <p className="body-muted">{t("summary.permit", { value: permit })}</p>}
+          {pid && <p className="body-muted">{t("summary.pid", { value: pid })}</p>}
         </div>
       )}
     </div>
@@ -132,6 +133,7 @@ function SummaryCard() {
   );
   const { geoData, humanAddress } = useSelector((state) => state.geo);
   const intakeForm = useSelector((state) => state.report.intakeForm);
+  const { t } = useTranslation();
 
   const hasIntakeData =
     intakeForm &&
@@ -165,28 +167,28 @@ function SummaryCard() {
 
   return (
     <div className="space-y-4">
-      <h2 className="heading-card">Summary</h2>
+      <h2 className="heading-card">{t("summary.heading")}</h2>
 
       {/* Project Information */}
       <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
-          title="Project Information"
+          title={t("summary.section.project")}
           editTo="/flow/intake"
-          editLabel="Edit project information"
+          editLabel={t("summary.editProject")}
         />
         {hasIntakeData ? (
           <ProjectInformation intake={intakeForm} />
         ) : (
-          <p className="body-muted">No project information entered.</p>
+          <p className="body-muted">{t("summary.empty.project")}</p>
         )}
       </div>
 
       {/* Site Location */}
       <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
-          title="Site Location"
+          title={t("summary.section.location")}
           editTo="/flow/intake"
-          editLabel="Edit project information"
+          editLabel={t("summary.editProject")}
         />
         {humanAddress || geoData ? (
           <div className="flex items-start gap-2">
@@ -201,7 +203,7 @@ function SummaryCard() {
             </div>
           </div>
         ) : (
-          <p className="body-muted">No site selected.</p>
+          <p className="body-muted">{t("summary.empty.location")}</p>
         )}
       </div>
 
@@ -210,14 +212,14 @@ function SummaryCard() {
         <SectionHeader
           title={
             validSelectedSystems.length > 0
-              ? `Selected Systems (${validSelectedSystems.length})`
-              : "Selected Systems"
+              ? t("summary.section.systemsCount", { count: validSelectedSystems.length })
+              : t("summary.section.systems")
           }
           editTo="/flow/selectedSystems#systems"
-          editLabel="Edit selected systems"
+          editLabel={t("summary.editSystems")}
         />
         {validSelectedSystems.length === 0 ? (
-          <p className="body-muted">No systems selected.</p>
+          <p className="body-muted">{t("summary.empty.systems")}</p>
         ) : (
           <div className="space-y-4">
             {services.map((service) => (
@@ -246,14 +248,14 @@ function SummaryCard() {
         <SectionHeader
           title={
             validSelectedSiteFeatures.length > 0
-              ? `Selected Site Features (${validSelectedSiteFeatures.length})`
-              : "Selected Site Features"
+              ? t("summary.section.featuresCount", { count: validSelectedSiteFeatures.length })
+              : t("summary.section.features")
           }
           editTo="/flow/selectedSystems#site-features"
-          editLabel="Edit selected features"
+          editLabel={t("summary.editFeatures")}
         />
         {validSelectedSiteFeatures.length === 0 ? (
-          <p className="body-muted">No features selected.</p>
+          <p className="body-muted">{t("summary.empty.features")}</p>
         ) : (
           <div className="space-y-4">
             {featureServices.map((service) => (

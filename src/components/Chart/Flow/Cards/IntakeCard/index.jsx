@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n";
 import {
   clearIntakeForm,
   selectIntakeForm,
@@ -30,6 +31,7 @@ const SIGNATURE_REQUIRED = ["ea_signature", "builder_signature"];
 export default function IntakeCard({ activeStep, registerNext, nav }) {
   const dispatch = useDispatch();
   const { intakeFillRef } = useTestMode();
+  const { t } = useTranslation();
   const submitSucceeded = useRef(false);
   // Use persisted Redux state as default values so autofill (and persistence)
   // are reflected when the form mounts.
@@ -50,7 +52,7 @@ export default function IntakeCard({ activeStep, registerNext, nav }) {
       if (submitSucceeded.current) {
         nav();
       } else {
-        dispatch(setError(activeStep?.errorMessage ?? "Please complete the intake form."));
+        dispatch(setError(t("intake.errorMessage")));
       }
     });
     // Register a live field-setter so TestModePanel can autofill the mounted form
@@ -72,7 +74,7 @@ export default function IntakeCard({ activeStep, registerNext, nav }) {
   return (
     <div>
       <div className="flex items-start justify-between mb-1">
-        <h2 className="heading-card">Intake</h2>
+        <h2 className="heading-card">{t("intake.heading")}</h2>
         <Button
           variant="ghost"
           size="sm"
@@ -87,12 +89,10 @@ export default function IntakeCard({ activeStep, registerNext, nav }) {
             dispatch(setError(null));
           }}
         >
-          Clear
+          {t("common.clear")}
         </Button>
       </div>
-      <p className="body-muted mb-6">
-        Provide the project, building, and assessor information.
-      </p>
+      <p className="body-muted mb-6">{t("intake.description")}</p>
 
       <form
         onSubmit={(e) => {
@@ -104,19 +104,19 @@ export default function IntakeCard({ activeStep, registerNext, nav }) {
       >
         <FormSection
           form={form}
-          title="Project Information"
+          title={t("intake.section.project")}
           requiredFields={PROJECT_REQUIRED}
         >
           <ProjectInformationSection form={form} />
         </FormSection>
 
-        <FormSection form={form} title="Building Information">
+        <FormSection form={form} title={t("intake.section.building")}>
           <BuildingInformationSection form={form} />
         </FormSection>
 
         <FormSection
           form={form}
-          title="Assessor Information"
+          title={t("intake.section.assessor")}
           requiredFields={ASSESSOR_REQUIRED}
         >
           <AssessorInformationSection form={form} />
@@ -124,7 +124,7 @@ export default function IntakeCard({ activeStep, registerNext, nav }) {
 
         <FormSection
           form={form}
-          title="Signature"
+          title={t("intake.section.signature")}
           requiredFields={SIGNATURE_REQUIRED}
         >
           <SignatureSection form={form} />

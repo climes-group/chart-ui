@@ -4,6 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 import { getFeatureKeyFor } from "@/state/slices/reportReducer";
 import { X } from "lucide-react";
@@ -22,6 +23,8 @@ export default function SiteFeaturesSection({
   const featuresForCategory = activeCategory
     ? features.filter((f) => f.Category === activeCategory)
     : [];
+
+  const locale = useTranslation().locale;
 
   return (
     <div>
@@ -42,7 +45,9 @@ export default function SiteFeaturesSection({
         {categoryNames.map((category) => {
           const selectedCount = features
             .filter((f) => f.Category === category)
-            .filter((f) => selectedFeatureCodes.has(getFeatureKeyFor(f))).length;
+            .filter((f) =>
+              selectedFeatureCodes.has(getFeatureKeyFor(f)),
+            ).length;
 
           return (
             <button
@@ -77,7 +82,10 @@ export default function SiteFeaturesSection({
         <div className="flex flex-wrap gap-2">
           {featuresForCategory.map((feature) => {
             const code = getFeatureKeyFor(feature);
-            const description = feature["Description"];
+            const description =
+              (locale === "fr-CA"
+                ? feature["DescriptionFr"]
+                : feature["Description"]) || feature["Description"];
 
             if (!description) {
               return (

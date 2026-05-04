@@ -1,24 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDate, useTranslation } from "@/i18n";
 import { Download, FileText, Loader2, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
-function formatGeneratedAt(value) {
-  if (!value) return "Unknown date";
-  const date = new Date(value);
-  if (isNaN(date.getTime())) return value;
-  return date.toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
-
 function ConfirmDialog({
   title,
   message,
-  confirmLabel = "Delete",
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   onCancel,
 }) {
@@ -42,7 +34,7 @@ function ConfirmDialog({
           <p className="body-muted">{message}</p>
           <div className="flex justify-end gap-2">
             <Button variant="outline" size="sm" onClick={onCancel}>
-              Cancel
+              {cancelLabel}
             </Button>
             <Button variant="destructive" size="sm" onClick={onConfirm}>
               {confirmLabel}
@@ -57,6 +49,7 @@ function ConfirmDialog({
 function SavedReports() {
   const profile = useSelector((state) => state.user.profile);
   const token = useSelector((state) => state.user.token);
+  const { t, locale } = useTranslation();
 
   const [reports, setReports] = useState([]);
   const [status, setStatus] = useState("loading"); // loading | error | ready
@@ -86,6 +79,15 @@ function SavedReports() {
       })
       .catch(() => setStatus("error"));
   }, [token]);
+
+  function formatGenerated(value) {
+    if (!value) return t("savedReports.unknownDate");
+    const formatted = formatDate(value, locale, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+    return formatted || value;
+  }
 
   async function handleDownload(filename) {
     setDownloadError(null);
@@ -159,7 +161,7 @@ function SavedReports() {
       <Card>
         <CardHeader className="flex flex-row items-center gap-3 pb-4">
           <FileText className="text-teal-deep size-6 shrink-0" />
-          <CardTitle className="heading-card flex-1">Saved Reports</CardTitle>
+          <CardTitle className="heading-card flex-1">{t("savedReports.heading")}</CardTitle>
           {hasReports && (
             <Button
               variant="destructive"
@@ -167,7 +169,7 @@ function SavedReports() {
               onClick={() => setConfirmDeleteAll(true)}
             >
               <Trash2 />
-              Delete all reports
+              {t("savedReports.deleteAllReports")}
             </Button>
           )}
         </CardHeader>
@@ -175,31 +177,31 @@ function SavedReports() {
           {status === "loading" && (
             <div className="body-muted flex items-center justify-center gap-2 py-12">
               <Loader2 className="size-5 animate-spin" />
-              <span>Loading reports…</span>
+              <span>{t("savedReports.loading")}</span>
             </div>
           )}
 
           {downloadError && (
             <p className="text-coral bg-coral/10 rounded-md px-3 py-2 text-sm">
-              Failed to download {downloadError}. Please try again.
+              {t("savedReports.downloadError", { filename: downloadError })}
             </p>
           )}
 
           {deleteAllError && (
             <p className="text-coral bg-coral/10 mb-3 rounded-md px-3 py-2 text-sm">
-              Failed to delete all reports. Please try again.
+              {t("savedReports.deleteAllError")}
             </p>
           )}
 
           {status === "error" && (
             <p className="body-muted text-coral py-12 text-center">
-              Failed to load reports. Please try again later.
+              {t("savedReports.loadError")}
             </p>
           )}
 
           {status === "ready" && reports.length === 0 && (
             <p className="body-muted py-12 text-center">
-              No saved reports found.
+              {t("savedReports.empty")}
             </p>
           )}
 
@@ -215,7 +217,9 @@ function SavedReports() {
                       {report.name}
                     </p>
                     <p className="body-muted">
-                      Generated {formatGeneratedAt(report.created)}
+                      {t("savedReports.generated", {
+                        date: formatGenerated(report.created),
+                      })}
                     </p>
                   </div>
                   <div className="flex shrink-0 gap-2">
@@ -225,7 +229,7 @@ function SavedReports() {
                       onClick={() => handleDownload(report.name)}
                     >
                       <Download />
-                      Download
+                      {t("common.download")}
                     </Button>
                     <Button
                       variant="destructive"
@@ -233,7 +237,7 @@ function SavedReports() {
                       onClick={() => setPendingDelete(report.name)}
                     >
                       <Trash2 />
-                      Delete
+                      {t("common.delete")}
                     </Button>
                   </div>
                 </li>
@@ -245,14 +249,16 @@ function SavedReports() {
 
       {pendingDelete && (
         <ConfirmDialog
-          title="Delete report?"
+          title={t("savedReports.confirmDeleteTitle")}
           message={
             <>
-              This will permanently delete{" "}
+              {t("savedReports.confirmDeleteBefore")}
               <span className="text-charcoal font-medium">{pendingDelete}</span>
-              . This action cannot be undone.
+              {t("savedReports.confirmDeleteAfter")}
             </>
           }
+          confirmLabel={t("common.delete")}
+          cancelLabel={t("common.cancel")}
           onConfirm={deleting ? undefined : handleDelete}
           onCancel={() => !deleting && setPendingDelete(null)}
         />
@@ -260,17 +266,18 @@ function SavedReports() {
 
       {confirmDeleteAll && (
         <ConfirmDialog
-          title="Delete all reports?"
+          title={t("savedReports.confirmDeleteAllTitle")}
           message={
             <>
-              This will permanently delete all{" "}
+              {t("savedReports.confirmDeleteAllBefore")}
               <span className="text-charcoal font-medium">
                 {reports.length}
-              </span>{" "}
-              saved reports. This action cannot be undone.
+              </span>
+              {t("savedReports.confirmDeleteAllAfter")}
             </>
           }
-          confirmLabel="Delete all"
+          confirmLabel={t("savedReports.confirmDeleteAllAction")}
+          cancelLabel={t("common.cancel")}
           onConfirm={deleting ? undefined : handleDeleteAll}
           onCancel={() => !deleting && setConfirmDeleteAll(false)}
         />
