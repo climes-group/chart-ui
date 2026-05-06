@@ -1,6 +1,7 @@
 import { useEffect, useEffectEvent, useState } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "@/i18n";
 import { meetCondition } from "@/state/slices/flowReducer";
 import {
   addSelectedFeature,
@@ -24,6 +25,7 @@ export default function SelectedSystemsCard({ activeStep }) {
   const [activeCategory, setActiveCategory] = useState(null);
   const [error, setError] = useState(null);
 
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const selectedSystems = useSelector((state) => state.report.selectedSystems);
   const selectedSiteFeatures = useSelector(
@@ -125,9 +127,9 @@ export default function SelectedSystemsCard({ activeStep }) {
   if (error)
     return (
       <div>
-        <h2 className="heading-card mb-2">Systems</h2>
+        <h2 className="heading-card mb-2">{t("inventory.systems.heading")}</h2>
         <p className="text-destructive text-sm">
-          Error loading systems: {error}
+          {t("inventory.systems.loadError", { message: error })}
         </p>
       </div>
     );
