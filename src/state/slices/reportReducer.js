@@ -111,14 +111,6 @@ export const reportSlice = createSlice({
     clearSelectedFeatures: (state) => {
       state.selectedSiteFeatures = [];
     },
-    setSelectedSystems: (state, action) => {
-      state.selectedSystems = Array.isArray(action.payload) ? action.payload : [];
-    },
-    setSelectedFeatures: (state, action) => {
-      state.selectedSiteFeatures = Array.isArray(action.payload)
-        ? action.payload
-        : [];
-    },
     setIntakeField: (state, action) => {
       const { key, value } = action.payload || {};
       if (!key) return;
@@ -156,11 +148,9 @@ export const {
   addSelectedSystem,
   removeSelectedSystem,
   clearSelectedSystems,
-  setSelectedSystems,
   addSelectedFeature,
   removeSelectedFeature,
   clearSelectedFeatures,
-  setSelectedFeatures,
   setIntakeField,
   setIntakeForm,
   clearIntakeForm,

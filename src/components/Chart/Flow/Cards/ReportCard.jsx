@@ -19,17 +19,11 @@ import {
   MapPin,
   Pencil,
   RefreshCw,
-  Save,
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  clearSnapshot,
-  loadSnapshot,
-  saveSnapshot,
-} from "@/components/TestMode/snapshot";
 import DebugDataModal from "./DebugDataModal";
 
 const openPdfInNewWindow = async (result, popupBlockedMessage) => {
@@ -140,26 +134,6 @@ export default function ReportCard() {
   const isDebugMode = useDebugMode();
   const { t } = useTranslation();
   const [showDebug, setShowDebug] = useState(false);
-  const [snapshotMeta, setSnapshotMeta] = useState(() => {
-    const snap = loadSnapshot();
-    return snap ? { savedAt: snap.savedAt } : null;
-  });
-
-  const handleSaveSnapshot = () => {
-    const saved = saveSnapshot({
-      intakeForm,
-      selectedSystems,
-      selectedSiteFeatures,
-      geoData,
-      humanAddress,
-    });
-    setSnapshotMeta({ savedAt: saved.savedAt });
-  };
-
-  const handleClearSnapshot = () => {
-    clearSnapshot();
-    setSnapshotMeta(null);
-  };
 
   async function handleGenerateReport() {
     dispatch(setReportStatus("generating"));
@@ -251,37 +225,6 @@ export default function ReportCard() {
               <RefreshCw />
               {t("report.regenerate")}
             </Button>
-          )}
-
-          {isDebugMode && (
-            <div className="ml-auto flex items-center gap-2">
-              <Button
-                variant="link"
-                onClick={handleSaveSnapshot}
-                className="text-warm-brown hover:text-warm-brown/80 decoration-warm-gold/60 underline decoration-dashed underline-offset-4"
-              >
-                <Save />
-                {snapshotMeta ? "Overwrite snapshot" : "Save snapshot for autofill"}
-              </Button>
-              {snapshotMeta && (
-                <>
-                  <span
-                    className="text-muted-foreground text-xs"
-                    title={snapshotMeta.savedAt}
-                  >
-                    Saved
-                  </span>
-                  <Button
-                    variant="link"
-                    size="sm"
-                    onClick={handleClearSnapshot}
-                    className="text-muted-foreground hover:text-destructive"
-                  >
-                    Clear
-                  </Button>
-                </>
-              )}
-            </div>
           )}
         </div>
 

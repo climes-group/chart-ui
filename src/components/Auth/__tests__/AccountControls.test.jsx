@@ -5,6 +5,11 @@ import { describe } from "vitest";
 import AccountControls from "../AccountControls";
 
 describe("AccountControls tests", () => {
+  it.skip("should render a login button when no profile", async () => {
+    renderWithProviders(<AccountControls />);
+    await screen.findByText("Login");
+  });
+
   it("should render a profile button when profile is present", async () => {
     renderWithProviders(<AccountControls />, {
       preloadedState: {

@@ -5,12 +5,7 @@ import {
 } from "@/context/TestModeContext";
 import { meetCondition, setTheme } from "@/state/slices/flowReducer";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
-import {
-  setIntakeForm,
-  setSelectedFeatures,
-  setSelectedSystems,
-} from "@/state/slices/reportReducer";
-import { SNAPSHOT_EVENT, loadSnapshot } from "./snapshot";
+import { addSelectedSystem, setIntakeForm } from "@/state/slices/reportReducer";
 import { Bug, Wrench, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -84,29 +79,14 @@ export default function TestModePanel() {
 
   if (!isTestMode || pathname === "/") return null;
 
-  const [snapshot, setSnapshot] = useState(loadSnapshot);
-  useEffect(() => {
-    const onChange = () => setSnapshot(loadSnapshot());
-    window.addEventListener(SNAPSHOT_EVENT, onChange);
-    return () => window.removeEventListener(SNAPSHOT_EVENT, onChange);
-  }, []);
-
   const handleAutofill = () => {
-    const snap = loadSnapshot();
-    const intake = snap?.intakeForm ?? TEST_INTAKE;
-    const geo = snap?.geoData ?? TEST_GEO;
-    const address = snap?.humanAddress ?? TEST_ADDRESS;
-    const systems = snap?.selectedSystems ?? [TEST_SYSTEM];
-    const features = snap?.selectedSiteFeatures ?? [];
-
-    dispatch(setIntakeForm(intake));
-    dispatch(setGeoData(geo));
-    dispatch(setHumanAddress(address));
-    dispatch(setSelectedSystems(systems));
-    dispatch(setSelectedFeatures(features));
+    dispatch(setIntakeForm(TEST_INTAKE));
+    dispatch(setGeoData(TEST_GEO));
+    dispatch(setHumanAddress(TEST_ADDRESS));
+    dispatch(addSelectedSystem(TEST_SYSTEM));
     dispatch(meetCondition({ name: "intake", condition: true }));
     dispatch(meetCondition({ name: "inventory", condition: true }));
-    intakeFillRef?.current?.(intake);
+    intakeFillRef?.current?.(TEST_INTAKE);
   };
 
   return (
@@ -197,8 +177,7 @@ export default function TestModePanel() {
             onClick={handleAutofill}
             className="bg-golden-accent/20 text-warm-brown hover:bg-golden-accent/40 rounded-full px-3 py-1.5 text-left text-xs font-medium transition-colors"
           >
-            {snapshot ? "Autofill from snapshot" : "Autofill (defaults)"} &amp;
-            Unlock Steps
+            Autofill &amp; Unlock Steps
           </button>
         </div>
       </div>

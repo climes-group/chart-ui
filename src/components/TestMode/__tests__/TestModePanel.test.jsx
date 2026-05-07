@@ -128,7 +128,7 @@ describe("TestModePanel", () => {
       screen.getByRole("button", { name: /open test mode panel/i }),
     );
     await user.click(
-      screen.getByRole("button", { name: /autofill.*unlock steps/i }),
+      screen.getByRole("button", { name: /autofill & unlock steps/i }),
     );
 
     const state = store.getState();
@@ -139,40 +139,6 @@ describe("TestModePanel", () => {
     expect(state.report.intakeForm.building_permit).toBe("BP-2024-TEST-001");
     expect(state.geo.geoData).toEqual({ lat: 49.2827, lng: -123.1207 });
     expect(state.geo.humanAddress).toMatch(/123 Test Street/);
-  });
-
-  it("autofill prefers a saved snapshot over the canned defaults", async () => {
-    const user = userEvent.setup();
-    const SNAPSHOT = {
-      version: 1,
-      savedAt: new Date().toISOString(),
-      intakeForm: { building_permit: "BP-FROM-SNAP", ea_name: "Snap EA" },
-      selectedSystems: [{ "ASTM.System.Code": "SNAP-SYS-1" }],
-      selectedSiteFeatures: [{ ID: "SNAP-FEAT-1" }],
-      geoData: { lat: 1.23, lng: 4.56 },
-      humanAddress: "1 Snapshot Lane",
-    };
-    localStorage.setItem("CHART_FORM_SNAPSHOT", JSON.stringify(SNAPSHOT));
-
-    const { store } = renderPanel();
-
-    await user.click(
-      screen.getByRole("button", { name: /open test mode panel/i }),
-    );
-    const autofillBtn = screen.getByRole("button", {
-      name: /autofill from snapshot.*unlock steps/i,
-    });
-    await user.click(autofillBtn);
-
-    const state = store.getState();
-    expect(state.report.intakeForm.building_permit).toBe("BP-FROM-SNAP");
-    expect(state.report.intakeForm.ea_name).toBe("Snap EA");
-    expect(state.report.selectedSystems).toEqual([
-      { "ASTM.System.Code": "SNAP-SYS-1" },
-    ]);
-    expect(state.report.selectedSiteFeatures).toEqual([{ ID: "SNAP-FEAT-1" }]);
-    expect(state.geo.geoData).toEqual({ lat: 1.23, lng: 4.56 });
-    expect(state.geo.humanAddress).toBe("1 Snapshot Lane");
   });
 
   it("invokes the registered intakeFillRef on autofill", async () => {
@@ -196,7 +162,7 @@ describe("TestModePanel", () => {
       screen.getByRole("button", { name: /open test mode panel/i }),
     );
     await user.click(
-      screen.getByRole("button", { name: /autofill.*unlock steps/i }),
+      screen.getByRole("button", { name: /autofill & unlock steps/i }),
     );
 
     expect(spy).toHaveBeenCalledTimes(1);

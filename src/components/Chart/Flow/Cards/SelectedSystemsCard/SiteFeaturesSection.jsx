@@ -24,19 +24,19 @@ export default function SiteFeaturesSection({
     ? features.filter((f) => f.Category === activeCategory)
     : [];
 
-  const { locale, t } = useTranslation();
+  const locale = useTranslation().locale;
 
   return (
     <div>
       <div className="mt-8 mb-4 flex items-center justify-between">
-        <h2 className="heading-card">{t("inventory.siteFeatures.heading")}</h2>
+        <h2 className="heading-card">Site Features</h2>
         {selectedFeatureCodes.size > 0 && (
           <button
             onClick={onClearAll}
             className="text-muted-foreground hover:text-destructive flex items-center gap-1 text-xs transition-colors"
           >
             <X className="size-3" />
-            {t("common.clearAll", { count: selectedFeatureCodes.size })}
+            Clear all ({selectedFeatureCodes.size})
           </button>
         )}
       </div>

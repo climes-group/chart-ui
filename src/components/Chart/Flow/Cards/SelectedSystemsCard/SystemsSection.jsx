@@ -1,4 +1,3 @@
-import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 import { getSystemCodeFor } from "@/state/slices/reportReducer";
 import { X } from "lucide-react";
@@ -14,7 +13,6 @@ export default function SystemsSection({
   onClearAll,
   onClearClassification,
 }) {
-  const { t } = useTranslation();
   const serviceNames = [...new Set(systems.map((s) => s.Services))].sort();
   const systemsForService = activeService
     ? systems.filter((s) => s.Services === activeService)
@@ -26,14 +24,14 @@ export default function SystemsSection({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="heading-card">{t("inventory.systems.heading")}</h2>
+        <h2 className="heading-card">Systems</h2>
         {selectedSystemCodes.size > 0 && (
           <button
             onClick={onClearAll}
             className="text-muted-foreground hover:text-destructive flex items-center gap-1 text-xs transition-colors"
           >
             <X className="size-3" />
-            {t("common.clearAll", { count: selectedSystemCodes.size })}
+            Clear all ({selectedSystemCodes.size})
           </button>
         )}
       </div>
@@ -93,7 +91,7 @@ export default function SystemsSection({
                     onClick={onClearClassification(classification)}
                     className="text-muted-foreground hover:text-destructive text-xs transition-colors"
                   >
-                    {t("common.clearCount", { count: selectedCount })}
+                    Clear {selectedCount}
                   </button>
                 )}
               </div>
