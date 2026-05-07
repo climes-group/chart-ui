@@ -1,3 +1,5 @@
+import { PublicClientApplication } from "@azure/msal-browser";
+import { MsalProvider } from "@azure/msal-react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { enableMapSet } from "immer";
@@ -22,6 +24,16 @@ import { setupStore } from "./state/store.js";
 const { store, persistor } = setupStore();
 
 enableMapSet();
+
+const msalInstance = new PublicClientApplication({
+  auth: {
+    clientId: import.meta.env.VITE_MICROSOFT_CLIENT_ID,
+    authority: "https://login.microsoftonline.com/common",
+    redirectUri: window.location.origin,
+  },
+  cache: { cacheLocation: "sessionStorage" },
+});
+await msalInstance.initialize();
 
 const router = createBrowserRouter([
   {
@@ -81,16 +93,18 @@ const theme = createTheme({
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-    <React.StrictMode>
-      <LocaleProvider>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <ThemeProvider theme={theme}>
-              <RouterProvider router={router} />
-            </ThemeProvider>
-          </PersistGate>
-        </Provider>
-      </LocaleProvider>
-    </React.StrictMode>
+    <MsalProvider instance={msalInstance}>
+      <React.StrictMode>
+        <LocaleProvider>
+          <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+              <ThemeProvider theme={theme}>
+                <RouterProvider router={router} />
+              </ThemeProvider>
+            </PersistGate>
+          </Provider>
+        </LocaleProvider>
+      </React.StrictMode>
+    </MsalProvider>
   </GoogleOAuthProvider>,
 );

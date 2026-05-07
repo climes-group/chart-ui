@@ -5,6 +5,7 @@ import { renderWithProviders } from "@/utils/testing";
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
+import { Route, Routes } from "react-router-dom";
 import { describe } from "vitest";
 import StepperFlow from "../StepperFlow.jsx";
 
@@ -34,19 +35,24 @@ describe("StepperFlow tests", () => {
   });
 
   it("shows the FinishCard after finishing the last step", async () => {
-    const oneStep = [{ id: 0, name: "intake", label: "Intake", prev: undefined, next: undefined }];
-    const { getByRole, findByText, store } = renderWithProviders(<StepperFlow steps={oneStep} />);
+    // FinishCard is rendered by a `/finish` route inside StepperFlow's
+    // <Routes>, which is relative to the `/flow/*` parent route mounted in
+    // main.jsx. In tests we need to mirror that nesting so the inner Routes
+    // sees the URL path relative to /flow/.
+    const oneStep = [{ id: 0, name: "intake", prev: undefined, next: undefined }];
+    window.history.pushState({}, "", "/flow/intake");
+    const { getByRole, findByText } = renderWithProviders(
+      <Routes>
+        <Route path="/flow/*" element={<StepperFlow steps={oneStep} />} />
+      </Routes>,
+    );
 
     // wait for currentStep to be set (button becomes enabled)
     await waitFor(() => expect(getByRole("button", { name: /Finish/ })).not.toBeDisabled());
 
-    console.log("BEFORE click - URL:", window.location.pathname, "currentStep:", store.getState().flow.currentStep);
-
     await act(async () => {
       getByRole("button", { name: /Finish/ }).click();
     });
-
-    console.log("AFTER click - URL:", window.location.pathname, "currentStep:", store.getState().flow.currentStep, "error:", store.getState().flow.error);
 
     await findByText(/All done/);
     expect(window.location.pathname).toBe("/flow/finish");

@@ -225,7 +225,11 @@ export default function ProjectInformationSection({ form }) {
       const deviceLoc = await lookUpHumanAddress(geoCode);
       const { address } = deviceLoc || {};
       console.log("Device location address:", deviceLoc);
-      dispatch(setHumanAddress(deviceLoc.display_name || "Current Location"));
+      dispatch(
+        setHumanAddress(
+          deviceLoc.display_name || t("intake.fields.currentLocation"),
+        ),
+      );
 
       // Fill the project address field so the user doesn't have to type it
       if (address.road) {
@@ -462,7 +466,7 @@ export default function ProjectInformationSection({ form }) {
               label={t("intake.fields.planVersion")}
               fullWidth
               variant="outlined"
-              placeholder="e.g. v1.0"
+              placeholder={t("intake.fields.planVersionPlaceholder")}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />

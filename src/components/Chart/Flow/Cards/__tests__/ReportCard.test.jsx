@@ -1,3 +1,4 @@
+import { TestModeProvider } from "@/context/TestModeContext";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import {
   addSelectedFeature,
@@ -10,6 +11,16 @@ import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, vi } from "vitest";
 import ReportCard from "../ReportCard";
+
+function renderInDebugMode(options = {}) {
+  localStorage.setItem("CHART_DEBUG_MODE", "true");
+  return renderWithProviders(
+    <TestModeProvider>
+      <ReportCard />
+    </TestModeProvider>,
+    options,
+  );
+}
 
 describe("ReportCard tests", () => {
   it("renders the heading", () => {
@@ -161,6 +172,79 @@ describe("ReportCard tests", () => {
     expect(
       screen.getByRole("link", { name: /edit the summary/i }),
     ).toBeInTheDocument();
+  });
+
+  describe("snapshot save (debug mode)", () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it("does not show the save snapshot button when debug mode is off", () => {
+      renderWithProviders(<ReportCard />);
+      expect(
+        screen.queryByRole("button", { name: /save snapshot/i }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("shows the save snapshot button when debug mode is on", () => {
+      renderInDebugMode();
+      expect(
+        screen.getByRole("button", { name: /save snapshot for autofill/i }),
+      ).toBeInTheDocument();
+    });
+
+    it("writes the current state to localStorage on click and reveals Clear", async () => {
+      const user = userEvent.setup();
+      const { store } = renderInDebugMode();
+
+      await act(async () => {
+        store.dispatch(setHumanAddress("99 Saved St"));
+        store.dispatch(setGeoData({ lat: 10, lng: 20 }));
+        store.dispatch(setIntakeForm({ ea_name: "Saved EA" }));
+        store.dispatch(addSelectedSystem({ "ASTM.System.Code": "S1" }));
+        store.dispatch(addSelectedFeature({ ID: "F1" }));
+      });
+
+      await user.click(
+        screen.getByRole("button", { name: /save snapshot for autofill/i }),
+      );
+
+      const raw = localStorage.getItem("CHART_FORM_SNAPSHOT");
+      expect(raw).not.toBeNull();
+      const parsed = JSON.parse(raw);
+      expect(parsed.intakeForm.ea_name).toBe("Saved EA");
+      expect(parsed.geoData).toEqual({ lat: 10, lng: 20 });
+      expect(parsed.humanAddress).toBe("99 Saved St");
+      expect(parsed.selectedSystems[0]["ASTM.System.Code"]).toBe("S1");
+      expect(parsed.selectedSiteFeatures[0].ID).toBe("F1");
+
+      expect(
+        screen.getByRole("button", { name: /^clear$/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /overwrite snapshot/i }),
+      ).toBeInTheDocument();
+    });
+
+    it("Clear removes the snapshot from localStorage", async () => {
+      const user = userEvent.setup();
+      localStorage.setItem(
+        "CHART_FORM_SNAPSHOT",
+        JSON.stringify({
+          version: 1,
+          savedAt: new Date().toISOString(),
+          intakeForm: {},
+        }),
+      );
+      renderInDebugMode();
+
+      await user.click(screen.getByRole("button", { name: /^clear$/i }));
+
+      expect(localStorage.getItem("CHART_FORM_SNAPSHOT")).toBeNull();
+      expect(
+        screen.queryByRole("button", { name: /^clear$/i }),
+      ).not.toBeInTheDocument();
+    });
   });
 
   it("has no axe violations in the not_generated state", async () => {
