@@ -9,8 +9,6 @@ import {
   stepBackward,
   stepForward,
 } from "../state/slices/flowReducer";
-import { resetAppState } from "../state/actions/resetAppState";
-
 function useFlow(initialSteps = []) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -57,11 +55,6 @@ function useFlow(initialSteps = []) {
     }
   }
 
-  function reset() {
-    dispatch(resetAppState(initialSteps));
-    navigate("/flow/intake");
-  }
-
   function back() {
     dispatch(setError(null));
     dispatch(stepBackward());
@@ -88,7 +81,7 @@ function useFlow(initialSteps = []) {
     return blockingSteps;
   }
 
-  return { currentStep, next, back, jumpTo, reset, error, isStepLocked };
+  return { currentStep, next, back, jumpTo, error, isStepLocked };
 }
 
 export default useFlow;

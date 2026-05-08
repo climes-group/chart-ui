@@ -77,17 +77,6 @@ describe("useFlow", () => {
     expect(result.current.currentStep.id).toBe(1);
   });
 
-  it("resets", () => {
-    const { result } = renderHook(() => useFlow(testSteps), { wrapper });
-    const { currentStep, jumpTo, reset } = result.current;
-    expect(currentStep.id).toBe(1);
-    act(() => {
-      jumpTo("Step 3");
-      reset();
-    });
-    expect(result.current.currentStep.id).toBe(1);
-  });
-
   it("sets error when condition not met on next", () => {
     const store = setupTestStore();
     const { result } = renderHook(() => useFlow(stepsWithCondition), {

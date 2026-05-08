@@ -1,16 +1,26 @@
 import { CheckCircle2 } from "lucide-react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { formatDate, useTranslation } from "@/i18n";
+import { resetAppState } from "@/state/actions/resetAppState";
+import steps from "@/steps";
 
-export default function FinishCard({ onReset, onBackToReport }) {
+export default function FinishCard({ onBackToReport }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const intake = useSelector((s) => s.report.intakeForm);
   const selectedSystems = useSelector((s) => s.report.selectedSystems);
   const reportGenAt = useSelector((s) => s.report.reportGenAt);
   const { t, locale } = useTranslation();
+
+  const handleReset = () => {
+    dispatch(resetAppState(steps));
+    navigate("/flow/intake");
+  };
 
   const date = reportGenAt
     ? formatDate(reportGenAt, locale, { dateStyle: "medium" })
@@ -63,7 +73,7 @@ export default function FinishCard({ onReset, onBackToReport }) {
             <Button variant="outline" onClick={() => setConfirmOpen(false)}>
               {t("common.cancel")}
             </Button>
-            <Button variant="destructive" onClick={onReset}>
+            <Button variant="destructive" onClick={handleReset}>
               {t("finish.yesReset")}
             </Button>
           </div>

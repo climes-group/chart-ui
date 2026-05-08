@@ -20,8 +20,7 @@ import {
 function StepperFlow({ steps = [] }) {
   const errorMessage = useSelector((s) => s.flow.error);
   const [isSmallDevice] = useMedia();
-  const { currentStep, next, back, jumpTo, reset, isStepLocked } =
-    useFlow(steps);
+  const { currentStep, next, back, jumpTo, isStepLocked } = useFlow(steps);
   const nextRef = useRef(next);
   nextRef.current = next;
   // Stable wrapper so cards can call the latest next() without a stale closure.
@@ -80,10 +79,7 @@ function StepperFlow({ steps = [] }) {
               <Route
                 path="/finish"
                 element={
-                  <FinishCard
-                    onReset={reset}
-                    onBackToReport={() => jumpTo("report")}
-                  />
+                  <FinishCard onBackToReport={() => jumpTo("report")} />
                 }
               />
               <Route
