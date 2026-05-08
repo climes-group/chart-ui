@@ -82,14 +82,14 @@ export default function TestModePanel() {
     localStorage.setItem(PANEL_OPEN_KEY, String(isOpen));
   }, [isOpen]);
 
-  if (!isTestMode || pathname === "/") return null;
-
   const [snapshot, setSnapshot] = useState(loadSnapshot);
   useEffect(() => {
     const onChange = () => setSnapshot(loadSnapshot());
     window.addEventListener(SNAPSHOT_EVENT, onChange);
     return () => window.removeEventListener(SNAPSHOT_EVENT, onChange);
   }, []);
+
+  if (!isTestMode || pathname === "/") return null;
 
   const handleAutofill = () => {
     const snap = loadSnapshot();
