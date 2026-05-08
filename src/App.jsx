@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
 import OidcLogin from "./components/Auth/OidcLogin";
-import LocaleSwitcher from "./components/LocaleSwitcher";
 import TestModePanel from "./components/TestMode/TestModePanel";
 import { TestModeProvider } from "./context/TestModeContext";
 import { useIdleTimeout } from "./hooks/useIdleTimeout";
@@ -22,7 +21,6 @@ function AppInner() {
 
       <div className="relative z-[2] flex flex-col min-h-full">
         <header className="flex items-center justify-end gap-4 px-4 pt-3 pb-2 sm:px-8 sm:pt-4">
-          <LocaleSwitcher />
           <OidcLogin />
         </header>
 

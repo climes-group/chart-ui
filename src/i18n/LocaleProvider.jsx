@@ -1,13 +1,11 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import enCA from "./locales/en-CA.json";
-import frCA from "./locales/fr-CA.json";
 
-export const SUPPORTED_LOCALES = ["en-CA", "fr-CA"];
+export const SUPPORTED_LOCALES = ["en-CA"];
 export const DEFAULT_LOCALE = "en-CA";
 
 const DICTIONARIES = {
   "en-CA": enCA,
-  "fr-CA": frCA,
 };
 
 const STORAGE_KEY = "locale";
@@ -16,8 +14,6 @@ function detectInitialLocale() {
   if (typeof window === "undefined") return DEFAULT_LOCALE;
   const stored = window.localStorage?.getItem(STORAGE_KEY);
   if (stored && SUPPORTED_LOCALES.includes(stored)) return stored;
-  const browser = window.navigator?.language;
-  if (browser?.toLowerCase().startsWith("fr")) return "fr-CA";
   return DEFAULT_LOCALE;
 }
 

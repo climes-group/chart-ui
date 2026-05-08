@@ -12,19 +12,8 @@ describe("SplashCard", () => {
     expect(screen.getByRole("button", { name: "Get started" })).toBeInTheDocument();
   });
 
-  it("renders the localized tagline and CTA in fr-CA", () => {
-    renderWithProviders(<SplashCard />, { locale: "fr-CA" });
-    expect(screen.getByText("Tracez votre chemin vers la résilience")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Commencer" })).toBeInTheDocument();
-  });
-
   it("has no axe violations in en-CA", async () => {
     const { container } = renderWithProviders(<SplashCard />);
-    expect(await axe(container)).toHaveNoViolations();
-  });
-
-  it("has no axe violations in fr-CA", async () => {
-    const { container } = renderWithProviders(<SplashCard />, { locale: "fr-CA" });
     expect(await axe(container)).toHaveNoViolations();
   });
 });
