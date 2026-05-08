@@ -25,23 +25,23 @@ function detectInitialLocale() {
 
 function interpolate(template, vars) {
   if (!vars) return template;
-  return template.replace(/\{(\w+)\}/g, (match, key) =>
-    Object.prototype.hasOwnProperty.call(vars, key) ? String(vars[key]) : match,
+  return template.replaceAll(/\{(\w+)\}/g, (match, key) =>
+    Object.hasOwn(vars, key) ? String(vars[key]) : match,
   );
 }
 
 export const LocaleContext = createContext(null);
 
 export function LocaleProvider({ children, initialLocale }) {
-  const [locale, setLocaleState] = useState(
+  const [localeState, setLocaleState] = useState(
     () => initialLocale ?? detectInitialLocale(),
   );
 
   useEffect(() => {
     if (typeof document !== "undefined") {
-      document.documentElement.lang = locale;
+      document.documentElement.lang = localeState;
     }
-  }, [locale]);
+  }, [localeState]);
 
   const setLocale = useCallback((next) => {
     if (!SUPPORTED_LOCALES.includes(next)) return;

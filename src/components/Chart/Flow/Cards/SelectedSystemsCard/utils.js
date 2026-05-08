@@ -2,7 +2,7 @@ import { getSystemCodeFor } from "@/state/slices/reportReducer";
 
 export function sanitizeName(name) {
   if (!name || name === "undefined" || name === "null") return "N/A";
-  return name.replace(/_/g, " ");
+  return name.replaceAll(/_/g, " ");
 }
 
 export function dedupeSystems(systems) {
