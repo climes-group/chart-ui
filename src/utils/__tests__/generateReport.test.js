@@ -4,8 +4,8 @@ import { downloadCsv, generateCsvFomJson } from "../generateReport";
 
 describe("generateReport tests", () => {
   beforeAll(() => {
-    // mock Window.URL.createObjectURL
-    window.URL.createObjectURL = vi.fn(() => "mocked url");
+    // mock globalThis.URL.createObjectURL
+    globalThis.URL.createObjectURL = vi.fn(() => "mocked url");
     HTMLAnchorElement.prototype.click = vi.fn();
   });
   afterAll(() => {
@@ -26,6 +26,6 @@ describe("generateReport tests", () => {
 
   it("should download a report", () => {
     downloadCsv("mocked csv", "mocked.csv");
-    expect(window.URL.createObjectURL).toHaveBeenCalled();
+    expect(globalThis.URL.createObjectURL).toHaveBeenCalled();
   });
 });

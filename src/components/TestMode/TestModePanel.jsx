@@ -78,8 +78,8 @@ export default function TestModePanel() {
   const [snapshot, setSnapshot] = useState(loadSnapshot);
   useEffect(() => {
     const onChange = () => setSnapshot(loadSnapshot());
-    window.addEventListener(SNAPSHOT_EVENT, onChange);
-    return () => window.removeEventListener(SNAPSHOT_EVENT, onChange);
+    globalThis.addEventListener(SNAPSHOT_EVENT, onChange);
+    return () => globalThis.removeEventListener(SNAPSHOT_EVENT, onChange);
   }, []);
 
   if (!isTestMode || pathname === "/") return null;

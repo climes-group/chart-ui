@@ -1,4 +1,4 @@
-import { renderHook, act } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { useIdleTimeout } from "../useIdleTimeout";
 
 describe("useIdleTimeout", () => {
@@ -25,7 +25,7 @@ describe("useIdleTimeout", () => {
 
     act(() => {
       vi.advanceTimersByTime(800);
-      window.dispatchEvent(new MouseEvent("mousemove"));
+      globalThis.dispatchEvent(new MouseEvent("mousemove"));
       vi.advanceTimersByTime(800);
     });
 

@@ -6,16 +6,16 @@ import { enableMapSet } from "immer";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
 import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
 } from "react-router-dom";
+import { PersistGate } from "redux-persist/integration/react";
 import App from "./App.jsx";
 import Chart from "./Chart.jsx";
-import Design from "./components/Design/index.jsx";
 import SplashCard from "./components/Chart/Flow/Cards/Splash.jsx";
+import Design from "./components/Design/index.jsx";
 import SavedReports from "./components/SavedReports/index.jsx";
 import { LocaleProvider } from "./i18n";
 import "./index.css";
@@ -29,7 +29,7 @@ const msalInstance = new PublicClientApplication({
   auth: {
     clientId: import.meta.env.VITE_MICROSOFT_CLIENT_ID,
     authority: "https://login.microsoftonline.com/common",
-    redirectUri: window.location.origin,
+    redirectUri: globalThis.location.origin,
   },
   cache: { cacheLocation: "sessionStorage" },
 });

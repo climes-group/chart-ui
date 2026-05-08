@@ -44,7 +44,7 @@ const openPdfInNewWindow = async (result, popupBlockedMessage) => {
   const byteArray = new Uint8Array(byteNumbers);
   const blob = new Blob([byteArray], { type: "application/pdf" });
   const fileURL = URL.createObjectURL(blob);
-  const pdfWindow = window.open(fileURL, "_blank");
+  const pdfWindow = globalThis.open(fileURL, "_blank");
 
   if (!pdfWindow) {
     alert(popupBlockedMessage);

@@ -1,6 +1,6 @@
 import useMedia from "@/hooks/useMedia.js";
-import steps from "@/steps.js";
 import { meetCondition } from "@/state/slices/flowReducer";
+import steps from "@/steps.js";
 import { renderWithProviders } from "@/utils/testing";
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -10,7 +10,9 @@ import { describe } from "vitest";
 import StepperFlow from "../StepperFlow.jsx";
 
 vi.mock("@/hooks/useMedia");
-vi.mock("../StepRenderer", () => ({ default: () => <div data-testid="step-content" /> }));
+vi.mock("../StepRenderer", () => ({
+  default: () => <div data-testid="step-content" />,
+}));
 
 describe("StepperFlow tests", () => {
   beforeEach(() => {
@@ -29,7 +31,15 @@ describe("StepperFlow tests", () => {
   });
 
   it("renders Finish button on desktop when only one step", () => {
-    const oneStep = [{ id: 0, name: "intake", label: "Intake", prev: undefined, next: undefined }];
+    const oneStep = [
+      {
+        id: 0,
+        name: "intake",
+        label: "Intake",
+        prev: undefined,
+        next: undefined,
+      },
+    ];
     const { getByRole } = renderWithProviders(<StepperFlow steps={oneStep} />);
     expect(getByRole("button", { name: /Finish/ })).toBeInTheDocument();
   });
@@ -39,8 +49,10 @@ describe("StepperFlow tests", () => {
     // <Routes>, which is relative to the `/flow/*` parent route mounted in
     // main.jsx. In tests we need to mirror that nesting so the inner Routes
     // sees the URL path relative to /flow/.
-    const oneStep = [{ id: 0, name: "intake", prev: undefined, next: undefined }];
-    window.history.pushState({}, "", "/flow/intake");
+    const oneStep = [
+      { id: 0, name: "intake", prev: undefined, next: undefined },
+    ];
+    globalThis.history.pushState({}, "", "/flow/intake");
     const { getByRole, findByText } = renderWithProviders(
       <Routes>
         <Route path="/flow/*" element={<StepperFlow steps={oneStep} />} />
@@ -48,14 +60,16 @@ describe("StepperFlow tests", () => {
     );
 
     // wait for currentStep to be set (button becomes enabled)
-    await waitFor(() => expect(getByRole("button", { name: /Finish/ })).not.toBeDisabled());
+    await waitFor(() =>
+      expect(getByRole("button", { name: /Finish/ })).not.toBeDisabled(),
+    );
 
     await act(async () => {
       getByRole("button", { name: /Finish/ }).click();
     });
 
     await findByText(/All done/);
-    expect(window.location.pathname).toBe("/flow/finish");
+    expect(globalThis.location.pathname).toBe("/flow/finish");
   });
 
   it("renders mobile layout on small screens", () => {
@@ -78,7 +92,9 @@ describe("StepperFlow tests", () => {
     renderWithProviders(<StepperFlow steps={steps} />);
     // intake has leaveCondition and starts false → applicableSystems (Inventory) should be locked
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Inventory/i })).toHaveAttribute("data-locked", "true");
+      expect(
+        screen.getByRole("button", { name: /Inventory/i }),
+      ).toHaveAttribute("data-locked", "true");
     });
   });
 
@@ -86,7 +102,9 @@ describe("StepperFlow tests", () => {
     useMedia.mockReturnValue([false]);
     renderWithProviders(<StepperFlow steps={steps} />);
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Intake/i })).not.toHaveAttribute("data-locked");
+      expect(
+        screen.getByRole("button", { name: /Intake/i }),
+      ).not.toHaveAttribute("data-locked");
     });
   });
 
@@ -95,7 +113,9 @@ describe("StepperFlow tests", () => {
     const { store } = renderWithProviders(<StepperFlow steps={steps} />);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Inventory/i })).toHaveAttribute("data-locked", "true");
+      expect(
+        screen.getByRole("button", { name: /Inventory/i }),
+      ).toHaveAttribute("data-locked", "true");
     });
 
     act(() => {
@@ -103,7 +123,9 @@ describe("StepperFlow tests", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Inventory/i })).not.toHaveAttribute("data-locked");
+      expect(
+        screen.getByRole("button", { name: /Inventory/i }),
+      ).not.toHaveAttribute("data-locked");
     });
   });
 
@@ -112,13 +134,18 @@ describe("StepperFlow tests", () => {
     renderWithProviders(<StepperFlow steps={steps} />);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Inventory/i })).toHaveAttribute("data-locked", "true");
+      expect(
+        screen.getByRole("button", { name: /Inventory/i }),
+      ).toHaveAttribute("data-locked", "true");
     });
 
     await userEvent.click(screen.getByRole("button", { name: /Inventory/i }));
 
     // intake is the blocker — it should be pulsing
-    expect(screen.getByRole("button", { name: /Intake/i })).toHaveAttribute("data-pulsing", "true");
+    expect(screen.getByRole("button", { name: /Intake/i })).toHaveAttribute(
+      "data-pulsing",
+      "true",
+    );
   });
 
   it("has no axe violations in the desktop layout", async () => {

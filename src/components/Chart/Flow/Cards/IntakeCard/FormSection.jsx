@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@tanstack/react-form";
 import { CheckIcon } from "lucide-react";
-import { useTranslation } from "@/i18n";
+import { useEffect, useRef, useState } from "react";
 
 function isFilled(value) {
   if (Array.isArray(value)) return value.length > 0;
@@ -12,7 +12,7 @@ function shouldSkipAnimation() {
   if (typeof window === "undefined") return true;
   if (typeof IntersectionObserver === "undefined") return true;
   if (document.hidden) return true;
-  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  return globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 }
 
 function useInView() {
@@ -55,16 +55,14 @@ export default function FormSection({
     <section
       ref={ref}
       className={`transition-all duration-500 ease-out ${
-        inView
-          ? "opacity-100 translate-y-0"
-          : "opacity-0 translate-y-4"
+        inView ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}
     >
-      <div className="sticky top-0 z-10 -mx-2 px-2 py-2 mb-4 flex items-center justify-between bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
+      <div className="bg-card/80 supports-[backdrop-filter]:bg-card/60 sticky top-0 z-10 -mx-2 mb-4 flex items-center justify-between px-2 py-2 backdrop-blur">
         <h3 className="heading-section m-0">{title}</h3>
         {total > 0 && (
           <span
-            className={`inline-flex items-center gap-1 text-xs font-medium tabular-nums px-2 py-0.5 rounded-full transition-colors ${
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium tabular-nums transition-colors ${
               complete
                 ? "bg-moss-primary/10 text-moss-primary"
                 : "bg-muted text-muted-foreground"

@@ -7,7 +7,7 @@ export function generateCsvFomJson(data) {
 
 export function downloadCsv(csv, fileName) {
   const csvBlob = new Blob([csv], { type: "text/csv" });
-  const url = window.URL.createObjectURL(csvBlob);
+  const url = globalThis.URL.createObjectURL(csvBlob);
   const a = document.createElement("a");
   a.href = url;
   a.download = fileName;

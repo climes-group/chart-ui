@@ -12,14 +12,14 @@ function AppInner() {
 
   useIdleTimeout(() => {
     sessionStorage.clear();
-    window.location.reload();
+    globalThis.location.reload();
   }, IDLE_TIMEOUT_MS);
 
   return (
     <>
       <div className="page-bg fixed inset-0 z-0" data-theme={theme} />
 
-      <div className="relative z-[2] flex flex-col min-h-full">
+      <div className="relative z-[2] flex min-h-full flex-col">
         <header className="flex items-center justify-end gap-4 px-4 pt-3 pb-2 sm:px-8 sm:pt-4">
           <OidcLogin />
         </header>

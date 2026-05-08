@@ -1,4 +1,10 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import enCA from "./locales/en-CA.json";
 
 export const SUPPORTED_LOCALES = ["en-CA"];
@@ -12,7 +18,7 @@ const STORAGE_KEY = "locale";
 
 function detectInitialLocale() {
   if (typeof window === "undefined") return DEFAULT_LOCALE;
-  const stored = window.localStorage?.getItem(STORAGE_KEY);
+  const stored = globalThis.localStorage?.getItem(STORAGE_KEY);
   if (stored && SUPPORTED_LOCALES.includes(stored)) return stored;
   return DEFAULT_LOCALE;
 }
@@ -41,7 +47,7 @@ export function LocaleProvider({ children, initialLocale }) {
     if (!SUPPORTED_LOCALES.includes(next)) return;
     setLocaleState(next);
     try {
-      window.localStorage?.setItem(STORAGE_KEY, next);
+      globalThis.localStorage?.setItem(STORAGE_KEY, next);
     } catch {
       // ignore storage failures (private mode, quota, etc.)
     }

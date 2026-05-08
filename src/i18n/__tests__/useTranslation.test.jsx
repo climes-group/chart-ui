@@ -12,7 +12,7 @@ function wrapper(initialLocale) {
 
 describe("useTranslation", () => {
   beforeEach(() => {
-    window.localStorage.clear();
+    globalThis.localStorage.clear();
   });
 
   it("looks up a key in en-CA by default", () => {
@@ -33,18 +33,18 @@ describe("useTranslation", () => {
     const { result } = renderHook(() => useTranslation(), {
       wrapper: wrapper("en-CA"),
     });
-    expect(
-      result.current.t("auth.loggedInAs", { email: "a@b.com" }),
-    ).toBe("Logged in as a@b.com");
+    expect(result.current.t("auth.loggedInAs", { email: "a@b.com" })).toBe(
+      "Logged in as a@b.com",
+    );
   });
 
   it("leaves an unknown placeholder untouched", () => {
     const { result } = renderHook(() => useTranslation(), {
       wrapper: wrapper("en-CA"),
     });
-    expect(
-      result.current.t("auth.loggedInAs", { other: "x" }),
-    ).toBe("Logged in as {email}");
+    expect(result.current.t("auth.loggedInAs", { other: "x" })).toBe(
+      "Logged in as {email}",
+    );
   });
 
   it("setLocale ignores unsupported locales", () => {

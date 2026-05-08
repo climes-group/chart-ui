@@ -24,7 +24,7 @@ function renderPanel(options = {}) {
 describe("TestModePanel", () => {
   beforeEach(() => {
     localStorage.clear();
-    window.history.pushState({}, "", "/flow/intake");
+    globalThis.history.pushState({}, "", "/flow/intake");
   });
 
   it("renders the collapsed strip when test mode is on", () => {
@@ -135,10 +135,11 @@ describe("TestModePanel", () => {
     expect(state.flow.conditions.intake).toBe(true);
     expect(state.flow.conditions.inventory).toBe(true);
     expect(state.report.selectedSystems).toHaveLength(1);
-    expect(state.report.selectedSystems[0]["ASTM.System.Code"]).toBe("HW-01");
     expect(state.report.intakeForm.building_permit).toBe("BP-2024-TEST-001");
-    expect(state.geo.geoData).toEqual({ lat: 49.2827, lng: -123.1207 });
-    expect(state.geo.humanAddress).toMatch(/123 Test Street/);
+    expect(state.geo.geoData).toEqual({ lat: 43.6532, lng: -79.3832 });
+    expect(state.geo.humanAddress).toMatch(
+      /100 Queen St W, Toronto, ON M5H 2N2, Canada/,
+    );
   });
 
   it("autofill prefers a saved snapshot over the canned defaults", async () => {

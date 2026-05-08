@@ -3,7 +3,7 @@ export const SNAPSHOT_VERSION = 1;
 export const SNAPSHOT_EVENT = "chart:snapshot-changed";
 
 function emitChange() {
-  window.dispatchEvent(new CustomEvent(SNAPSHOT_EVENT));
+  globalThis.dispatchEvent(new CustomEvent(SNAPSHOT_EVENT));
 }
 
 export function saveSnapshot(data) {
