@@ -54,14 +54,14 @@ export function LocaleProvider({ children, initialLocale }) {
   }, []);
 
   const value = useMemo(() => {
-    const dict = DICTIONARIES[locale] ?? DICTIONARIES[DEFAULT_LOCALE];
+    const dict = DICTIONARIES[localeState] ?? DICTIONARIES[DEFAULT_LOCALE];
     const t = (key, vars) => {
       const template = dict[key];
       if (template === undefined) return key;
       return interpolate(template, vars);
     };
-    return { locale, setLocale, t };
-  }, [locale, setLocale]);
+    return { locale: localeState, setLocale, t };
+  }, [localeState, setLocale]);
 
   return (
     <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
