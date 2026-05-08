@@ -10,11 +10,11 @@ import {
   setSelectedFeatures,
   setSelectedSystems,
 } from "@/state/slices/reportReducer";
-import { SNAPSHOT_EVENT, loadSnapshot } from "./snapshot";
 import { Bug, Wrench, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { SNAPSHOT_EVENT, loadSnapshot } from "./snapshot";
 
 const TEST_INTAKE = {
   building_permit: "BP-2024-TEST-001",
@@ -52,17 +52,10 @@ const TEST_INTAKE = {
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkAAIAAAoAAv/lxKUAAAAASUVORK5CYII=",
 };
 
-const TEST_GEO = { lat: 49.2827, lng: -123.1207 };
-const TEST_ADDRESS = "123 Test Street, Vancouver, BC V6B 1A1, Canada";
+const TEST_GEO = { lat: 43.6532, lng: -79.3832 }; // Toronto City Hall
+const TEST_ADDRESS = "100 Queen St W, Toronto, ON M5H 2N2, Canada";
 
-const TEST_SYSTEM = {
-  Services: "Mechanical",
-  Classification: "Heating",
-  "ASTM.Code": "D3010",
-  "ASTM.Name": "Tank-style",
-  "ASTM.System.Name": "Boiler",
-  "ASTM.System.Code": "HW-01",
-};
+const TEST_SYSTEM = {};
 
 const PANEL_OPEN_KEY = "CHART_TEST_PANEL_OPEN";
 
@@ -82,14 +75,14 @@ export default function TestModePanel() {
     localStorage.setItem(PANEL_OPEN_KEY, String(isOpen));
   }, [isOpen]);
 
-  if (!isTestMode || pathname === "/") return null;
-
   const [snapshot, setSnapshot] = useState(loadSnapshot);
   useEffect(() => {
     const onChange = () => setSnapshot(loadSnapshot());
-    window.addEventListener(SNAPSHOT_EVENT, onChange);
-    return () => window.removeEventListener(SNAPSHOT_EVENT, onChange);
+    globalThis.addEventListener(SNAPSHOT_EVENT, onChange);
+    return () => globalThis.removeEventListener(SNAPSHOT_EVENT, onChange);
   }, []);
+
+  if (!isTestMode || pathname === "/") return null;
 
   const handleAutofill = () => {
     const snap = loadSnapshot();

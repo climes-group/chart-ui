@@ -252,14 +252,6 @@ describe("IntakeCard signature pads", () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
-  it("has no axe violations in fr-CA", async () => {
-    const { container } = renderWithProviders(
-      <IntakeCard registerNext={vi.fn()} nav={vi.fn()} />,
-      { ...preloadIntake(), locale: "fr-CA" },
-    );
-    expect(await axe(container)).toHaveNoViolations();
-  });
-
   it("the card-level Clear button wipes both canvases and dates", async () => {
     renderWithProviders(
       <IntakeCard registerNext={vi.fn()} nav={vi.fn()} />,

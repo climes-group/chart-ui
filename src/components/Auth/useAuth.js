@@ -1,15 +1,15 @@
-import { useDispatch, useSelector } from "react-redux";
 import {
   logout as logoutAction,
   setProfile,
   setToken,
 } from "@/state/slices/userReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 // Decodes the payload claims from a JWT without verifying the signature.
 // base64url uses - and _ instead of + and / — replace before atob.
 function decodeJwt(token) {
   const payload = token.split(".")[1];
-  return JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+  return JSON.parse(atob(payload.replaceAll(/-/g, "+").replaceAll(/_/g, "/")));
 }
 
 export function useAuth() {

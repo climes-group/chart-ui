@@ -11,7 +11,7 @@ import { formatLatLong } from "./utils";
 
 function sanitizeName(name) {
   if (!name || name === "undefined" || name === "null") return "N/A";
-  return name.replace(/_/g, " ");
+  return name.replaceAll(/_/g, " ");
 }
 
 function getSystemDisplayName(system) {
@@ -58,11 +58,15 @@ function formatHeadline(intake, t) {
 
   const counts = [];
   if (Number.isFinite(primary) && primary > 0) {
-    const key = primary === 1 ? "summary.primaryUnits.one" : "summary.primaryUnits.other";
+    const key =
+      primary === 1 ? "summary.primaryUnits.one" : "summary.primaryUnits.other";
     counts.push(t(key, { count: primary }));
   }
   if (Number.isFinite(secondary) && secondary > 0) {
-    const key = secondary === 1 ? "summary.secondarySuites.one" : "summary.secondarySuites.other";
+    const key =
+      secondary === 1
+        ? "summary.secondarySuites.one"
+        : "summary.secondarySuites.other";
     counts.push(t(key, { count: secondary }));
   }
 
@@ -106,7 +110,9 @@ function ProjectInformation({ intake }) {
 
       {standards.length > 0 && (
         <div>
-          <p className="heading-label mb-2">{t("intake.fields.modellingStandard")}</p>
+          <p className="heading-label mb-2">
+            {t("intake.fields.modellingStandard")}
+          </p>
           <div className="flex flex-wrap gap-2">
             {standards.map((s) => (
               <SystemPill key={s} name={s} />
@@ -118,8 +124,14 @@ function ProjectInformation({ intake }) {
       {(planLine || permit || pid) && (
         <div className="space-y-1">
           {planLine && <p className="body-muted">{planLine}</p>}
-          {permit && <p className="body-muted">{t("summary.permit", { value: permit })}</p>}
-          {pid && <p className="body-muted">{t("summary.pid", { value: pid })}</p>}
+          {permit && (
+            <p className="body-muted">
+              {t("summary.permit", { value: permit })}
+            </p>
+          )}
+          {pid && (
+            <p className="body-muted">{t("summary.pid", { value: pid })}</p>
+          )}
         </div>
       )}
     </div>
@@ -212,7 +224,9 @@ function SummaryCard() {
         <SectionHeader
           title={
             validSelectedSystems.length > 0
-              ? t("summary.section.systemsCount", { count: validSelectedSystems.length })
+              ? t("summary.section.systemsCount", {
+                  count: validSelectedSystems.length,
+                })
               : t("summary.section.systems")
           }
           editTo="/flow/selectedSystems#systems"
@@ -248,7 +262,9 @@ function SummaryCard() {
         <SectionHeader
           title={
             validSelectedSiteFeatures.length > 0
-              ? t("summary.section.featuresCount", { count: validSelectedSiteFeatures.length })
+              ? t("summary.section.featuresCount", {
+                  count: validSelectedSiteFeatures.length,
+                })
               : t("summary.section.features")
           }
           editTo="/flow/selectedSystems#site-features"

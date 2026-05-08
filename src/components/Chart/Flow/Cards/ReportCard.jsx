@@ -1,7 +1,13 @@
+import {
+  clearSnapshot,
+  loadSnapshot,
+  saveSnapshot,
+} from "@/components/TestMode/snapshot";
 import { Button } from "@/components/ui/button";
 import { useDebugMode } from "@/context/TestModeContext";
 import { useTranslation } from "@/i18n";
 import {
+  getFeatureKeyFor,
   getSystemCodeFor,
   setReportData,
   setReportDebugData,
@@ -25,11 +31,6 @@ import {
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  clearSnapshot,
-  loadSnapshot,
-  saveSnapshot,
-} from "@/components/TestMode/snapshot";
 import DebugDataModal from "./DebugDataModal";
 
 const openPdfInNewWindow = async (result, popupBlockedMessage) => {
@@ -43,7 +44,7 @@ const openPdfInNewWindow = async (result, popupBlockedMessage) => {
   const byteArray = new Uint8Array(byteNumbers);
   const blob = new Blob([byteArray], { type: "application/pdf" });
   const fileURL = URL.createObjectURL(blob);
-  const pdfWindow = window.open(fileURL, "_blank");
+  const pdfWindow = globalThis.open(fileURL, "_blank");
 
   if (!pdfWindow) {
     alert(popupBlockedMessage);
@@ -70,13 +71,17 @@ function ReportContext({
     { label: "MEUI", value: intakeForm?.meui },
     { label: "TEDI", value: intakeForm?.tedi },
     { label: "GHGI", value: intakeForm?.ghgi },
-  ].filter(
-    (x) => x.value !== "" && x.value !== null && x.value !== undefined,
-  );
+  ].filter((x) => x.value !== "" && x.value !== null && x.value !== undefined);
 
   const hasLocation = !!humanAddress;
-  const systemsKey = systemCount === 1 ? "report.context.systems.one" : "report.context.systems.other";
-  const featuresKey = featureCount === 1 ? "report.context.features.one" : "report.context.features.other";
+  const systemsKey =
+    systemCount === 1
+      ? "report.context.systems.one"
+      : "report.context.systems.other";
+  const featuresKey =
+    featureCount === 1
+      ? "report.context.features.one"
+      : "report.context.features.other";
   const systemLine = [
     t(systemsKey, { count: systemCount }),
     t(featuresKey, { count: featureCount }),
@@ -179,6 +184,9 @@ export default function ReportCard() {
             systems: (selectedSystems ?? [])
               .map(getSystemCodeFor)
               .filter(Boolean),
+            features: (selectedSiteFeatures ?? [])
+              .map(getFeatureKeyFor)
+              .filter(Boolean),
             intakeForm: intakeForm ?? {},
             ...(isDebugMode && { debug: true }),
           }),
@@ -261,7 +269,9 @@ export default function ReportCard() {
                 className="text-warm-brown hover:text-warm-brown/80 decoration-warm-gold/60 underline decoration-dashed underline-offset-4"
               >
                 <Save />
-                {snapshotMeta ? "Overwrite snapshot" : "Save snapshot for autofill"}
+                {snapshotMeta
+                  ? "Overwrite snapshot"
+                  : "Save snapshot for autofill"}
               </Button>
               {snapshotMeta && (
                 <>
@@ -332,10 +342,14 @@ export default function ReportCard() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="text-primary size-5 shrink-0" />
-                <span className="text-sm font-semibold">{t("report.ready")}</span>
+                <span className="text-sm font-semibold">
+                  {t("report.ready")}
+                </span>
               </div>
               <div className="text-muted-foreground flex items-center gap-3 text-xs">
-                {reportGenAt && <span>{t("report.generatedAt", { time: reportGenAt })}</span>}
+                {reportGenAt && (
+                  <span>{t("report.generatedAt", { time: reportGenAt })}</span>
+                )}
                 {reportGenTime && (
                   <span className="text-muted-foreground/60">
                     {(reportGenTime / 1000).toFixed(1)}s
@@ -347,7 +361,9 @@ export default function ReportCard() {
             {/* Download action */}
             <div className="border-primary/20 flex flex-wrap items-center gap-3 border-t pt-3">
               <Button
-                onClick={() => openPdfInNewWindow(reportData, t("report.popupBlocked"))}
+                onClick={() =>
+                  openPdfInNewWindow(reportData, t("report.popupBlocked"))
+                }
                 className="px-5"
               >
                 <Download />

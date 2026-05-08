@@ -1,8 +1,10 @@
 import reducer, {
+  addSelectedFeature,
   addSelectedSystem,
   clearIntakeForm,
   clearSelectedSystems,
   removeSelectedSystem,
+  resetReportState,
   selectIntakeForm,
   setIntakeField,
   setIntakeForm,
@@ -156,6 +158,19 @@ describe("reportReducer", () => {
     it("returns the intake form from state", () => {
       const fakeState = { report: { intakeForm: initialState.intakeForm } };
       expect(selectIntakeForm(fakeState)).toEqual(initialState.intakeForm);
+    });
+  });
+
+  describe("resetReportState", () => {
+    it("clears intake, selected systems, selected features, and report fields", () => {
+      let state = reducer(initialState, setIntakeField({ key: "building_permit", value: "BP-1" }));
+      state = reducer(state, addSelectedSystem({ "ASTM.System.Code": "HW-01" }));
+      state = reducer(state, addSelectedFeature({ ID: "F1" }));
+      state = reducer(state, setReportData("base64=="));
+      state = reducer(state, setReportStatus("generated"));
+
+      const reset = reducer(state, resetReportState());
+      expect(reset).toEqual(initialState);
     });
   });
 });

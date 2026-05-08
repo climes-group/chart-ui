@@ -79,7 +79,7 @@ export async function searchAddressGeolocator(query, lang) {
       headers: { "User-Agent": USER_AGENT },
     });
     const result = await resp.json();
-
+    return result;
     // Map the Nominatim response to the format your app expects.
     // addressdetails=1 gives us a structured `address` object on each result.
     /*
@@ -174,8 +174,8 @@ export async function searchAddress(query) {
           postcode: addr.postcode ?? "",
         },
         position: {
-          lat: parseFloat(item.lat),
-          lng: parseFloat(item.lon),
+          lat: Number.parseFloat(item.lat),
+          lng: Number.parseFloat(item.lon),
         },
       };
     });
@@ -192,11 +192,7 @@ export async function searchAddress(query) {
  * @returns {Promise<string>} human readable address
  */
 export async function lookUpHumanAddress(geoCode) {
-  if (
-    !geoCode ||
-    typeof geoCode.lat === "undefined" ||
-    typeof geoCode.lng === "undefined"
-  ) {
+  if (!geoCode || geoCode.lat === "undefined" || geoCode.lng === "undefined") {
     return "";
   }
 

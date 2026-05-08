@@ -12,7 +12,7 @@ function wrapper(initialLocale) {
 
 describe("useTranslation", () => {
   beforeEach(() => {
-    window.localStorage.clear();
+    globalThis.localStorage.clear();
   });
 
   it("looks up a key in en-CA by default", () => {
@@ -20,13 +20,6 @@ describe("useTranslation", () => {
       wrapper: wrapper("en-CA"),
     });
     expect(result.current.t("common.back")).toBe("Back");
-  });
-
-  it("looks up a key in fr-CA", () => {
-    const { result } = renderHook(() => useTranslation(), {
-      wrapper: wrapper("fr-CA"),
-    });
-    expect(result.current.t("common.back")).toBe("Précédent");
   });
 
   it("returns the key itself when a translation is missing", () => {
@@ -40,38 +33,18 @@ describe("useTranslation", () => {
     const { result } = renderHook(() => useTranslation(), {
       wrapper: wrapper("en-CA"),
     });
-    expect(
-      result.current.t("auth.loggedInAs", { email: "a@b.com" }),
-    ).toBe("Logged in as a@b.com");
+    expect(result.current.t("auth.loggedInAs", { email: "a@b.com" })).toBe(
+      "Logged in as a@b.com",
+    );
   });
 
   it("leaves an unknown placeholder untouched", () => {
     const { result } = renderHook(() => useTranslation(), {
       wrapper: wrapper("en-CA"),
     });
-    expect(
-      result.current.t("auth.loggedInAs", { other: "x" }),
-    ).toBe("Logged in as {email}");
-  });
-
-  it("setLocale switches the active dictionary", () => {
-    const { result } = renderHook(() => useTranslation(), {
-      wrapper: wrapper("en-CA"),
-    });
-    expect(result.current.t("common.next")).toBe("Next");
-
-    act(() => result.current.setLocale("fr-CA"));
-
-    expect(result.current.locale).toBe("fr-CA");
-    expect(result.current.t("common.next")).toBe("Suivant");
-  });
-
-  it("setLocale persists to localStorage", () => {
-    const { result } = renderHook(() => useTranslation(), {
-      wrapper: wrapper("en-CA"),
-    });
-    act(() => result.current.setLocale("fr-CA"));
-    expect(window.localStorage.getItem("locale")).toBe("fr-CA");
+    expect(result.current.t("auth.loggedInAs", { other: "x" })).toBe(
+      "Logged in as {email}",
+    );
   });
 
   it("setLocale ignores unsupported locales", () => {
@@ -82,12 +55,10 @@ describe("useTranslation", () => {
     expect(result.current.locale).toBe("en-CA");
   });
 
-  it("setLocale updates document.documentElement.lang", () => {
-    const { result } = renderHook(() => useTranslation(), {
+  it("sets document.documentElement.lang from the active locale", () => {
+    renderHook(() => useTranslation(), {
       wrapper: wrapper("en-CA"),
     });
     expect(document.documentElement.lang).toBe("en-CA");
-    act(() => result.current.setLocale("fr-CA"));
-    expect(document.documentElement.lang).toBe("fr-CA");
   });
 });

@@ -16,12 +16,14 @@ export function useIdleTimeout(onIdle, timeoutMs) {
       timerRef.current = setTimeout(() => onIdleRef.current(), timeoutMs);
     };
 
-    EVENTS.forEach((e) => window.addEventListener(e, reset, { passive: true }));
+    EVENTS.forEach((e) =>
+      globalThis.addEventListener(e, reset, { passive: true }),
+    );
     reset();
 
     return () => {
       clearTimeout(timerRef.current);
-      EVENTS.forEach((e) => window.removeEventListener(e, reset));
+      EVENTS.forEach((e) => globalThis.removeEventListener(e, reset));
     };
   }, [timeoutMs]);
 }

@@ -1,4 +1,8 @@
-import reducer, { setGeoData, setHumanAddress } from "../geoReducer";
+import reducer, {
+  resetGeoState,
+  setGeoData,
+  setHumanAddress,
+} from "../geoReducer";
 
 const initialState = { geoData: undefined, humanAddress: undefined };
 
@@ -42,5 +46,13 @@ describe("geoReducer", () => {
     const s1 = reducer(initialState, setGeoData(geoData));
     const s2 = reducer(s1, setHumanAddress("Some Address"));
     expect(s2.geoData).toEqual(geoData);
+  });
+
+  it("resetGeoState returns initialState", () => {
+    const seeded = reducer(
+      reducer(initialState, setGeoData({ lat: 1, lng: 2 })),
+      setHumanAddress("123 Main St"),
+    );
+    expect(reducer(seeded, resetGeoState())).toEqual(initialState);
   });
 });

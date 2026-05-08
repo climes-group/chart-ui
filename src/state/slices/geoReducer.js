@@ -15,10 +15,11 @@ export const geoSlice = createSlice({
     setHumanAddress: (state, action) => {
       state.humanAddress = action.payload;
     },
+    resetGeoState: () => initialState,
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setGeoData, setHumanAddress } = geoSlice.actions;
+export const { setGeoData, setHumanAddress, resetGeoState } = geoSlice.actions;
 
 export default geoSlice.reducer;
