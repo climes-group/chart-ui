@@ -9,12 +9,7 @@ import {
   stepBackward,
   stepForward,
 } from "../state/slices/flowReducer";
-import {
-  clearIntakeForm,
-  clearSelectedSystems,
-  resetReport,
-} from "../state/slices/reportReducer";
-import { setGeoData, setHumanAddress } from "../state/slices/geoReducer";
+import { resetAppState } from "../state/actions/resetAppState";
 
 function useFlow(initialSteps = []) {
   const dispatch = useDispatch();
@@ -63,12 +58,7 @@ function useFlow(initialSteps = []) {
   }
 
   function reset() {
-    dispatch(clearIntakeForm());
-    dispatch(clearSelectedSystems());
-    dispatch(resetReport());
-    dispatch(setGeoData(undefined));
-    dispatch(setHumanAddress(undefined));
-    dispatch(setSteps(initialSteps));
+    dispatch(resetAppState(initialSteps));
     navigate("/flow/intake");
   }
 

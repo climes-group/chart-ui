@@ -1,13 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
 import { ArrowRight } from "lucide-react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { resetAppState } from "@/state/actions/resetAppState";
+import steps from "@/steps";
 
 export default function SplashCard() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const handleDismiss = () => {
+  const handleGetStarted = () => {
+    dispatch(resetAppState(steps));
     navigate("/flow/intake");
   };
 
@@ -20,7 +25,7 @@ export default function SplashCard() {
         <p className="text-teal-deep/75 mt-3 max-w-sm text-sm sm:text-base">
           {t("splash.tagline")}
         </p>
-        <Button onClick={handleDismiss} size="lg" className="mt-8 px-8">
+        <Button onClick={handleGetStarted} size="lg" className="mt-8 px-8">
           {t("splash.getStarted")}
           <ArrowRight />
         </Button>

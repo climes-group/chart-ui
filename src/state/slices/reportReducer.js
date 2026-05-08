@@ -143,6 +143,7 @@ export const reportSlice = createSlice({
       state.reportGenAt = null;
       state.reportGenTime = null;
     },
+    resetReportState: () => initialState,
   },
 });
 
@@ -165,6 +166,7 @@ export const {
   setIntakeForm,
   clearIntakeForm,
   resetReport,
+  resetReportState,
 } = reportSlice.actions;
 
 export const selectIntakeForm = (state) => state.report.intakeForm;
