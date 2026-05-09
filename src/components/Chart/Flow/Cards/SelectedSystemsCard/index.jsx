@@ -77,7 +77,7 @@ export default function SelectedSystemsCard({ activeStep }) {
       // sort and get first service alphabetically
       const services = Array.from(
         new Set(unique.map((s) => s.Services).filter(Boolean)),
-      ).sort();
+      ).sort((a, b) => a - b);
 
       setActiveService(services[0] ?? null);
     } catch (err) {
@@ -98,7 +98,7 @@ export default function SelectedSystemsCard({ activeStep }) {
       // sort and get first category alphabetically
       const categories = Array.from(
         new Set(unique.map((f) => f.Category).filter(Boolean)),
-      ).sort();
+      ).sort((a, b) => a - b);
 
       setActiveCategory(categories[0] ?? null);
     } catch (err) {
