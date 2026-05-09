@@ -1,0 +1,419 @@
+import {
+  clearSnapshot,
+  loadSnapshot,
+  saveSnapshot,
+} from "@/components/TestMode/snapshot";
+import { Button } from "@/components/ui/button";
+import { useDebugMode } from "@/context/TestModeContext";
+import { useTranslation } from "@/i18n";
+import {
+  getFeatureKeyFor,
+  getSystemCodeFor,
+  setReportData,
+  setReportDebugData,
+  setReportGenAt,
+  setReportGenTime,
+  setReportStatus,
+  type IntakeForm,
+} from "@/state/slices/reportReducer";
+import type { RootState } from "@/state/store";
+import {
+  AlertTriangle,
+  Bug,
+  CheckCircle2,
+  Download,
+  FileText,
+  Loader2,
+  MapPin,
+  Pencil,
+  RefreshCw,
+  Save,
+  XCircle,
+} from "lucide-react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import DebugDataModal from "./DebugDataModal";
+
+const openPdfInNewWindow = async (
+  result: string,
+  popupBlockedMessage: string,
+) => {
+  const byteCharacters = atob(result);
+  const byteNumbers = new Array(byteCharacters.length);
+
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], { type: "application/pdf" });
+  const fileURL = URL.createObjectURL(blob);
+  const pdfWindow = globalThis.open(fileURL, "_blank");
+
+  if (!pdfWindow) {
+    alert(popupBlockedMessage);
+  }
+};
+
+type ReportContextProps = {
+  humanAddress?: string;
+  intakeForm: IntakeForm;
+  systemCount: number;
+  featureCount: number;
+};
+
+function ReportContext({
+  humanAddress,
+  intakeForm,
+  systemCount,
+  featureCount,
+}: ReportContextProps) {
+  const { t } = useTranslation();
+  const standards = (intakeForm?.modelling_standard || []).filter(Boolean);
+  const standardsLabel = standards
+    .map((s) =>
+      s === "Other" && intakeForm?.modelling_standard_other
+        ? intakeForm.modelling_standard_other
+        : s,
+    )
+    .join(", ");
+
+  const energy = [
+    { label: "MEUI", value: intakeForm?.meui },
+    { label: "TEDI", value: intakeForm?.tedi },
+    { label: "GHGI", value: intakeForm?.ghgi },
+  ].filter((x) => x.value !== "" && x.value !== null && x.value !== undefined);
+
+  const hasLocation = !!humanAddress;
+  const systemsKey =
+    systemCount === 1
+      ? "report.context.systems.one"
+      : "report.context.systems.other";
+  const featuresKey =
+    featureCount === 1
+      ? "report.context.features.one"
+      : "report.context.features.other";
+  const systemLine = [
+    t(systemsKey, { count: systemCount }),
+    t(featuresKey, { count: featureCount }),
+    standardsLabel || null,
+  ]
+    .filter(Boolean)
+    .join("  ·  ");
+
+  return (
+    <div className="border-warm-gold/40 bg-warm-gold/10 space-y-3 rounded-lg border p-4">
+      <div className="flex items-start gap-2.5 text-sm">
+        {hasLocation ? (
+          <MapPin className="text-primary mt-0.5 size-4 shrink-0" />
+        ) : (
+          <AlertTriangle className="text-warm-brown mt-0.5 size-4 shrink-0" />
+        )}
+        <div className="flex-1 space-y-1">
+          {hasLocation ? (
+            <p className="text-foreground">{humanAddress}</p>
+          ) : (
+            <p className="text-warm-brown">{t("report.context.noLocation")}</p>
+          )}
+          {systemLine && (
+            <p className="text-muted-foreground text-xs">{systemLine}</p>
+          )}
+          {energy.length > 0 && (
+            <p className="text-muted-foreground font-mono text-xs">
+              {energy.map((e) => `${e.label} ${e.value}`).join("  ·  ")}
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="border-warm-gold/30 flex justify-end border-t pt-2.5">
+        <Link
+          to="/flow/summary"
+          className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 text-xs transition-colors"
+        >
+          <Pencil className="size-3" />
+          {t("report.context.editSummary")}
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default function ReportCard() {
+  const geoData = useSelector((s: RootState) => s.geo.geoData);
+  const humanAddress = useSelector((s: RootState) => s.geo.humanAddress);
+  const selectedSystems = useSelector(
+    (state: RootState) => state.report.selectedSystems,
+  );
+  const selectedSiteFeatures = useSelector(
+    (state: RootState) => state.report.selectedSiteFeatures,
+  );
+  const intakeForm = useSelector(
+    (state: RootState) => state.report.intakeForm,
+  );
+  const reportData = useSelector(
+    (state: RootState) => state.report.reportData,
+  );
+  const reportDebugData = useSelector(
+    (state: RootState) => state.report.reportDebugData,
+  );
+  const { reportStatus, reportGenAt, reportGenTime } = useSelector(
+    (s: RootState) => s.report,
+  );
+  const token = useSelector((s: RootState) => s.user.token);
+  const dispatch = useDispatch();
+  const isDebugMode = useDebugMode();
+  const { t } = useTranslation();
+  const [showDebug, setShowDebug] = useState(false);
+  const [snapshotMeta, setSnapshotMeta] = useState<{ savedAt: string } | null>(
+    () => {
+      const snap = loadSnapshot();
+      return snap ? { savedAt: snap.savedAt } : null;
+    },
+  );
+
+  const handleSaveSnapshot = () => {
+    const saved = saveSnapshot({
+      intakeForm,
+      selectedSystems,
+      selectedSiteFeatures,
+      geoData,
+      humanAddress,
+    });
+    setSnapshotMeta({ savedAt: saved.savedAt });
+  };
+
+  const handleClearSnapshot = () => {
+    clearSnapshot();
+    setSnapshotMeta(null);
+  };
+
+  async function handleGenerateReport() {
+    dispatch(setReportStatus("generating"));
+    const startTime = Date.now();
+
+    try {
+      const result = await fetch(
+        `${import.meta.env.VITE_API_HOST}/generate_report`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          body: JSON.stringify({
+            geo: { lat: geoData?.lat, lon: geoData?.lng },
+            systems: (selectedSystems ?? [])
+              .map(getSystemCodeFor)
+              .filter(Boolean),
+            features: (selectedSiteFeatures ?? [])
+              .map(getFeatureKeyFor)
+              .filter(Boolean),
+            intakeForm: intakeForm ?? {},
+            ...(isDebugMode && { debug: true }),
+          }),
+        },
+      );
+      const responseData = await result.json();
+
+      if (responseData.status === "Success") {
+        dispatch(setReportGenAt(new Date().toLocaleTimeString()));
+        dispatch(setReportGenTime(Date.now() - startTime));
+        dispatch(setReportData(responseData.data));
+        dispatch(setReportDebugData(responseData.debugData ?? null));
+        dispatch(setReportStatus("generated"));
+      } else {
+        dispatch(setReportStatus("error"));
+      }
+    } catch (error) {
+      console.error("Error generating report:", error);
+      dispatch(setReportStatus("error"));
+    }
+  }
+
+  function handleClearReport() {
+    dispatch(setReportStatus("not_generated"));
+    dispatch(setReportGenAt(null));
+    dispatch(setReportGenTime(null));
+    dispatch(setReportData(null));
+    dispatch(setReportDebugData(null));
+    setShowDebug(false);
+  }
+
+  const isGenerating = reportStatus === "generating";
+  const isGenerated = reportStatus === "generated";
+  const isError = reportStatus === "error";
+
+  const systemCount = selectedSystems?.length ?? 0;
+  const featureCount = selectedSiteFeatures?.length ?? 0;
+
+  return (
+    <>
+      <h2 className="heading-card mb-5">{t("report.heading")}</h2>
+
+      <div className="flex flex-col gap-5">
+        {/* Primary action row */}
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            onClick={handleGenerateReport}
+            disabled={isGenerated || isGenerating}
+            className="px-5 disabled:opacity-60"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="animate-spin" />
+                {t("report.generating")}
+              </>
+            ) : (
+              <>
+                <FileText />
+                {t("report.generate")}
+              </>
+            )}
+          </Button>
+
+          {isGenerated && (
+            <Button
+              onClick={handleClearReport}
+              variant="outline"
+              className="text-muted-foreground"
+            >
+              <RefreshCw />
+              {t("report.regenerate")}
+            </Button>
+          )}
+
+          {isDebugMode && (
+            <div className="ml-auto flex items-center gap-2">
+              <Button
+                variant="link"
+                onClick={handleSaveSnapshot}
+                className="text-warm-brown hover:text-warm-brown/80 decoration-warm-gold/60 underline decoration-dashed underline-offset-4"
+              >
+                <Save />
+                {snapshotMeta
+                  ? "Overwrite snapshot"
+                  : "Save snapshot for autofill"}
+              </Button>
+              {snapshotMeta && (
+                <>
+                  <span
+                    className="text-muted-foreground text-xs"
+                    title={snapshotMeta.savedAt}
+                  >
+                    Saved
+                  </span>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    onClick={handleClearSnapshot}
+                    className="text-muted-foreground hover:text-destructive"
+                  >
+                    Clear
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Status panel */}
+        {reportStatus === "not_generated" && (
+          <div className="space-y-4">
+            <p className="body-muted">{t("report.intro")}</p>
+
+            <ReportContext
+              humanAddress={humanAddress}
+              intakeForm={intakeForm}
+              systemCount={systemCount}
+              featureCount={featureCount}
+            />
+          </div>
+        )}
+
+        {isGenerating && (
+          <div className="border-border bg-muted/20 text-muted-foreground flex items-center gap-3 rounded-lg border px-4 py-3 text-sm">
+            <Loader2 className="text-primary size-4 shrink-0 animate-spin" />
+            <span>{t("report.building")}</span>
+          </div>
+        )}
+
+        {isError && (
+          <div className="border-destructive/30 bg-destructive/5 flex items-start gap-3 rounded-lg border p-4">
+            <XCircle className="text-destructive mt-0.5 size-5 shrink-0" />
+            <div className="flex flex-col gap-2">
+              <p className="text-destructive text-sm font-medium">
+                {t("report.failed")}
+              </p>
+              <p className="body-muted">{t("report.failedHelp")}</p>
+              <Button
+                onClick={handleGenerateReport}
+                variant="outline"
+                size="sm"
+                className="w-fit"
+              >
+                {t("report.retry")}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {isGenerated && (
+          <div className="border-primary/20 bg-primary/5 space-y-4 rounded-lg border p-5">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="text-primary size-5 shrink-0" />
+                <span className="text-sm font-semibold">
+                  {t("report.ready")}
+                </span>
+              </div>
+              <div className="text-muted-foreground flex items-center gap-3 text-xs">
+                {reportGenAt && (
+                  <span>{t("report.generatedAt", { time: reportGenAt })}</span>
+                )}
+                {reportGenTime && (
+                  <span className="text-muted-foreground/60">
+                    {(reportGenTime / 1000).toFixed(1)}s
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="border-primary/20 flex flex-wrap items-center gap-3 border-t pt-3">
+              <Button
+                onClick={() =>
+                  openPdfInNewWindow(
+                    reportData as string,
+                    t("report.popupBlocked"),
+                  )
+                }
+                className="px-5"
+              >
+                <Download />
+                {t("report.downloadPdf")}
+              </Button>
+
+              {isDebugMode && !!reportDebugData && (
+                <Button
+                  variant="link"
+                  onClick={() => setShowDebug(true)}
+                  className="text-warm-brown hover:text-warm-brown/80 decoration-warm-gold/60 underline decoration-dashed underline-offset-4"
+                >
+                  <Bug />
+                  {t("report.viewDebug")}
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {showDebug && reportDebugData && (
+        <DebugDataModal
+          data={reportDebugData}
+          onClose={() => setShowDebug(false)}
+        />
+      )}
+    </>
+  );
+}
