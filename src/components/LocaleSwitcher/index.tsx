@@ -1,5 +1,5 @@
 import { useTranslation, type Locale } from "@/i18n";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 const LOCALES: { code: Locale; labelKey: string; switchKey: string }[] = [
   {

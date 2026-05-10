@@ -13,10 +13,10 @@ import {
 } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import App from "./App";
-import Chart from "./Chart";
-import SplashCard from "./components/Chart/Flow/Cards/Splash";
-import Design from "./components/Design";
-import SavedReports from "./components/SavedReports";
+import Chart from "./pages/Chart";
+import Design from "./pages/Design";
+import SavedReports from "./pages/SavedReports";
+import SplashCard from "./pages/Splash";
 import { LocaleProvider } from "./i18n";
 import "./index.css";
 import { setupStore } from "./state/store";

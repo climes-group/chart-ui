@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import type { Step } from "@/steps";
 import {
   AlertCircle,

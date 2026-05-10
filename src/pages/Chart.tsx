@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import StepperFlow from "./components/Chart/Flow/StepperFlow";
-import steps from "./steps";
+import StepperFlow from "@/components/Chart/StepperFlow";
+import steps from "@/steps";
 
 function Chart() {
   const targetElement = useRef<HTMLDivElement>(null);

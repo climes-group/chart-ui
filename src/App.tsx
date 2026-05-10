@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
 import OidcLogin from "./components/Auth/OidcLogin";
 import TestModePanel from "./components/TestMode/TestModePanel";
-import { TestModeProvider } from "./context/TestModeContext";
+import { TestModeProvider } from "./components/TestMode/TestModeContext";
 import { useIdleTimeout } from "./hooks/useIdleTimeout";
 import type { RootState } from "./state/store";
 

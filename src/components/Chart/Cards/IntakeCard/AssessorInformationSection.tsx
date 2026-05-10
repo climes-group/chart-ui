@@ -1,5 +1,5 @@
 import { useTranslation } from "@/i18n";
-import { isValidPhone } from "@/lib/validators";
+import { isValidPhone } from "@/utils/validators";
 import { TextField } from "@mui/material";
 import { type AnyFieldApi } from "@tanstack/form-core";
 import type { IntakeFormApi } from ".";
