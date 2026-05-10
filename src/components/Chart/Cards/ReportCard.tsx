@@ -4,7 +4,7 @@ import {
   saveSnapshot,
 } from "@/components/TestMode/snapshot";
 import { Button } from "@/components/ui/button";
-import { useDebugMode } from "@/context/TestModeContext";
+import { useDebugMode } from "@/components/TestMode/TestModeContext";
 import { useTranslation } from "@/i18n";
 import {
   getFeatureKeyFor,

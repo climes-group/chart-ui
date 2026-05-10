@@ -2,7 +2,7 @@ import {
   useDebugMode,
   useSetDebugMode,
   useTestMode,
-} from "@/context/TestModeContext";
+} from "@/components/TestMode/TestModeContext";
 import { meetCondition, setTheme } from "@/state/slices/flowReducer";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import {

@@ -1,4 +1,4 @@
-import { TestModeProvider } from "@/context/TestModeContext";
+import { TestModeProvider } from "@/components/TestMode/TestModeContext";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import {
   addSelectedFeature,

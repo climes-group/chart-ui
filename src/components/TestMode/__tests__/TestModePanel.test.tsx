@@ -2,7 +2,7 @@ import {
   TestModeProvider,
   useDebugMode,
   useTestMode,
-} from "@/context/TestModeContext";
+} from "@/components/TestMode/TestModeContext";
 import { setSteps } from "@/state/slices/flowReducer";
 import steps from "@/steps";
 import { renderWithProviders } from "@/utils/testing";

@@ -5,7 +5,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useTranslation } from "@/i18n";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import {
   getFeatureKeyFor,
   type FeatureRecord,
