@@ -203,7 +203,7 @@ export const reportSlice = createSlice({
     ) => {
       state.intakeForm = {
         ...state.intakeForm,
-        ...(action.payload ?? {}),
+        ...action.payload,
       };
     },
     clearIntakeForm: (state) => {

@@ -34,8 +34,12 @@ import type { IntakeFormApi } from ".";
 
 const MODELLING_STANDARDS = ["EnerGuide", "Passive House", "CHBA Net-Zero", "Other"] as const;
 
-function toggleOption(values: readonly string[], opt: string, checked: boolean): string[] {
-  return checked ? [...values, opt] : values.filter((v) => v !== opt);
+function addOption(values: readonly string[], opt: string): string[] {
+  return [...values, opt];
+}
+
+function removeOption(values: readonly string[], opt: string): string[] {
+  return values.filter((v) => v !== opt);
 }
 
 // ─── Debounced address search ─────────────────────────────────────────────────
@@ -539,7 +543,7 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
                         checked={field.state.value.includes(opt)}
                         onChange={(e) =>
                           field.handleChange(
-                            toggleOption(field.state.value, opt, e.target.checked),
+                            e.target.checked ? addOption(field.state.value, opt) : removeOption(field.state.value, opt),
                           )
                         }
                       />

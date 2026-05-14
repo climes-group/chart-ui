@@ -51,7 +51,8 @@ describe("useTranslation", () => {
     const { result } = renderHook(() => useTranslation(), {
       wrapper: wrapper("en-CA"),
     });
-    act(() => result.current.setLocale("es-MX" as Locale));
+    // @ts-expect-error intentionally passing unsupported locale to test guard
+    act(() => result.current.setLocale("es-MX"));
     expect(result.current.locale).toBe("en-CA");
   });
 

@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 function decodeJwt(token: string): UserProfile {
   const payload = token.split(".")[1];
   return JSON.parse(
-    atob(payload.replaceAll(/-/g, "+").replaceAll(/_/g, "/")),
+    atob(payload.replaceAll('-', '+').replaceAll('_', '/')),
   ) as UserProfile;
 }
 

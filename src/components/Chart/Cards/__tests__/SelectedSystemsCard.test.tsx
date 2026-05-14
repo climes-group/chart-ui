@@ -69,7 +69,7 @@ describe("SelectedSystemsCard tests", () => {
     await screen.findByText("Boiler");
   }
   it("renders loading skeleton before data arrives", () => {
-    global.fetch = vi.fn<typeof fetch>(() => new Promise<Response>(() => {})); // never resolves
+    globalThis.fetch = vi.fn<typeof fetch>(() => new Promise<Response>(() => {})); // never resolves
     const { container } = renderWithProviders(<SelectedSystemsCard />);
     expect(
       container.querySelectorAll(

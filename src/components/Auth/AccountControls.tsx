@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 type Props = { logout?: () => void };
 
-function AccountControls({ logout }: Props) {
+function AccountControls({ logout }: Readonly<Props>) {
   const profile = useSelector((state: RootState) => state.user.profile);
   const { t } = useTranslation();
 

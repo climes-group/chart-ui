@@ -15,7 +15,7 @@ function mockListReports(reports: unknown[]) {
   return vi.fn<typeof fetch>().mockResolvedValue({
     ok: true,
     json: () => Promise.resolve({ data: reports }),
-  } as Response);
+  } as unknown as Response);
 }
 
 function mockDeleteAllOk(): FetchResponseLike {

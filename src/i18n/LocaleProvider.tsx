@@ -14,7 +14,7 @@ export const DEFAULT_LOCALE: Locale = "en-CA";
 
 type Dictionary = Record<string, string>;
 const DICTIONARIES: Record<Locale, Dictionary> = {
-  "en-CA": enCA as Dictionary,
+  "en-CA": enCA,
 };
 
 const STORAGE_KEY = "locale";
@@ -24,7 +24,7 @@ function isLocale(value: string | null): value is Locale {
 }
 
 function detectInitialLocale(): Locale {
-  if (typeof window === "undefined") return DEFAULT_LOCALE;
+  if (typeof globalThis.window === "undefined") return DEFAULT_LOCALE;
   const stored = globalThis.localStorage?.getItem(STORAGE_KEY);
   if (isLocale(stored)) return stored;
   return DEFAULT_LOCALE;
@@ -61,7 +61,7 @@ type LocaleProviderProps = {
 export function LocaleProvider({
   children,
   initialLocale,
-}: LocaleProviderProps) {
+}: Readonly<LocaleProviderProps>) {
   const [localeState, setLocaleState] = useState<Locale>(
     () => initialLocale ?? detectInitialLocale(),
   );

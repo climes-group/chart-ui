@@ -25,7 +25,7 @@ type Props = {
   onError?: (err: unknown) => void;
 };
 
-function MicrosoftProvider({ onSuccess, onError }: Props) {
+function MicrosoftProvider({ onSuccess, onError }: Readonly<Props>) {
   const { instance } = useMsal();
   const { t } = useTranslation();
   const label = t("auth.signInWith", { provider: "Microsoft" });

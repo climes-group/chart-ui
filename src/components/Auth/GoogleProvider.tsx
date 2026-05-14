@@ -5,7 +5,7 @@ type Props = {
   onError?: (err: Error) => void;
 };
 
-function GoogleProvider({ onSuccess, onError }: Props) {
+function GoogleProvider({ onSuccess, onError }: Readonly<Props>) {
   return (
     <GoogleLogin
       onSuccess={(response) => onSuccess?.(response.credential)}

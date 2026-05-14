@@ -21,7 +21,7 @@ export function renderWithProviders(
 ) {
   const {
     preloadedState = {},
-    locale = "en-CA" as Locale,
+    locale = "en-CA",
     store = setupTestStore(preloadedState),
     ...renderOptions
   } = extendedRenderOptions;
