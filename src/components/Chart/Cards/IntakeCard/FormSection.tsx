@@ -64,7 +64,7 @@ export default function FormSection({
 
   return (
     <section
-      ref={ref as React.RefObject<HTMLElement>}
+      ref={ref}
       className={`transition-all duration-500 ease-out ${
         inView ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}

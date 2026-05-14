@@ -101,7 +101,7 @@ export default function TestModePanel() {
     dispatch(setSelectedFeatures(features));
     dispatch(meetCondition({ name: "intake", condition: true }));
     dispatch(meetCondition({ name: "inventory", condition: true }));
-    intakeFillRef?.current?.(intake as Record<string, unknown>);
+    intakeFillRef?.current?.(intake);
   };
 
   return (

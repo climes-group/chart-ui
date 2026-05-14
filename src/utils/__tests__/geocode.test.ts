@@ -14,7 +14,7 @@ describe("geocode", () => {
     console.error = consoleErr;
   });
 
-  const mockFetch = () => vi.mocked(global.fetch);
+  const mockFetch = () => vi.mocked(globalThis.fetch);
 
   describe("Geocode tests", () => {
     const geodata = {
@@ -63,7 +63,7 @@ describe("geocode", () => {
           },
         },
       ],
-    } as Response);
+    } as unknown as Response);
     const resp = await searchAddress(
       "1600 Amphitheatre Parkway, Mountain View, CA",
     );

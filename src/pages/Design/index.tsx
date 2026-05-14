@@ -161,7 +161,7 @@ function Design() {
   );
 }
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+function Section({ title, children }: Readonly<{ title: string; children: ReactNode }>) {
   return (
     <section className="mb-14">
       <h2 className="mb-5">{title}</h2>

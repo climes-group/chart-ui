@@ -139,7 +139,7 @@ describe("ReportCard tests", () => {
   });
 
   it("transitions to generating state on Generate Report click", async () => {
-    global.fetch = vi.fn<typeof fetch>(() => new Promise<Response>(() => {})); // never resolves
+    globalThis.fetch = vi.fn<typeof fetch>(() => new Promise<Response>(() => {})); // never resolves
 
     const { store } = renderWithProviders(<ReportCard />);
     await act(async () => {

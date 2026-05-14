@@ -9,7 +9,7 @@ type Props = {
   onIdToken?: (idToken: string | undefined) => void;
 };
 
-function LoginButton({ onIdToken }: Props) {
+function LoginButton({ onIdToken }: Readonly<Props>) {
   const { t } = useTranslation();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);

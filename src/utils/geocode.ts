@@ -88,7 +88,7 @@ export class GeoCode {
 export async function searchAddressGeolocator(
   query: string,
   lang: string,
-): Promise<{ items: AddressResult[] } | unknown> {
+): Promise<unknown> {
   const params = new URLSearchParams({ q: query, lang });
 
   try {
@@ -186,7 +186,7 @@ export async function searchAddress(
 }
 
 export async function lookUpHumanAddress(geoCode: GeoCode): Promise<unknown> {
-  if (!geoCode || geoCode.lat === undefined || geoCode.lng === undefined) {
+  if (geoCode?.lat === undefined || geoCode?.lng === undefined) {
     return "";
   }
 
