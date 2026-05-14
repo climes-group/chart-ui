@@ -15,7 +15,7 @@ const LOCALES: { code: Locale; labelKey: string; switchKey: string }[] = [
   },
 ];
 
-function LocaleSwitcher({ className }: { className?: string }) {
+function LocaleSwitcher({ className }: Readonly<{ className?: string }>) {
   const { locale, setLocale, t } = useTranslation();
 
   return (

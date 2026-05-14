@@ -11,7 +11,7 @@ function isFilled(value: unknown): boolean {
 }
 
 function shouldSkipAnimation() {
-  if (typeof window === "undefined") return true;
+  if (globalThis.window === undefined) return true;
   if (typeof IntersectionObserver === "undefined") return true;
   if (document.hidden) return true;
   return globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -51,7 +51,7 @@ export default function FormSection({
   title,
   requiredFields = [],
   children,
-}: Props) {
+}: Readonly<Props>) {
   const [ref, inView] = useInView();
   const { t } = useTranslation();
   const { filled, total } = useStore(form.store, (snapshot: AnyFormState) => ({

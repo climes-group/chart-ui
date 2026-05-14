@@ -6,7 +6,7 @@ type Props = {
   compact?: boolean;
 };
 
-function MapView({ geoData, compact }: Props) {
+function MapView({ geoData, compact }: Readonly<Props>) {
   if (!geoData) return null;
 
   const geoCode = new GeoCode(geoData.lat, geoData.lng);

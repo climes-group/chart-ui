@@ -27,7 +27,7 @@ type Handler = (() => FetchResponseLike) | FetchResponseLike;
 function mockFetchSequence(handlers: Handler[]) {
   let call = 0;
   return vi.fn<typeof fetch>(() => {
-    const handler = handlers[call] ?? handlers[handlers.length - 1];
+    const handler = handlers[call] ?? handlers.at(-1);
     call += 1;
     return Promise.resolve(
       typeof handler === "function" ? handler() : handler,
@@ -37,7 +37,7 @@ function mockFetchSequence(handlers: Handler[]) {
 
 describe("SavedReports", () => {
   beforeEach(() => {
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ data: [] }),
     });
@@ -51,13 +51,13 @@ describe("SavedReports", () => {
   });
 
   it("shows the loading state while fetching", () => {
-    global.fetch = vi.fn<typeof fetch>(() => new Promise<Response>(() => {}));
+    globalThis.fetch = vi.fn<typeof fetch>(() => new Promise<Response>(() => {}));
     renderWithProviders(<SavedReports />, { preloadedState: loggedInState });
     expect(screen.getByText(/Loading reports/)).toBeInTheDocument();
   });
 
   it("shows the empty state and hides 'Delete all reports' when there are no reports", async () => {
-    global.fetch = mockListReports([]);
+    globalThis.fetch = mockListReports([]);
     renderWithProviders(<SavedReports />, { preloadedState: loggedInState });
 
     expect(await screen.findByText(/No saved reports found/)).toBeInTheDocument();
@@ -67,7 +67,7 @@ describe("SavedReports", () => {
   });
 
   it("shows reports and the 'Delete all reports' button when reports exist", async () => {
-    global.fetch = mockListReports([
+    globalThis.fetch = mockListReports([
       { name: "report-1.pdf", created: "2026-04-01T10:00:00Z" },
       { name: "report-2.pdf", created: "2026-04-02T10:00:00Z" },
     ]);
@@ -81,7 +81,7 @@ describe("SavedReports", () => {
   });
 
   it("shows the load-error state on fetch failure", async () => {
-    global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
     renderWithProviders(<SavedReports />, { preloadedState: loggedInState });
 
     expect(
@@ -93,7 +93,7 @@ describe("SavedReports", () => {
   });
 
   it("opens the delete-all confirmation with the correct count", async () => {
-    global.fetch = mockListReports([
+    globalThis.fetch = mockListReports([
       { name: "a.pdf", created: "2026-04-01T10:00:00Z" },
       { name: "b.pdf", created: "2026-04-02T10:00:00Z" },
       { name: "c.pdf", created: "2026-04-03T10:00:00Z" },
@@ -112,7 +112,7 @@ describe("SavedReports", () => {
   });
 
   it("cancelling the delete-all dialog leaves the list intact and fires no request", async () => {
-    global.fetch = mockListReports([
+    globalThis.fetch = mockListReports([
       { name: "a.pdf", created: "2026-04-01T10:00:00Z" },
     ]);
     renderWithProviders(<SavedReports />, { preloadedState: loggedInState });
@@ -122,7 +122,7 @@ describe("SavedReports", () => {
     );
 
     const dialog = screen.getByRole("dialog", { name: /Delete all reports/ });
-    const initialCallCount = vi.mocked(global.fetch).mock.calls.length;
+    const initialCallCount = vi.mocked(globalThis.fetch).mock.calls.length;
 
     await userEvent.click(within(dialog).getByRole("button", { name: "Cancel" }));
 
@@ -130,11 +130,11 @@ describe("SavedReports", () => {
       screen.queryByRole("dialog", { name: /Delete all reports/ }),
     ).not.toBeInTheDocument();
     expect(screen.getByText("a.pdf")).toBeInTheDocument();
-    expect(vi.mocked(global.fetch).mock.calls.length).toBe(initialCallCount);
+    expect(vi.mocked(globalThis.fetch).mock.calls.length).toBe(initialCallCount);
   });
 
   it("confirming sends POST to /reports/delete_all and clears the list", async () => {
-    global.fetch = mockFetchSequence([
+    globalThis.fetch = mockFetchSequence([
       () => ({ ok: true, json: () => Promise.resolve({ data: [{ name: "a.pdf", created: "2026-04-01T10:00:00Z" }] }) }),
       () => mockDeleteAllOk(),
     ]);
@@ -156,16 +156,16 @@ describe("SavedReports", () => {
       screen.queryByRole("button", { name: /Delete all reports/ }),
     ).not.toBeInTheDocument();
 
-    const lastCall = vi.mocked(global.fetch).mock.calls.at(-1)!;
+    const lastCall = vi.mocked(globalThis.fetch).mock.calls.at(-1)!;
     expect(lastCall[0]).toMatch(/\/reports\/delete_all$/);
     expect(lastCall[1]).toMatchObject({
       method: "POST",
-      headers: { Authorization: "Bearer test-token" },
+      headers: { "X-ID-Token": "Bearer test-token" },
     });
   });
 
   it("shows an inline error and keeps the list when delete-all fails", async () => {
-    global.fetch = mockFetchSequence([
+    globalThis.fetch = mockFetchSequence([
       () => ({ ok: true, json: () => Promise.resolve({ data: [{ name: "a.pdf", created: "2026-04-01T10:00:00Z" }] }) }),
       () => ({ ok: false, status: 500, json: () => Promise.resolve({}) }),
     ]);
@@ -187,7 +187,7 @@ describe("SavedReports", () => {
   });
 
   it("opening the per-report delete dialog shows the filename and is independent of delete-all", async () => {
-    global.fetch = mockListReports([
+    globalThis.fetch = mockListReports([
       { name: "only.pdf", created: "2026-04-01T10:00:00Z" },
     ]);
     renderWithProviders(<SavedReports />, { preloadedState: loggedInState });
@@ -201,7 +201,7 @@ describe("SavedReports", () => {
   });
 
   it("has no axe violations in the loading state", async () => {
-    global.fetch = vi.fn<typeof fetch>(() => new Promise<Response>(() => {}));
+    globalThis.fetch = vi.fn<typeof fetch>(() => new Promise<Response>(() => {}));
     const { container } = renderWithProviders(<SavedReports />, {
       preloadedState: loggedInState,
     });
@@ -210,7 +210,7 @@ describe("SavedReports", () => {
   });
 
   it("has no axe violations in the empty state", async () => {
-    global.fetch = mockListReports([]);
+    globalThis.fetch = mockListReports([]);
     const { container } = renderWithProviders(<SavedReports />, {
       preloadedState: loggedInState,
     });
@@ -219,7 +219,7 @@ describe("SavedReports", () => {
   });
 
   it("has no axe violations in the ready state", async () => {
-    global.fetch = mockListReports([
+    globalThis.fetch = mockListReports([
       { name: "report-1.pdf", created: "2026-04-01T10:00:00Z" },
       { name: "report-2.pdf", created: "2026-04-02T10:00:00Z" },
     ]);
@@ -231,7 +231,7 @@ describe("SavedReports", () => {
   });
 
   it("has no axe violations in the error state", async () => {
-    global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
     const { container } = renderWithProviders(<SavedReports />, {
       preloadedState: loggedInState,
     });
@@ -240,7 +240,7 @@ describe("SavedReports", () => {
   });
 
   it("has no axe violations when the delete-all dialog is open", async () => {
-    global.fetch = mockListReports([
+    globalThis.fetch = mockListReports([
       { name: "a.pdf", created: "2026-04-01T10:00:00Z" },
     ]);
     const { container } = renderWithProviders(<SavedReports />, {

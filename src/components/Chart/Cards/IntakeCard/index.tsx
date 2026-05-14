@@ -51,7 +51,7 @@ const PROJECT_REQUIRED = [
 const ASSESSOR_REQUIRED = ["ea_name", "ea_number", "ea_phone", "ea_business"];
 const SIGNATURE_REQUIRED = ["ea_signature", "builder_signature"];
 
-export default function IntakeCard({ registerNext, nav }: StepCardProps) {
+export default function IntakeCard({ registerNext, nav }: Readonly<StepCardProps>) {
   const dispatch = useDispatch();
   const { intakeFillRef } = useTestMode();
   const { t } = useTranslation();

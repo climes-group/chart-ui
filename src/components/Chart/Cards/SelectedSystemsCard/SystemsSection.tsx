@@ -26,11 +26,11 @@ export default function SystemsSection({
   onToggle,
   onClearAll,
   onClearClassification,
-}: Props) {
+}: Readonly<Props>) {
   const { t } = useTranslation();
   const serviceNames = [
     ...new Set(systems.map((s) => s.Services as string).filter(Boolean)),
-  ].sort();
+  ].sort((a, b) => a.localeCompare(b));
   const systemsForService = activeService
     ? systems.filter((s) => s.Services === activeService)
     : [];

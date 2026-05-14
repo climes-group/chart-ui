@@ -43,7 +43,7 @@ const openPdfInNewWindow = async (
   const byteNumbers = new Array(byteCharacters.length);
 
   for (let i = 0; i < byteCharacters.length; i++) {
-    byteNumbers[i] = byteCharacters.charCodeAt(i);
+    byteNumbers[i] = byteCharacters.codePointAt(i);
   }
 
   const byteArray = new Uint8Array(byteNumbers);
@@ -68,7 +68,7 @@ function ReportContext({
   intakeForm,
   systemCount,
   featureCount,
-}: ReportContextProps) {
+}: Readonly<ReportContextProps>) {
   const { t } = useTranslation();
   const standards = (intakeForm?.modelling_standard || []).filter(Boolean);
   const standardsLabel = standards
@@ -199,7 +199,7 @@ export default function ReportCard() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
+            ...(token && { "X-ID-Token": `Bearer ${token}` }),
           },
           body: JSON.stringify({
             geo: { lat: geoData?.lat, lon: geoData?.lng },

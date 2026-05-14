@@ -26,7 +26,7 @@ type Props = {
   nav?: () => void;
 };
 
-export default function StepRenderer({ step, registerNext, nav }: Props) {
+export default function StepRenderer({ step, registerNext, nav }: Readonly<Props>) {
   const StepCard = STEP_CARDS[step.name];
   if (!StepCard) return null;
   return <StepCard activeStep={step} registerNext={registerNext} nav={nav} />;
