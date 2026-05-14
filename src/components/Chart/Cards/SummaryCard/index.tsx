@@ -15,7 +15,7 @@ import { formatLatLong } from "./utils";
 
 function sanitizeName(name: string | null | undefined): string {
   if (!name || name === "undefined" || name === "null") return "N/A";
-  return name.replaceAll(/_/g, " ");
+  return name.replaceAll('_', " ");
 }
 
 function getSystemDisplayName(system: SystemRecord): string {
@@ -35,7 +35,7 @@ type SectionHeaderProps = {
   editLabel: string;
 };
 
-function SectionHeader({ title, editTo, editLabel }: SectionHeaderProps) {
+function SectionHeader({ title, editTo, editLabel }: Readonly<SectionHeaderProps>) {
   const { t } = useTranslation();
   return (
     <div className="mb-3 flex items-center justify-between">
@@ -53,7 +53,38 @@ function SectionHeader({ title, editTo, editLabel }: SectionHeaderProps) {
   );
 }
 
-function SystemPill({ name, code }: { name: string; code?: string }) {
+function groupByKey<T>(items: T[], getKey: (item: T) => string): Record<string, T[]> {
+  return items.reduce<Record<string, T[]>>((acc, item) => {
+    const key = getKey(item) || "Other";
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+}
+
+type ServicePillListProps = {
+  groups: Record<string, { name: string; code?: string }[]>;
+};
+
+function ServicePillList({ groups }: Readonly<ServicePillListProps>) {
+  const services = Object.keys(groups).sort((a, b) => a.localeCompare(b));
+  return (
+    <div className="space-y-4">
+      {services.map((service) => (
+        <div key={service}>
+          <p className="heading-label mb-2">{sanitizeName(service)}</p>
+          <div className="flex flex-wrap gap-2">
+            {groups[service].map(({ name, code }) => (
+              <SystemPill key={code ?? name} name={name} code={code} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SystemPill({ name, code }: Readonly<{ name: string; code?: string }>) {
   return (
     <span className="border-teal-deep bg-teal-deep/10 text-teal-deep inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-sm font-medium">
       <span>{name}</span>
@@ -105,7 +136,7 @@ function formatPlanLine(intake: IntakeForm, t: TranslateFn): string | null {
   return t("summary.plan", { value: parts.join(" · ") });
 }
 
-function ProjectInformation({ intake }: { intake: IntakeForm }) {
+function ProjectInformation({ intake }: Readonly<{ intake: IntakeForm }>) {
   const { t } = useTranslation();
   const headline = formatHeadline(intake, t);
   const standards = formatStandards(intake);
@@ -182,25 +213,21 @@ function SummaryCard() {
     (f) => f && typeof f === "object" && getFeatureKeyFor(f),
   );
 
-  const systemsByService = validSelectedSystems.reduce<
-    Record<string, SystemRecord[]>
-  >((acc, s) => {
-    const service = (s["Services"] as string) || "Other";
-    if (!acc[service]) acc[service] = [];
-    acc[service].push(s);
-    return acc;
-  }, {});
-  const services = Object.keys(systemsByService).sort();
+  const systemGroups = Object.fromEntries(
+    Object.entries(groupByKey(validSelectedSystems, (s) => (s["Services"] as string) || "Other"))
+      .map(([k, systems]) => [
+        k,
+        systems.map((s) => ({ name: sanitizeName(getSystemDisplayName(s)), code: getSystemCodeFor(s) })),
+      ]),
+  );
 
-  const featuresByService = validSelectedSiteFeatures.reduce<
-    Record<string, FeatureRecord[]>
-  >((acc, f) => {
-    const service = (f["Category"] as string) || "Other";
-    if (!acc[service]) acc[service] = [];
-    acc[service].push(f);
-    return acc;
-  }, {});
-  const featureServices = Object.keys(featuresByService).sort();
+  const featureGroups = Object.fromEntries(
+    Object.entries(groupByKey(validSelectedSiteFeatures, (f) => (f["Category"] as string) || "Other"))
+      .map(([k, features]) => [
+        k,
+        features.map((f) => ({ name: sanitizeName(getSiteFeatureDisplayName(f)), code: getFeatureKeyFor(f) })),
+      ]),
+  );
 
   return (
     <div className="space-y-4">
@@ -257,25 +284,7 @@ function SummaryCard() {
         {validSelectedSystems.length === 0 ? (
           <p className="body-muted">{t("summary.empty.systems")}</p>
         ) : (
-          <div className="space-y-4">
-            {services.map((service) => (
-              <div key={service}>
-                <p className="heading-label mb-2">{sanitizeName(service)}</p>
-                <div className="flex flex-wrap gap-2">
-                  {systemsByService[service].map((s) => {
-                    const code = getSystemCodeFor(s);
-                    return (
-                      <SystemPill
-                        key={code}
-                        name={sanitizeName(getSystemDisplayName(s))}
-                        code={code}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
+          <ServicePillList groups={systemGroups} />
         )}
       </div>
 
@@ -294,26 +303,7 @@ function SummaryCard() {
         {validSelectedSiteFeatures.length === 0 ? (
           <p className="body-muted">{t("summary.empty.features")}</p>
         ) : (
-          <div className="space-y-4">
-            {featureServices.map((service) => (
-              <div key={service}>
-                <p className="heading-label mb-2">{sanitizeName(service)}</p>
-                <div className="flex flex-wrap gap-2">
-                  {featuresByService[service].map((f) => {
-                    const code = getFeatureKeyFor(f);
-
-                    return (
-                      <SystemPill
-                        key={code}
-                        name={sanitizeName(getSiteFeatureDisplayName(f))}
-                        code={code}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
+          <ServicePillList groups={featureGroups} />
         )}
       </div>
     </div>

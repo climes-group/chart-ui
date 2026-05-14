@@ -32,6 +32,12 @@ import type { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import type { IntakeFormApi } from ".";
 
+const MODELLING_STANDARDS = ["EnerGuide", "Passive House", "CHBA Net-Zero", "Other"] as const;
+
+function toggleOption(values: readonly string[], opt: string, checked: boolean): string[] {
+  return checked ? [...values, opt] : values.filter((v) => v !== opt);
+}
+
 // ─── Debounced address search ─────────────────────────────────────────────────
 function useAddressSearch(delay = 380) {
   const [query, setQuery] = useState("");
@@ -73,7 +79,7 @@ function ProjectAddressAutocomplete({
   form,
   dispatch,
   onLocate,
-}: AutocompleteProps) {
+}: Readonly<AutocompleteProps>) {
   const { setQuery, options, loading } = useAddressSearch();
   const { t } = useTranslation();
 
@@ -94,7 +100,6 @@ function ProjectAddressAutocomplete({
     if (!item || typeof item === "string") return;
 
     const streetLine = item.address.street || item.address.label;
-    console.log("Selected address:", streetLine);
     field.handleChange(streetLine);
 
     if (item.address.city)
@@ -158,30 +163,32 @@ function ProjectAddressAutocomplete({
               ? field.state.meta.errors[0]
               : t("intake.fields.projectAddressHelp")
           }
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: (
-              <>
-                {loading ? (
-                  <CircularProgress
-                    color="inherit"
-                    size={16}
-                    sx={{ mr: 0.5 }}
-                  />
-                ) : null}
-                <Tooltip title={t("intake.fields.useMyLocation")}>
-                  <IconButton
-                    size="small"
-                    onClick={onLocate}
-                    aria-label={t("intake.fields.useMyLocation")}
-                    sx={{ mr: -0.5 }}
-                  >
-                    <LocateFixedIcon className="size-4" />
-                  </IconButton>
-                </Tooltip>
-                {params.InputProps.endAdornment}
-              </>
-            ),
+          slotProps={{
+            input: {
+              ...params.InputProps,
+              endAdornment: (
+                <>
+                  {loading ? (
+                    <CircularProgress
+                      color="inherit"
+                      size={16}
+                      sx={{ mr: 0.5 }}
+                    />
+                  ) : null}
+                  <Tooltip title={t("intake.fields.useMyLocation")}>
+                    <IconButton
+                      size="small"
+                      onClick={onLocate}
+                      aria-label={t("intake.fields.useMyLocation")}
+                      sx={{ mr: -0.5 }}
+                    >
+                      <LocateFixedIcon className="size-4" />
+                    </IconButton>
+                  </Tooltip>
+                  {params.InputProps.endAdornment}
+                </>
+              ),
+            },
           }}
         />
       )}
@@ -199,7 +206,7 @@ function SiteLocationPreview({
   geoData,
   humanAddress,
   onClear,
-}: SiteLocationPreviewProps) {
+}: Readonly<SiteLocationPreviewProps>) {
   const { t } = useTranslation();
   const geoCode = new GeoCode(geoData.lat, geoData.lng);
   return (
@@ -246,7 +253,7 @@ type NominatimReverseResponse = {
 
 type Props = { form: IntakeFormApi };
 
-export default function ProjectInformationSection({ form }: Props) {
+export default function ProjectInformationSection({ form }: Readonly<Props>) {
   const dispatch = useDispatch();
   const geoData = useSelector((s: RootState) => s.geo.geoData);
   const humanAddress = useSelector((s: RootState) => s.geo.humanAddress);
@@ -264,7 +271,6 @@ export default function ProjectInformationSection({ form }: Props) {
       )) as NominatimReverseResponse | "";
       const deviceLoc = typeof result === "string" ? null : result;
       const address = deviceLoc?.address ?? {};
-      console.log("Device location address:", deviceLoc);
       dispatch(
         setHumanAddress(
           deviceLoc?.display_name || t("intake.fields.currentLocation"),
@@ -303,7 +309,7 @@ export default function ProjectInformationSection({ form }: Props) {
           name="project_address"
           validators={{
             onBlur: ({ value }: { value: string }) =>
-              !value ? required : undefined,
+              value ? undefined : required,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -322,7 +328,7 @@ export default function ProjectInformationSection({ form }: Props) {
           name="municipality"
           validators={{
             onBlur: ({ value }: { value: string }) =>
-              !value ? required : undefined,
+              value ? undefined : required,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -346,9 +352,9 @@ export default function ProjectInformationSection({ form }: Props) {
           name="postal_code"
           validators={{
             onBlur: ({ value }: { value: string }) =>
-              !/^[A-Z]\d[A-Z] \d[A-Z]\d$/i.test(value)
-                ? t("validators.postalFormat")
-                : undefined,
+              /^[A-Z]\d[A-Z] \d[A-Z]\d$/i.test(value)
+                ? undefined
+                : t("validators.postalFormat"),
           }}
         >
           {(field: AnyFieldApi) => (
@@ -406,7 +412,7 @@ export default function ProjectInformationSection({ form }: Props) {
           name="unit_model_type"
           validators={{
             onBlur: ({ value }: { value: string }) =>
-              !value ? required : undefined,
+              value ? undefined : required,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -484,7 +490,7 @@ export default function ProjectInformationSection({ form }: Props) {
               label={t("intake.fields.planDate")}
               fullWidth
               variant="outlined"
-              InputLabelProps={{ shrink: true }}
+              slotProps={{ inputLabel: { shrink: true } }}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -525,27 +531,22 @@ export default function ProjectInformationSection({ form }: Props) {
                 {t("intake.fields.modellingStandard")}
               </FormLabel>
               <FormGroup row>
-                {["EnerGuide", "Passive House", "CHBA Net-Zero", "Other"].map(
-                  (opt) => (
-                    <FormControlLabel
-                      key={opt}
-                      control={
-                        <Checkbox
-                          checked={field.state.value.includes(opt)}
-                          onChange={(e) => {
-                            const nextValue = e.target.checked
-                              ? [...field.state.value, opt]
-                              : field.state.value.filter(
-                                  (v: string) => v !== opt,
-                                );
-                            field.handleChange(nextValue);
-                          }}
-                        />
-                      }
-                      label={opt}
-                    />
-                  ),
-                )}
+                {MODELLING_STANDARDS.map((opt) => (
+                  <FormControlLabel
+                    key={opt}
+                    control={
+                      <Checkbox
+                        checked={field.state.value.includes(opt)}
+                        onChange={(e) =>
+                          field.handleChange(
+                            toggleOption(field.state.value, opt, e.target.checked),
+                          )
+                        }
+                      />
+                    }
+                    label={opt}
+                  />
+                ))}
               </FormGroup>
             </FormControl>
           )}

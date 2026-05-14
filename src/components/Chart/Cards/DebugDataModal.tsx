@@ -13,7 +13,7 @@ type Props = {
   onClose: () => void;
 };
 
-export default function DebugDataModal({ data, onClose }: Props) {
+export default function DebugDataModal({ data, onClose }: Readonly<Props>) {
   const [copied, setCopied] = useState(false);
   const json = JSON.stringify(data, null, 2);
 
@@ -28,9 +28,8 @@ export default function DebugDataModal({ data, onClose }: Props) {
   };
 
   return (
-    <div
+    <dialog
       className="fixed inset-0 z-50 flex items-center justify-center"
-      role="dialog"
       aria-modal="true"
       aria-label="Debug data"
     >
@@ -81,6 +80,6 @@ export default function DebugDataModal({ data, onClose }: Props) {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </dialog>
   );
 }

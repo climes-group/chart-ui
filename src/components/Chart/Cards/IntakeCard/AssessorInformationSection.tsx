@@ -6,7 +6,7 @@ import type { IntakeFormApi } from ".";
 
 type Props = { form: IntakeFormApi };
 
-export default function AssessorInformationSection({ form }: Props) {
+export default function AssessorInformationSection({ form }: Readonly<Props>) {
   const { t } = useTranslation();
   const required = t("validators.required");
   const phoneFormat = t("validators.phoneFormat");
@@ -18,7 +18,7 @@ export default function AssessorInformationSection({ form }: Props) {
           name="ea_name"
           validators={{
             onBlur: ({ value }: { value: string }) =>
-              !value ? required : undefined,
+              value ? undefined : required,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -42,7 +42,7 @@ export default function AssessorInformationSection({ form }: Props) {
           name="ea_number"
           validators={{
             onBlur: ({ value }: { value: string }) =>
-              !value ? required : undefined,
+              value ? undefined : required,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -99,7 +99,7 @@ export default function AssessorInformationSection({ form }: Props) {
           name="ea_business"
           validators={{
             onBlur: ({ value }: { value: string }) =>
-              !value ? required : undefined,
+              value ? undefined : required,
           }}
         >
           {(field: AnyFieldApi) => (

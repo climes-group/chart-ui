@@ -11,7 +11,7 @@ import steps from "@/steps";
 
 type Props = { onBackToReport?: () => void };
 
-export default function FinishCard({ onBackToReport }: Props) {
+export default function FinishCard({ onBackToReport }: Readonly<Props>) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();

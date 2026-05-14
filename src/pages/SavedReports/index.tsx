@@ -87,7 +87,7 @@ function SavedReports() {
     setStatus("loading");
     fetch(`${import.meta.env.VITE_API_HOST}/reports`, {
       headers: {
-        ...(token && { Authorization: `Bearer ${token}` }),
+        ...(token && { "X-ID-Token": `Bearer ${token}` }),
       },
     })
       .then((res) => {
@@ -118,7 +118,7 @@ function SavedReports() {
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_HOST}/reports/${encodeURIComponent(filename)}/download`,
-        { headers: { Authorization: `Bearer ${token}` } },
+        { headers: { "X-ID-Token": `Bearer ${token}` } },
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const blob = await res.blob();
@@ -141,7 +141,7 @@ function SavedReports() {
         `${import.meta.env.VITE_API_HOST}/reports/${encodeURIComponent(pendingDelete)}/delete`,
         {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { "X-ID-Token": `Bearer ${token}` },
         },
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -162,7 +162,7 @@ function SavedReports() {
         `${import.meta.env.VITE_API_HOST}/reports/delete_all`,
         {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { "X-ID-Token": `Bearer ${token}` },
         },
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

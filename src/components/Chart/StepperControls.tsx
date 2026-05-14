@@ -18,13 +18,34 @@ type StepperHeaderProps = {
   pulsingSteps?: Set<string>;
 };
 
+function getStepCircleClass(
+  isActive: boolean | null | undefined,
+  isCompleted: boolean | null | undefined,
+  isPulsing: boolean,
+) {
+  if (isActive || isCompleted) return "bg-primary border-primary text-primary-foreground";
+  if (isPulsing) return "bg-warm-brown border-warm-brown text-white";
+  return "border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60 bg-transparent";
+}
+
+function getStepLabelClass(
+  isActive: boolean | null | undefined,
+  isCompleted: boolean | null | undefined,
+  isPulsing: boolean,
+) {
+  if (isActive) return "text-foreground font-semibold";
+  if (isCompleted) return "text-foreground";
+  if (isPulsing) return "text-warm-brown";
+  return "text-muted-foreground group-hover:text-foreground/70";
+}
+
 export function StepperHeader({
   steps,
   currentStep,
   jumpTo,
   isStepLocked,
   pulsingSteps,
-}: StepperHeaderProps) {
+}: Readonly<StepperHeaderProps>) {
   const { t } = useTranslation();
   return (
     <div className="flex w-full items-center px-2 py-5">
@@ -57,11 +78,7 @@ export function StepperHeader({
                 <div
                   className={cn(
                     "flex size-8 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all",
-                    isActive || isCompleted
-                      ? "bg-primary border-primary text-primary-foreground"
-                      : isPulsing
-                        ? "bg-warm-brown border-warm-brown text-white"
-                        : "border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60 bg-transparent",
+                    getStepCircleClass(isActive, isCompleted, isPulsing),
                   )}
                 >
                   {isCompleted ? (
@@ -74,13 +91,7 @@ export function StepperHeader({
               <span
                 className={cn(
                   "text-sm transition-colors",
-                  isActive
-                    ? "text-foreground font-semibold"
-                    : isCompleted
-                      ? "text-foreground"
-                      : isPulsing
-                        ? "text-warm-brown"
-                        : "text-muted-foreground group-hover:text-foreground/70",
+                  getStepLabelClass(isActive, isCompleted, isPulsing),
                 )}
               >
                 {stepLabel}
@@ -114,9 +125,9 @@ export function DesktopControls({
   errorMessage,
   onBack,
   onNext,
-}: ControlsProps) {
+}: Readonly<ControlsProps>) {
   const { t } = useTranslation();
-  const nextLabel = !currentStep?.next ? t("common.finish") : t("common.next");
+  const nextLabel = currentStep?.next ? t("common.next") : t("common.finish");
   return (
     <div className="flex w-full items-center justify-between">
       <Button variant="outline" disabled={!currentStep?.prev} onClick={onBack}>
@@ -153,7 +164,7 @@ export function MobileControls({
   onNext,
 }: MobileControlsProps) {
   const { t } = useTranslation();
-  const nextLabel = !currentStep?.next ? t("common.finish") : t("common.next");
+  const nextLabel = currentStep?.next ? t("common.next") : t("common.finish");
   return (
     <div className="flex w-full items-center justify-between">
       <Button

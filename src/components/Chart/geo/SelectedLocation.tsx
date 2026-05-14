@@ -7,7 +7,7 @@ type Props = {
   geoData?: { lat: number; lng: number };
 };
 
-function SelectedLocation({ humanAddr, geoData }: Props) {
+function SelectedLocation({ humanAddr, geoData }: Readonly<Props>) {
   const [isSmallDevice] = useMedia();
 
   if (!geoData && !humanAddr) {

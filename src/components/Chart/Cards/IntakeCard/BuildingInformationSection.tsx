@@ -5,7 +5,7 @@ import type { IntakeFormApi } from ".";
 
 type Props = { form: IntakeFormApi };
 
-export default function BuildingInformationSection({ form }: Props) {
+export default function BuildingInformationSection({ form }: Readonly<Props>) {
   const { t } = useTranslation();
   const fields: { name: string; label: string }[] = [
     { name: "heated_floor_area", label: t("intake.fields.floorArea") },

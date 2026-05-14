@@ -22,7 +22,7 @@ import SiteFeaturesSection from "./SiteFeaturesSection";
 import SystemsSection from "./SystemsSection";
 import { dedupeSiteFeatures, dedupeSystems } from "./utils";
 
-export default function SelectedSystemsCard({ activeStep }: StepCardProps) {
+export default function SelectedSystemsCard({ activeStep }: Readonly<StepCardProps>) {
   const [availableSystems, setAvailableSystems] = useState<
     SystemRecord[] | null
   >(null);
@@ -93,7 +93,7 @@ export default function SelectedSystemsCard({ activeStep }: StepCardProps) {
           new Set(
             unique.map((s) => s.Services as string).filter(Boolean),
           ),
-        ).sort();
+        ).sort((a, b) => a.localeCompare(b));
 
         setActiveService(services[0] ?? null);
       } catch (err) {
@@ -122,7 +122,7 @@ export default function SelectedSystemsCard({ activeStep }: StepCardProps) {
           new Set(
             unique.map((f) => f.Category as string).filter(Boolean),
           ),
-        ).sort();
+        ).sort((a, b) => a.localeCompare(b));
 
         setActiveCategory(categories[0] ?? null);
       } catch (err) {
@@ -172,7 +172,7 @@ export default function SelectedSystemsCard({ activeStep }: StepCardProps) {
           <div className="flex flex-wrap gap-2">
             {[96, 124, 80, 144, 100, 116].map((w, i) => (
               <Skeleton
-                key={i}
+                key={`${w}-${i}`}
                 className="h-8 rounded-md"
                 style={{ width: w }}
               />
@@ -184,7 +184,7 @@ export default function SelectedSystemsCard({ activeStep }: StepCardProps) {
           <div className="flex flex-wrap gap-2">
             {[108, 76, 130, 92].map((w, i) => (
               <Skeleton
-                key={i}
+                key={`${w}-${i}`}
                 className="h-8 rounded-md"
                 style={{ width: w }}
               />

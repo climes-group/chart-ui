@@ -6,6 +6,7 @@ import SignatureCanvas from "react-signature-canvas";
 
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
+import { cn } from "@/utils/cn";
 import type { IntakeFormApi } from ".";
 
 function todayISO() {
@@ -26,7 +27,7 @@ function SignaturePad({
   dateFieldName,
   label,
   testId,
-}: PadProps) {
+}: Readonly<PadProps>) {
   const ref = useRef<SignatureCanvas | null>(null);
   const { t } = useTranslation();
   const value = useStore(
@@ -63,10 +64,12 @@ function SignaturePad({
               label={t("intake.fields.signatureDate", { label })}
               fullWidth
               variant="outlined"
-              InputLabelProps={{ shrink: true }}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
-              inputProps={{ "data-testid": `${testId}-date` }}
+              slotProps={{
+                inputLabel: { shrink: true },
+                htmlInput: { "data-testid": `${testId}-date` },
+              }}
             />
           )}
         </form.Field>
@@ -75,9 +78,9 @@ function SignaturePad({
           name={signatureFieldName}
           validators={{
             onChange: ({ value }: { value: string }) =>
-              !value ? t("validators.signatureRequired") : undefined,
+              value ? undefined : t("validators.signatureRequired"),
             onSubmit: ({ value }: { value: string }) =>
-              !value ? t("validators.signatureRequired") : undefined,
+              value ? undefined : t("validators.signatureRequired"),
           }}
         >
           {(field: AnyFieldApi) => {
@@ -105,12 +108,10 @@ function SignaturePad({
             return (
               <div className="flex flex-col">
                 <div
-                  className={`border-2 rounded bg-white h-40 relative ${
-                    hasError
-                      ? "border-destructive"
-                      : "border-muted-foreground/40"
-                  }`}
-                  style={{ touchAction: "none" }}
+                  className={cn(
+                    "relative h-40 touch-none rounded border-2 bg-white",
+                    hasError ? "border-destructive" : "border-muted-foreground/40",
+                  )}
                 >
                   <SignatureCanvas
                     ref={ref}
@@ -155,10 +156,9 @@ function SignaturePad({
   );
 }
 
-
 type Props = { form: IntakeFormApi };
 
-export default function SignatureSection({ form }: Props) {
+export default function SignatureSection({ form }: Readonly<Props>) {
   const { t } = useTranslation();
   return (
     <div className="space-y-4">

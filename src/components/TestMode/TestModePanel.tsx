@@ -94,7 +94,7 @@ export default function TestModePanel() {
     const systems = snap?.selectedSystems ?? [TEST_SYSTEM];
     const features = snap?.selectedSiteFeatures ?? [];
 
-    dispatch(setIntakeForm(intake as IntakeForm));
+    dispatch(setIntakeForm(intake));
     dispatch(setGeoData(geo as { lat: number; lng: number }));
     dispatch(setHumanAddress(address));
     dispatch(setSelectedSystems(systems));

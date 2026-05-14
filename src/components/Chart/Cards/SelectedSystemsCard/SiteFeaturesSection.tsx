@@ -30,10 +30,10 @@ export default function SiteFeaturesSection({
   selectedFeatureCodes,
   onToggle,
   onClearAll,
-}: Props) {
+}: Readonly<Props>) {
   const categoryNames = [
     ...new Set(features.map((f) => f.Category as string).filter(Boolean)),
-  ].sort();
+  ].sort((a, b) => a.localeCompare(b));
   const featuresForCategory = activeCategory
     ? features.filter((f) => f.Category === activeCategory)
     : [];

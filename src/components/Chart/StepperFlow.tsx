@@ -21,7 +21,7 @@ import {
 
 type Props = { steps?: Step[] };
 
-function StepperFlow({ steps = [] }: Props) {
+function StepperFlow({ steps = [] }: Readonly<Props>) {
   const errorMessage = useSelector((s: RootState) => s.flow.error);
   const [isSmallDevice] = useMedia();
   const { currentStep, next, back, jumpTo, isStepLocked } = useFlow(steps);
