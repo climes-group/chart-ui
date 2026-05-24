@@ -65,15 +65,7 @@ export default function FinishCard({ onBackToReport }: Readonly<Props>) {
         </button>
       )}
 
-      {!confirmOpen ? (
-        <Button
-          onClick={() => setConfirmOpen(true)}
-          variant="outline"
-          className="mt-4"
-        >
-          {t("finish.startNew")}
-        </Button>
-      ) : (
+      {confirmOpen ? (
         <div className="mt-4 flex flex-col items-center gap-3">
           <p className="text-foreground text-sm">{t("finish.confirmReset")}</p>
           <div className="flex gap-2">
@@ -85,6 +77,14 @@ export default function FinishCard({ onBackToReport }: Readonly<Props>) {
             </Button>
           </div>
         </div>
+      ) : (
+        <Button
+          onClick={() => setConfirmOpen(true)}
+          variant="outline"
+          className="mt-4"
+        >
+          {t("finish.startNew")}
+        </Button>
       )}
     </div>
   );

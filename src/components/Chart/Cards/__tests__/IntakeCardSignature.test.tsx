@@ -17,7 +17,7 @@ vi.mock("react-signature-canvas", () => {
     ref,
   ) {
     const dataRef = useRef("");
-    const [, setTick] = useState(0);
+    const [__, setTick] = useState(0);
     const setData = (v: string) => {
       dataRef.current = v;
       setTick((t) => t + 1);
