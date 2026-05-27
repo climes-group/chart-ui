@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { resetAppState } from "@/state/actions/resetAppState";
 import { useAppDispatch } from "@/state/store";
 import steps from "@/steps";
+import { prefetchRefData } from "@/utils/prefetchRefData";
 
 export default function SplashCard() {
   const dispatch = useAppDispatch();
@@ -12,6 +13,7 @@ export default function SplashCard() {
   const { t } = useTranslation();
 
   const handleGetStarted = () => {
+    prefetchRefData();
     dispatch(resetAppState(steps));
     navigate("/flow/intake");
   };

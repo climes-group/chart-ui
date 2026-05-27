@@ -1,3 +1,4 @@
+import { clearRefDataCache } from "@/utils/prefetchRefData";
 import { renderWithProviders } from "@/utils/testing";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -57,6 +58,7 @@ function setupFetch(
 describe("SelectedSystemsCard tests", () => {
   beforeEach(() => {
     localStorage.clear();
+    clearRefDataCache();
   });
 
   // The card sorts services alphabetically and selects the first as the active
