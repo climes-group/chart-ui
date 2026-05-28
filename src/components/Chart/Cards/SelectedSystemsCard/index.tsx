@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { getCachedJson } from "@/utils/prefetchRefData";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/i18n";
 import { meetCondition } from "@/state/slices/flowReducer";
@@ -80,11 +81,9 @@ export default function SelectedSystemsCard({ activeStep }: Readonly<StepCardPro
     let cancelled = false;
     (async () => {
       try {
-        const response = await fetch(
+        const data = await getCachedJson<SystemRecord[]>(
           `${import.meta.env.VITE_API_HOST}/codes/building_services/ref`,
         );
-        if (!response.ok) throw new Error("Failed to fetch systems");
-        const data = (await response.json()) as SystemRecord[];
         if (cancelled) return;
         const unique = dedupeSystems(data);
         setAvailableSystems(unique);
@@ -109,11 +108,9 @@ export default function SelectedSystemsCard({ activeStep }: Readonly<StepCardPro
     let cancelled = false;
     (async () => {
       try {
-        const response = await fetch(
+        const data = await getCachedJson<FeatureRecord[]>(
           `${import.meta.env.VITE_API_HOST}/codes/site_features/ref`,
         );
-        if (!response.ok) throw new Error("Failed to fetch site features");
-        const data = (await response.json()) as FeatureRecord[];
         if (cancelled) return;
         const unique = dedupeSiteFeatures(data);
         setAvailableFeatures(unique);
