@@ -1,6 +1,10 @@
 import reducer, { logout, setProfile } from "../userReducer";
 
-const initialState = { profile: undefined, token: undefined };
+const initialState = {
+  profile: undefined,
+  token: undefined,
+  loginModalOpen: false,
+};
 
 const mockProfile = { given_name: "Jane", email: "jane@example.com" };
 

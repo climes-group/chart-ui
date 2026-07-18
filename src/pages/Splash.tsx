@@ -1,21 +1,28 @@
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
-import { ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { resetAppState } from "@/state/actions/resetAppState";
-import { useAppDispatch } from "@/state/store";
+import { setLoginModalOpen } from "@/state/slices/userReducer";
+import { RootState, useAppDispatch } from "@/state/store";
 import steps from "@/steps";
 import { prefetchRefData } from "@/utils/prefetchRefData";
+import { ArrowRight } from "lucide-react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function SplashCard() {
   const dispatch = useAppDispatch();
+  const profileData = useSelector((state: RootState) => state.user.profile);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const handleGetStarted = () => {
-    prefetchRefData();
-    dispatch(resetAppState(steps));
-    navigate("/flow/intake");
+    if (!profileData) {
+      dispatch(setLoginModalOpen(true));
+    } else {
+      prefetchRefData();
+      dispatch(resetAppState(steps));
+      navigate("/flow/intake");
+    }
   };
 
   return (
