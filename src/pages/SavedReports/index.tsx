@@ -1,10 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate, useTranslation } from "@/i18n";
 import type { RootState } from "@/state/store";
 import { Download, FileText, Loader2, Trash2 } from "lucide-react";
@@ -70,7 +65,7 @@ type Status = "loading" | "error" | "ready";
 
 function SavedReports() {
   const profile = useSelector((state: RootState) => state.user.profile);
-  const token = useSelector((state: RootState) => state.user.token);
+  const { token, authProvider } = useSelector((state: RootState) => state.user);
   const { t, locale } = useTranslation();
 
   const [reports, setReports] = useState<Report[]>([]);
@@ -88,6 +83,7 @@ function SavedReports() {
     fetch(`${import.meta.env.VITE_API_HOST}/reports`, {
       headers: {
         ...(token && { "X-ID-Token": `Bearer ${token}` }),
+        ...(authProvider && { "X-Auth-Provider": authProvider }),
       },
     })
       .then((res) => {
@@ -95,9 +91,7 @@ function SavedReports() {
         return res.json();
       })
       .then((data) => {
-        const items = Array.isArray(data?.data)
-          ? (data.data as Report[])
-          : [];
+        const items = Array.isArray(data?.data) ? (data.data as Report[]) : [];
         setReports(items);
         setStatus("ready");
       })
@@ -118,7 +112,10 @@ function SavedReports() {
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_HOST}/reports/${encodeURIComponent(filename)}/download`,
-        { headers: { "X-ID-Token": `Bearer ${token}` } },
+        {
+          headers: { "X-ID-Token": `Bearer ${token}` },
+          ...(authProvider && { "X-Auth-Provider": authProvider }),
+        },
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const blob = await res.blob();
@@ -141,7 +138,10 @@ function SavedReports() {
         `${import.meta.env.VITE_API_HOST}/reports/${encodeURIComponent(pendingDelete)}/delete`,
         {
           method: "POST",
-          headers: { "X-ID-Token": `Bearer ${token}` },
+          headers: {
+            "X-ID-Token": `Bearer ${token}`,
+            ...(authProvider && { "X-Auth-Provider": authProvider }),
+          },
         },
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -162,7 +162,10 @@ function SavedReports() {
         `${import.meta.env.VITE_API_HOST}/reports/delete_all`,
         {
           method: "POST",
-          headers: { "X-ID-Token": `Bearer ${token}` },
+          headers: {
+            "X-ID-Token": `Bearer ${token}`,
+            ...(authProvider && { "X-Auth-Provider": authProvider }),
+          },
         },
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

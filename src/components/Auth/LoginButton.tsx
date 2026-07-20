@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
+import { setLoginModalOpen } from "@/state/slices/userReducer";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import { LOGIN_PROVIDERS } from "./providers";
 
 type Props = {
@@ -13,6 +15,7 @@ function LoginButton({ onIdToken }: Readonly<Props>) {
   const { t } = useTranslation();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -29,7 +32,9 @@ function LoginButton({ onIdToken }: Readonly<Props>) {
         id="login-menu-button"
         variant="primary"
         size="default"
-        onClick={handleOpen}
+        onClick={() => {
+          dispatch(setLoginModalOpen(true));
+        }}
         aria-haspopup="true"
         aria-controls={open ? "login-menu" : undefined}
         aria-expanded={open ? "true" : undefined}

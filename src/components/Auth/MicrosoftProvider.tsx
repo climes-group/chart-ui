@@ -1,7 +1,8 @@
 import { useTranslation } from "@/i18n";
 import { useMsal } from "@azure/msal-react";
+import { LoginProviderComponent } from "./providers";
 
-const MICROSOFT_SCOPES = ["openid", "profile", "email"];
+const MICROSOFT_SCOPES = ["openid", "profile", "email", "User.Read"];
 
 function MicrosoftLogo() {
   return (
@@ -20,24 +21,18 @@ function MicrosoftLogo() {
   );
 }
 
-type Props = {
-  onSuccess?: (idToken: string) => void;
-  onError?: (err: unknown) => void;
-};
-
-function MicrosoftProvider({ onSuccess, onError }: Readonly<Props>) {
+function MicrosoftProvider({
+  onSuccess,
+  onError,
+  disabled,
+}: Readonly<LoginProviderComponent>) {
   const { instance } = useMsal();
   const { t } = useTranslation();
   const label = t("auth.signInWith", { provider: "Microsoft" });
 
-  const handleClick = async () => {
+  const handleClick = () => {
     try {
-      const response = await instance.loginPopup({ scopes: MICROSOFT_SCOPES });
-      if (response?.idToken) {
-        onSuccess?.(response.idToken);
-      } else {
-        onError?.(new Error("No idToken returned"));
-      }
+      instance.loginRedirect({ scopes: MICROSOFT_SCOPES });
     } catch (err) {
       onError?.(err);
     }
@@ -47,11 +42,11 @@ function MicrosoftProvider({ onSuccess, onError }: Readonly<Props>) {
     <button
       type="button"
       onClick={handleClick}
-      aria-label={label}
-      className="inline-flex w-full items-center gap-2 rounded-md border border-[#8c8c8c] bg-white px-3 py-2 text-sm font-medium text-[#5e5e5e] shadow-sm transition-colors hover:bg-[#f5f5f5] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      disabled={disabled}
+      className="focus-visible:ring-ring inline-flex w-full items-center justify-between gap-3 rounded-sm border border-1 border-[#8c8c8c] p-3 text-sm font-medium shadow-sm transition-colors hover:bg-[#f5f5f5] focus-visible:ring-1 focus-visible:outline-none disabled:opacity-50"
     >
       <MicrosoftLogo />
-      <span>{label}</span>
+      <span className="flex-grow">{label}</span>
     </button>
   );
 }

@@ -8,8 +8,22 @@ describe("SplashCard", () => {
   it("renders the title, tagline, and call-to-action in en-CA", () => {
     renderWithProviders(<SplashCard />);
     expect(screen.getByRole("heading", { name: "CHART" })).toBeInTheDocument();
-    expect(screen.getByText("Charting your path to resilience")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Get started" })).toBeInTheDocument();
+    expect(
+      screen.getByText("Charting your path to resilience"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Get started" }),
+    ).toBeInTheDocument();
+  });
+
+  it("dispatches setLoginModalOpen when the button is clicked and user is not logged in", () => {
+    const { store } = renderWithProviders(<SplashCard />);
+
+    const button = screen.getByRole("button", { name: "Get started" });
+    button.click();
+
+    const state = store.getState();
+    expect(state.user.loginModalOpen).toBe(true);
   });
 
   it("has no axe violations in en-CA", async () => {

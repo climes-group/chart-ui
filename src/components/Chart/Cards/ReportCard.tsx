@@ -3,8 +3,8 @@ import {
   loadSnapshot,
   saveSnapshot,
 } from "@/components/TestMode/snapshot";
-import { Button } from "@/components/ui/button";
 import { useDebugMode } from "@/components/TestMode/TestModeContext";
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
 import {
   getFeatureKeyFor,
@@ -148,19 +148,15 @@ export default function ReportCard() {
   const selectedSiteFeatures = useSelector(
     (state: RootState) => state.report.selectedSiteFeatures,
   );
-  const intakeForm = useSelector(
-    (state: RootState) => state.report.intakeForm,
-  );
-  const reportData = useSelector(
-    (state: RootState) => state.report.reportData,
-  );
+  const intakeForm = useSelector((state: RootState) => state.report.intakeForm);
+  const reportData = useSelector((state: RootState) => state.report.reportData);
   const reportDebugData = useSelector(
     (state: RootState) => state.report.reportDebugData,
   );
   const { reportStatus, reportGenAt, reportGenTime } = useSelector(
     (s: RootState) => s.report,
   );
-  const token = useSelector((s: RootState) => s.user.token);
+  const { token, authProvider } = useSelector((s: RootState) => s.user);
   const dispatch = useDispatch();
   const isDebugMode = useDebugMode();
   const { t } = useTranslation();
@@ -200,6 +196,7 @@ export default function ReportCard() {
           headers: {
             "Content-Type": "application/json",
             ...(token && { "X-ID-Token": `Bearer ${token}` }),
+            ...(authProvider && { "X-Auth-Provider": authProvider }),
           },
           body: JSON.stringify({
             geo: { lat: geoData?.lat, lon: geoData?.lng },

@@ -13,12 +13,12 @@ import {
 } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import App from "./App";
+import { LocaleProvider } from "./i18n";
+import "./index.css";
 import Chart from "./pages/Chart";
 import Design from "./pages/Design";
 import SavedReports from "./pages/SavedReports";
 import SplashCard from "./pages/Splash";
-import { LocaleProvider } from "./i18n";
-import "./index.css";
 import { setupStore } from "./state/store";
 
 const { store, persistor } = setupStore();
@@ -28,7 +28,7 @@ enableMapSet();
 const msalInstance = new PublicClientApplication({
   auth: {
     clientId: import.meta.env.VITE_MICROSOFT_CLIENT_ID,
-    authority: "https://login.microsoftonline.com/common",
+    authority: "https://login.microsoftonline.com/consumers",
     redirectUri: globalThis.location.origin,
   },
   cache: { cacheLocation: "sessionStorage" },
