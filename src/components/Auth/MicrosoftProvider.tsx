@@ -43,10 +43,10 @@ function MicrosoftProvider({
       type="button"
       onClick={handleClick}
       disabled={disabled}
-      className="focus-visible:ring-ring inline-flex w-full items-center justify-center gap-3 rounded-sm border border-[#8c8c8c] px-4 py-3 text-sm font-medium text-[#5e5e5e] shadow-sm transition-colors hover:bg-[#f5f5f5] focus-visible:ring-1 focus-visible:outline-none disabled:opacity-50"
+      className="focus-visible:ring-ring inline-flex w-full items-center justify-between gap-3 rounded-sm border border-1 border-[#8c8c8c] p-3 text-sm font-medium shadow-sm transition-colors hover:bg-[#f5f5f5] focus-visible:ring-1 focus-visible:outline-none disabled:opacity-50"
     >
       <MicrosoftLogo />
-      <span>{label}</span>
+      <span className="flex-grow">{label}</span>
     </button>
   );
 }

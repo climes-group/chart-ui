@@ -34,6 +34,9 @@ export default function GoogleButtonComponent({
         onSuccess();
       }}
       onError={() => onError?.(new Error("Google login failed"))}
+      size="large"
+      theme="outline"
+      shape="rectangular"
       useOneTap={false}
     />
   );
