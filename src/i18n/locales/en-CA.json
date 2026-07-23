@@ -46,10 +46,10 @@
   "intake.fields.eaName": "EA Name",
   "intake.fields.eaNumber": "EA Number",
   "intake.fields.eaPhone": "EA Phone",
-  "intake.fields.eaBusiness": "EA Business #",
-  "intake.fields.soCompanyName": "Service Organisation Company Name",
-  "intake.fields.builderName": "Builder Name",
-  "intake.fields.builderPhone": "Builder Phone #",
+  "intake.fields.eaBusiness": "EA Company Name",
+  "intake.fields.soCompanyName": "Builder Name",
+  "intake.fields.builderName": "Client Name",
+  "intake.fields.builderPhone": "Client Phone #",
 
   "intake.fields.buildingPermit": "Building Permit #",
   "intake.fields.buildingPermitHelp": "If applicable",
@@ -92,7 +92,7 @@
   "intake.fields.ghgi": "GHGI (kg CO₂e/m²/y)",
 
   "intake.fields.eaSignature": "EA Signature",
-  "intake.fields.builderSignature": "Builder Signature",
+  "intake.fields.builderSignature": "Client Signature",
   "intake.fields.signatureDate": "{label} Date",
   "intake.fields.signAbove": "Sign above",
   "intake.fields.clearSignature": "Clear signature",
