@@ -1,7 +1,7 @@
 import { MapPin, Pencil } from "lucide-react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 
+import useFlow from "@/hooks/useFlow";
 import { useTranslation, type TranslateFn } from "@/i18n";
 import {
   getFeatureKeyFor,
@@ -43,18 +43,19 @@ function SectionHeader({
   editLabel,
 }: Readonly<SectionHeaderProps>) {
   const { t } = useTranslation();
+  const { jumpTo } = useFlow();
   return (
     <div className="mb-3 flex items-center justify-between">
       <h3 className="heading-section">{title}</h3>
-      <Link
-        to={editTo}
-        aria-label={editLabel}
+      <button
+        onClick={() => jumpTo(editTo)}
+        aria-label={"Jump to " + editLabel}
         title={editLabel}
-        className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 text-xs transition-colors"
+        className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 rounded-md px-4 py-2 text-sm transition-colors"
       >
         <Pencil className="size-3" />
         {t("summary.edit")}
-      </Link>
+      </button>
     </div>
   );
 }
@@ -255,7 +256,7 @@ function SummaryCard() {
       <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
           title={t("summary.section.project")}
-          editTo="/flow/intake"
+          editTo="intake"
           editLabel={t("summary.editProject")}
         />
         {hasIntakeData ? (
@@ -268,7 +269,7 @@ function SummaryCard() {
       <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
           title={t("summary.section.location")}
-          editTo="/flow/intake"
+          editTo="intake"
           editLabel={t("summary.editProject")}
         />
         {humanAddress || geoData ? (
@@ -297,7 +298,7 @@ function SummaryCard() {
                 })
               : t("summary.section.systems")
           }
-          editTo="/flow/inventory#systems"
+          editTo="inventory"
           editLabel={t("summary.editSystems")}
         />
         {validSelectedSystems.length === 0 ? (
@@ -316,7 +317,7 @@ function SummaryCard() {
                 })
               : t("summary.section.features")
           }
-          editTo="/flow/inventory#site-features"
+          editTo="inventory"
           editLabel={t("summary.editFeatures")}
         />
         {validSelectedSiteFeatures.length === 0 ? (

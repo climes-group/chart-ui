@@ -5,6 +5,7 @@ import {
 } from "@/components/TestMode/snapshot";
 import { useDebugMode } from "@/components/TestMode/TestModeContext";
 import { Button } from "@/components/ui/button";
+import useFlow from "@/hooks/useFlow";
 import { useTranslation } from "@/i18n";
 import {
   getFeatureKeyFor,
@@ -32,7 +33,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import DebugDataModal from "./DebugDataModal";
 
 const openPdfInNewWindow = async (
@@ -102,6 +102,8 @@ function ReportContext({
     .filter(Boolean)
     .join("  ·  ");
 
+  const { jumpTo } = useFlow();
+
   return (
     <div className="border-warm-gold/40 bg-warm-gold/10 space-y-3 rounded-lg border p-4">
       <div className="flex items-start gap-2.5 text-sm">
@@ -126,14 +128,14 @@ function ReportContext({
           )}
         </div>
       </div>
-      <div className="border-warm-gold/30 flex justify-end border-t pt-2.5">
-        <Link
-          to="/flow/summary"
-          className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 text-xs transition-colors"
+      <div className="border-warm-gold/30 flex justify-start border-t pt-2.5">
+        <button
+          onClick={() => jumpTo("summary")}
+          className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 rounded-md px-4 py-2 text-sm transition-colors"
         >
           <Pencil className="size-3" />
           {t("report.context.editSummary")}
-        </Link>
+        </button>
       </div>
     </div>
   );
