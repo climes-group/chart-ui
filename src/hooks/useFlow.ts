@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../i18n";
-import type { Step } from "../steps";
 import {
   jumpToStep,
   setError,
@@ -11,6 +10,7 @@ import {
   stepForward,
 } from "../state/slices/flowReducer";
 import type { RootState } from "../state/store";
+import type { Step } from "../steps";
 
 function useFlow(initialSteps: Step[] = []) {
   const dispatch = useDispatch();
@@ -73,7 +73,9 @@ function useFlow(initialSteps: Step[] = []) {
   }
 
   // Returns step names blocking navigation to `name`. Empty array on success.
-  function jumpTo(name: string): string[] {
+  function jumpTo(
+    name: "intake" | "inventory" | "summary" | "report",
+  ): string[] {
     const blockingSteps: string[] = [];
     let prevStep: Step | undefined = steps.find((s) => s.next === name);
     while (prevStep) {

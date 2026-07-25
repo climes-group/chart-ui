@@ -5,14 +5,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useTranslation } from "@/i18n";
-import { cn } from "@/utils/cn";
 import {
   getFeatureKeyFor,
   type FeatureRecord,
 } from "@/state/slices/reportReducer";
+import { cn } from "@/utils/cn";
 import { X } from "lucide-react";
+import { useRef } from "react";
 import SelectionPill from "./SelectionPill";
-import { sanitizeName } from "./utils";
+import { handleListboxKeyDown, sanitizeName } from "./utils";
 
 type Props = {
   features: FeatureRecord[];
@@ -39,14 +40,20 @@ export default function SiteFeaturesSection({
     : [];
 
   const { locale, t } = useTranslation();
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   return (
     <div>
       <div className="mt-8 mb-4 flex items-center justify-between">
-        <h2 className="heading-card">{t("inventory.siteFeatures.heading")}</h2>
+        <h2 className="heading-card" ref={headingRef} tabIndex={-1}>
+          {t("inventory.siteFeatures.heading")}
+        </h2>
         {selectedFeatureCodes.size > 0 && (
           <button
-            onClick={onClearAll}
+            onClick={() => {
+              onClearAll();
+              headingRef.current?.focus();
+            }}
             className="text-muted-foreground hover:text-destructive flex items-center gap-1 text-xs transition-colors"
           >
             <X className="size-3" />
@@ -59,7 +66,9 @@ export default function SiteFeaturesSection({
         {categoryNames.map((category) => {
           const selectedCount = features
             .filter((f) => f.Category === category)
-            .filter((f) => selectedFeatureCodes.has(getFeatureKeyFor(f))).length;
+            .filter((f) =>
+              selectedFeatureCodes.has(getFeatureKeyFor(f)),
+            ).length;
 
           return (
             <button
@@ -91,14 +100,22 @@ export default function SiteFeaturesSection({
       </div>
 
       <TooltipProvider>
-        <div className="flex flex-wrap gap-2">
+        <div
+          role="listbox"
+          aria-multiselectable="true"
+          aria-label={sanitizeName(activeCategory)}
+          onKeyDown={handleListboxKeyDown}
+          tabIndex={-1}
+          className="flex flex-wrap gap-2"
+        >
           {featuresForCategory.map((feature) => {
             const code = getFeatureKeyFor(feature);
             const description =
               (((locale as string) === "fr-CA"
                 ? (feature["DescriptionFr"] as string)
                 : (feature["Description"] as string)) ||
-                (feature["Description"] as string)) ?? "";
+                (feature["Description"] as string)) ??
+              "";
 
             if (!description) {
               return (

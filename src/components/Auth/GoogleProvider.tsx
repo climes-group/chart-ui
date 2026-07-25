@@ -38,6 +38,7 @@ export default function GoogleButtonComponent({
       theme="outline"
       shape="rectangular"
       useOneTap={false}
+      auto_select={false}
     />
   );
 }

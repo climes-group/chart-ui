@@ -1,7 +1,7 @@
 import { MapPin, Pencil } from "lucide-react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 
+import useFlow from "@/hooks/useFlow";
 import { useTranslation, type TranslateFn } from "@/i18n";
 import {
   getFeatureKeyFor,
@@ -15,11 +15,13 @@ import { formatLatLong } from "./utils";
 
 function sanitizeName(name: string | null | undefined): string {
   if (!name || name === "undefined" || name === "null") return "N/A";
-  return name.replaceAll('_', " ");
+  return name.replaceAll("_", " ");
 }
 
 function getSystemDisplayName(system: SystemRecord): string {
-  return (system["ASTM.Name"] as string) || (system["Classification"] as string);
+  return (
+    (system["ASTM.Name"] as string) || (system["Classification"] as string)
+  );
 }
 
 function getSiteFeatureDisplayName(feature: FeatureRecord): string {
@@ -35,25 +37,33 @@ type SectionHeaderProps = {
   editLabel: string;
 };
 
-function SectionHeader({ title, editTo, editLabel }: Readonly<SectionHeaderProps>) {
+function SectionHeader({
+  title,
+  editTo,
+  editLabel,
+}: Readonly<SectionHeaderProps>) {
   const { t } = useTranslation();
+  const { jumpTo } = useFlow();
   return (
     <div className="mb-3 flex items-center justify-between">
       <h3 className="heading-section">{title}</h3>
-      <Link
-        to={editTo}
-        aria-label={editLabel}
+      <button
+        onClick={() => jumpTo(editTo)}
+        aria-label={"Jump to " + editLabel}
         title={editLabel}
-        className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 text-xs transition-colors"
+        className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 rounded-md px-4 py-2 text-sm transition-colors"
       >
         <Pencil className="size-3" />
         {t("summary.edit")}
-      </Link>
+      </button>
     </div>
   );
 }
 
-function groupByKey<T>(items: T[], getKey: (item: T) => string): Record<string, T[]> {
+function groupByKey<T>(
+  items: T[],
+  getKey: (item: T) => string,
+): Record<string, T[]> {
   return items.reduce<Record<string, T[]>>((acc, item) => {
     const key = getKey(item) || "Other";
     if (!acc[key]) acc[key] = [];
@@ -103,9 +113,7 @@ function formatHeadline(intake: IntakeForm, t: TranslateFn): string | null {
   const counts: string[] = [];
   if (Number.isFinite(primary) && primary > 0) {
     const key =
-      primary === 1
-        ? "summary.primaryUnits.one"
-        : "summary.primaryUnits.other";
+      primary === 1 ? "summary.primaryUnits.one" : "summary.primaryUnits.other";
     counts.push(t(key, { count: primary }));
   }
   if (Number.isFinite(secondary) && secondary > 0) {
@@ -194,9 +202,7 @@ function SummaryCard() {
   const { geoData, humanAddress } = useSelector(
     (state: RootState) => state.geo,
   );
-  const intakeForm = useSelector(
-    (state: RootState) => state.report.intakeForm,
-  );
+  const intakeForm = useSelector((state: RootState) => state.report.intakeForm);
   const { t } = useTranslation();
 
   const hasIntakeData =
@@ -214,19 +220,33 @@ function SummaryCard() {
   );
 
   const systemGroups = Object.fromEntries(
-    Object.entries(groupByKey(validSelectedSystems, (s) => (s["Services"] as string) || "Other"))
-      .map(([k, systems]) => [
-        k,
-        systems.map((s) => ({ name: sanitizeName(getSystemDisplayName(s)), code: getSystemCodeFor(s) })),
-      ]),
+    Object.entries(
+      groupByKey(
+        validSelectedSystems,
+        (s) => (s["Services"] as string) || "Other",
+      ),
+    ).map(([k, systems]) => [
+      k,
+      systems.map((s) => ({
+        name: sanitizeName(getSystemDisplayName(s)),
+        code: getSystemCodeFor(s),
+      })),
+    ]),
   );
 
   const featureGroups = Object.fromEntries(
-    Object.entries(groupByKey(validSelectedSiteFeatures, (f) => (f["Category"] as string) || "Other"))
-      .map(([k, features]) => [
-        k,
-        features.map((f) => ({ name: sanitizeName(getSiteFeatureDisplayName(f)), code: getFeatureKeyFor(f) })),
-      ]),
+    Object.entries(
+      groupByKey(
+        validSelectedSiteFeatures,
+        (f) => (f["Category"] as string) || "Other",
+      ),
+    ).map(([k, features]) => [
+      k,
+      features.map((f) => ({
+        name: sanitizeName(getSiteFeatureDisplayName(f)),
+        code: getFeatureKeyFor(f),
+      })),
+    ]),
   );
 
   return (
@@ -236,7 +256,7 @@ function SummaryCard() {
       <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
           title={t("summary.section.project")}
-          editTo="/flow/intake"
+          editTo="intake"
           editLabel={t("summary.editProject")}
         />
         {hasIntakeData ? (
@@ -249,7 +269,7 @@ function SummaryCard() {
       <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
           title={t("summary.section.location")}
-          editTo="/flow/intake"
+          editTo="intake"
           editLabel={t("summary.editProject")}
         />
         {humanAddress || geoData ? (
@@ -278,7 +298,7 @@ function SummaryCard() {
                 })
               : t("summary.section.systems")
           }
-          editTo="/flow/selectedSystems#systems"
+          editTo="inventory"
           editLabel={t("summary.editSystems")}
         />
         {validSelectedSystems.length === 0 ? (
@@ -297,7 +317,7 @@ function SummaryCard() {
                 })
               : t("summary.section.features")
           }
-          editTo="/flow/selectedSystems#site-features"
+          editTo="inventory"
           editLabel={t("summary.editFeatures")}
         />
         {validSelectedSiteFeatures.length === 0 ? (

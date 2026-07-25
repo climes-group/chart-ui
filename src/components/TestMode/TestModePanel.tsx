@@ -5,12 +5,7 @@ import {
 } from "@/components/TestMode/TestModeContext";
 import { meetCondition, setTheme } from "@/state/slices/flowReducer";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
-import {
-  setIntakeForm,
-  setSelectedFeatures,
-  setSelectedSystems,
-  type IntakeForm,
-} from "@/state/slices/reportReducer";
+import { setIntakeForm, type IntakeForm } from "@/state/slices/reportReducer";
 import type { RootState } from "@/state/store";
 import { Bug, Wrench, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -57,8 +52,6 @@ const TEST_INTAKE: Partial<IntakeForm> & Record<string, unknown> = {
 const TEST_GEO = { lat: 43.6532, lng: -79.3832 }; // Toronto City Hall
 const TEST_ADDRESS = "100 Queen St W, Toronto, ON M5H 2N2, Canada";
 
-const TEST_SYSTEM = {};
-
 const PANEL_OPEN_KEY = "CHART_TEST_PANEL_OPEN";
 
 export default function TestModePanel() {
@@ -91,16 +84,11 @@ export default function TestModePanel() {
     const intake = (snap?.intakeForm as IntakeForm) ?? TEST_INTAKE;
     const geo = snap?.geoData ?? TEST_GEO;
     const address = (snap?.humanAddress as string) ?? TEST_ADDRESS;
-    const systems = snap?.selectedSystems ?? [TEST_SYSTEM];
-    const features = snap?.selectedSiteFeatures ?? [];
 
     dispatch(setIntakeForm(intake));
     dispatch(setGeoData(geo as { lat: number; lng: number }));
     dispatch(setHumanAddress(address));
-    dispatch(setSelectedSystems(systems));
-    dispatch(setSelectedFeatures(features));
     dispatch(meetCondition({ name: "intake", condition: true }));
-    dispatch(meetCondition({ name: "inventory", condition: true }));
     intakeFillRef?.current?.(intake);
   };
 
@@ -192,8 +180,7 @@ export default function TestModePanel() {
             onClick={handleAutofill}
             className="bg-golden-accent/20 text-warm-brown hover:bg-golden-accent/40 rounded-full px-3 py-1.5 text-left text-xs font-medium transition-colors"
           >
-            {snapshot ? "Autofill from snapshot" : "Autofill (defaults)"} &amp;
-            Unlock Steps
+            {snapshot ? "Autofill from snapshot" : "Autofill (defaults)"}
           </button>
         </div>
       </div>
