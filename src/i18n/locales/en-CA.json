@@ -10,6 +10,8 @@
   "common.other": "Other",
   "common.clearAll": "Clear all ({count})",
   "common.clearCount": "Clear {count}",
+  "common.clearAllSelected": "Clear {count} selected items",
+  "common.clearClassificationSelected": "Clear {count} selected items in {classification}",
 
   "localeSwitcher.label": "Language",
   "localeSwitcher.en": "EN",

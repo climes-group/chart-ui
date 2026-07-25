@@ -1,12 +1,13 @@
 import { useTranslation } from "@/i18n";
-import { cn } from "@/utils/cn";
 import {
   getSystemCodeFor,
   type SystemRecord,
 } from "@/state/slices/reportReducer";
+import { cn } from "@/utils/cn";
 import { X } from "lucide-react";
+import { useRef } from "react";
 import SelectionPill from "./SelectionPill";
-import { sanitizeName } from "./utils";
+import { handleListboxKeyDown, sanitizeName } from "./utils";
 
 type Props = {
   systems: SystemRecord[];
@@ -28,6 +29,9 @@ export default function SystemsSection({
   onClearClassification,
 }: Readonly<Props>) {
   const { t } = useTranslation();
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const listboxRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
   const serviceNames = [
     ...new Set(systems.map((s) => s.Services as string).filter(Boolean)),
   ].sort((a, b) => a.localeCompare(b));
@@ -43,13 +47,21 @@ export default function SystemsSection({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="heading-card">{t("inventory.systems.heading")}</h2>
+        <h2 className="heading-card" ref={headingRef} tabIndex={-1}>
+          {t("inventory.systems.heading")}
+        </h2>
         {selectedSystemCodes.size > 0 && (
           <button
-            onClick={onClearAll}
+            onClick={() => {
+              onClearAll();
+              headingRef.current?.focus();
+            }}
+            aria-label={t("common.clearAllSelected", {
+              count: selectedSystemCodes.size,
+            })}
             className="text-muted-foreground hover:text-destructive flex items-center gap-1 text-xs transition-colors"
           >
-            <X className="size-3" />
+            <X className="size-3" aria-hidden />
             {t("common.clearAll", { count: selectedSystemCodes.size })}
           </button>
         )}
@@ -107,15 +119,32 @@ export default function SystemsSection({
                 </h3>
                 {selectedCount > 0 && (
                   <button
-                    onClick={onClearClassification(classification)}
+                    onClick={() => {
+                      onClearClassification(classification)();
+                      listboxRefs.current[classification]?.focus();
+                    }}
+                    aria-label={t("common.clearClassificationSelected", {
+                      count: selectedCount,
+                      classification: sanitizeName(classification),
+                    })}
                     className="text-muted-foreground hover:text-destructive text-xs transition-colors"
                   >
                     {t("common.clearCount", { count: selectedCount })}
                   </button>
                 )}
               </div>
-              <div className="flex flex-wrap gap-2">
-                {systemsInClass.map((system) => {
+              <div
+                role="listbox"
+                aria-multiselectable="true"
+                aria-label={sanitizeName(classification)}
+                onKeyDown={handleListboxKeyDown}
+                tabIndex={-1}
+                ref={(el) => {
+                  listboxRefs.current[classification] = el;
+                }}
+                className="flex flex-wrap gap-2"
+              >
+                {systemsInClass.map((system, i) => {
                   const code = getSystemCodeFor(system);
                   return (
                     <SelectionPill
@@ -127,6 +156,7 @@ export default function SystemsSection({
                       }
                       isSelected={selectedSystemCodes.has(code)}
                       onToggle={() => onToggle(system)}
+                      tabIndex={i === 0 ? 0 : -1}
                     />
                   );
                 })}

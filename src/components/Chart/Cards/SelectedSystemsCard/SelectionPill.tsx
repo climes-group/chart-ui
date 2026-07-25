@@ -1,10 +1,6 @@
 import { cn } from "@/utils/cn";
 import { Check } from "lucide-react";
-import {
-  forwardRef,
-  type ButtonHTMLAttributes,
-  type MouseEvent,
-} from "react";
+import { forwardRef, type ButtonHTMLAttributes, type MouseEvent } from "react";
 
 type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "name"> & {
   name: string;
@@ -18,6 +14,8 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
     return (
       <button
         ref={ref}
+        role="option"
+        aria-selected={isSelected}
         {...props}
         onClick={(e) => {
           onClick?.(e);
@@ -31,6 +29,7 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
         )}
       >
         <span
+          aria-hidden="true"
           className={cn(
             "flex size-4 shrink-0 items-center justify-center rounded-sm border-[1.5px] transition-colors",
             isSelected
@@ -46,7 +45,10 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
         <span className="leading-snug">{name}</span>
 
         {code && (
-          <span className="text-warm-brown shrink-0 font-mono text-xs">
+          <span
+            aria-hidden
+            className="text-warm-brown shrink-0 font-mono text-xs"
+          >
             {code}
           </span>
         )}
