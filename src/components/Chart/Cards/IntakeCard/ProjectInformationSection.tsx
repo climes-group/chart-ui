@@ -28,11 +28,16 @@ import type {
 } from "@tanstack/form-core";
 import { LocateFixedIcon, XIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
+import type { Dispatch } from "redux";
 import type { IntakeFormApi } from ".";
 
-const MODELLING_STANDARDS = ["EnerGuide", "Passive House", "CHBA Net-Zero", "Other"] as const;
+const MODELLING_STANDARDS = [
+  "EnerGuide",
+  "Passive House",
+  "CHBA Net-Zero",
+  "Other",
+] as const;
 
 function addOption(values: readonly string[], opt: string): string[] {
   return [...values, opt];
@@ -87,11 +92,7 @@ function ProjectAddressAutocomplete({
   const { setQuery, options, loading } = useAddressSearch();
   const { t } = useTranslation();
 
-  function handleInputChange(
-    _: unknown,
-    newVal: string,
-    reason: string,
-  ) {
+  function handleInputChange(_: unknown, newVal: string, reason: string) {
     field.handleChange(newVal);
     if (reason === "input") {
       setQuery(newVal);
@@ -106,10 +107,12 @@ function ProjectAddressAutocomplete({
     const streetLine = item.address.street || item.address.label;
     field.handleChange(streetLine);
 
-    if (item.address.city)
+    if (item.address.city) {
       form.setFieldValue("municipality", item.address.city);
-    if (item.address.postcode)
-      form.setFieldValue("postal_code", item.address.postcode);
+    }
+
+    // do not set postal code as it's not reliable from nomatim
+    form.setFieldValue("postal_code", "");
 
     if (item.position) {
       dispatch(setGeoData(item.position));
@@ -142,9 +145,10 @@ function ProjectAddressAutocomplete({
       onInputChange={handleInputChange}
       onChange={handleSelect}
       renderOption={(props, opt) => {
-        const { key, ...rest } = props as React.HTMLAttributes<HTMLLIElement> & {
-          key: string;
-        };
+        const { key, ...rest } =
+          props as React.HTMLAttributes<HTMLLIElement> & {
+            key: string;
+          };
         return (
           <li key={key} {...rest}>
             <span style={{ fontSize: "0.875rem", lineHeight: 1.4 }}>
@@ -270,9 +274,9 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
       const geoCode = new GeoCode(coords.latitude, coords.longitude);
       dispatch(setGeoData(geoCode.obj));
 
-      const result = (await lookUpHumanAddress(
-        geoCode,
-      )) as NominatimReverseResponse | "";
+      const result = (await lookUpHumanAddress(geoCode)) as
+        | NominatimReverseResponse
+        | "";
       const deviceLoc = typeof result === "string" ? null : result;
       const address = deviceLoc?.address ?? {};
       dispatch(
@@ -345,8 +349,7 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
               }
             />
           )}
@@ -371,8 +374,7 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
               }
               helperText={
                 field.state.meta.isTouched
@@ -430,8 +432,7 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
               }
             >
               {[
@@ -543,7 +544,9 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
                         checked={field.state.value.includes(opt)}
                         onChange={(e) =>
                           field.handleChange(
-                            e.target.checked ? addOption(field.state.value, opt) : removeOption(field.state.value, opt),
+                            e.target.checked
+                              ? addOption(field.state.value, opt)
+                              : removeOption(field.state.value, opt),
                           )
                         }
                       />

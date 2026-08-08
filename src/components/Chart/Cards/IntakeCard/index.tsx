@@ -1,22 +1,20 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import { useTestMode } from "@/components/TestMode/TestModeContext";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
+import { meetCondition, setError } from "@/state/slices/flowReducer";
+import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
+import type { IntakeForm } from "@/state/slices/reportReducer";
 import {
   clearIntakeForm,
   selectIntakeForm,
   setIntakeForm,
 } from "@/state/slices/reportReducer";
-import { meetCondition, setError } from "@/state/slices/flowReducer";
-import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
-import { useTestMode } from "@/components/TestMode/TestModeContext";
-import type { IntakeForm } from "@/state/slices/reportReducer";
+import { RootState } from "@/state/store";
 import type { AnyFieldMetaBase } from "@tanstack/form-core";
-import {
-  useForm,
-  type ReactFormExtendedApi,
-} from "@tanstack/react-form";
+import { useForm, type ReactFormExtendedApi } from "@tanstack/react-form";
 import type { StepCardProps } from "../../StepRenderer";
 import AssessorInformationSection from "./AssessorInformationSection";
 import BuildingInformationSection from "./BuildingInformationSection";
@@ -51,12 +49,17 @@ const PROJECT_REQUIRED = [
 const ASSESSOR_REQUIRED = ["ea_name", "ea_number", "ea_phone", "ea_business"];
 const SIGNATURE_REQUIRED = ["ea_signature", "builder_signature"];
 
-export default function IntakeCard({ registerNext, nav }: Readonly<StepCardProps>) {
+export default function IntakeCard({
+  registerNext,
+  nav,
+}: Readonly<StepCardProps>) {
   const dispatch = useDispatch();
   const { intakeFillRef } = useTestMode();
   const { t } = useTranslation();
   const submitSucceeded = useRef(false);
   const savedForm = useSelector(selectIntakeForm);
+  const geoData = useSelector((state: RootState) => state.geo.geoData);
+
   const form: IntakeFormApi = useForm({
     defaultValues: savedForm,
     onSubmit: async ({ value }) => {
@@ -64,16 +67,32 @@ export default function IntakeCard({ registerNext, nav }: Readonly<StepCardProps
       dispatch(setIntakeForm(value));
       dispatch(meetCondition({ name: "intake" }));
     },
+    validators: {
+      onSubmit: () => {
+        // if geoData is not set, we can't submit the form
+        if (!geoData) {
+          return {
+            form: "Please select a valid address from suggestions or use device location.",
+          };
+        }
+      },
+    },
   });
 
   useEffect(() => {
-    registerNext?.(async () => {
+    registerNext(async () => {
       submitSucceeded.current = false;
       await form.handleSubmit();
+
       if (submitSucceeded.current) {
-        nav?.();
+        nav();
       } else {
-        dispatch(setError(t("intake.errorMessage")));
+        // get error for error map
+        if (form.state.errors.length > 0) {
+          dispatch(setError(form.state.errors[0].form));
+        } else {
+          dispatch(setError(t("intake.errorMessage")));
+        }
       }
     });
     if (intakeFillRef) {
@@ -94,7 +113,7 @@ export default function IntakeCard({ registerNext, nav }: Readonly<StepCardProps
       };
     }
     return () => {
-      registerNext?.(null);
+      registerNext(null);
       if (intakeFillRef) intakeFillRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,7 +121,7 @@ export default function IntakeCard({ registerNext, nav }: Readonly<StepCardProps
 
   return (
     <div>
-      <div className="flex items-start justify-between mb-1">
+      <div className="mb-1 flex items-start justify-between">
         <h2 className="heading-card">{t("intake.heading")}</h2>
         <Button
           variant="ghost"
@@ -129,7 +148,7 @@ export default function IntakeCard({ registerNext, nav }: Readonly<StepCardProps
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="[&>section+section]:border-t [&>section+section]:border-warm-gold/30 [&>section+section]:mt-6 [&>section+section]:pt-6"
+        className="[&>section+section]:border-warm-gold/30 [&>section+section]:mt-6 [&>section+section]:border-t [&>section+section]:pt-6"
       >
         <FormSection
           form={form}

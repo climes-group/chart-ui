@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { getCachedJson } from "@/utils/prefetchRefData";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/i18n";
 import { meetCondition } from "@/state/slices/flowReducer";
@@ -17,13 +16,14 @@ import {
   type SystemRecord,
 } from "@/state/slices/reportReducer";
 import type { RootState } from "@/state/store";
+import { getCachedJson } from "@/utils/prefetchRefData";
 import { useDispatch, useSelector } from "react-redux";
 import type { StepCardProps } from "../../StepRenderer";
 import SiteFeaturesSection from "./SiteFeaturesSection";
 import SystemsSection from "./SystemsSection";
 import { dedupeSiteFeatures, dedupeSystems } from "./utils";
 
-export default function SelectedSystemsCard({ activeStep }: Readonly<StepCardProps>) {
+export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
   const [availableSystems, setAvailableSystems] = useState<
     SystemRecord[] | null
   >(null);
@@ -89,9 +89,7 @@ export default function SelectedSystemsCard({ activeStep }: Readonly<StepCardPro
         setAvailableSystems(unique);
 
         const services = Array.from(
-          new Set(
-            unique.map((s) => s.Services as string).filter(Boolean),
-          ),
+          new Set(unique.map((s) => s.Services as string).filter(Boolean)),
         ).sort((a, b) => a.localeCompare(b));
 
         setActiveService(services[0] ?? null);
@@ -116,9 +114,7 @@ export default function SelectedSystemsCard({ activeStep }: Readonly<StepCardPro
         setAvailableFeatures(unique);
 
         const categories = Array.from(
-          new Set(
-            unique.map((f) => f.Category as string).filter(Boolean),
-          ),
+          new Set(unique.map((f) => f.Category as string).filter(Boolean)),
         ).sort((a, b) => a.localeCompare(b));
 
         setActiveCategory(categories[0] ?? null);
@@ -132,14 +128,14 @@ export default function SelectedSystemsCard({ activeStep }: Readonly<StepCardPro
   }, []);
 
   useEffect(() => {
-    if (!activeStep?.name) return;
+    if (!step?.name) return;
     dispatch(
       meetCondition({
-        name: activeStep.name,
+        name: step.name,
         condition: selectedSystems.length > 0,
       }),
     );
-  }, [selectedSystems.length, activeStep?.name, dispatch]);
+  }, [selectedSystems.length, step?.name, dispatch]);
 
   if (error)
     return (
