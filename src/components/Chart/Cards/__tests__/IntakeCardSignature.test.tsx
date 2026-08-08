@@ -1,3 +1,4 @@
+import { Step } from "@/steps";
 import { renderWithProviders } from "@/utils/testing";
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -104,14 +105,21 @@ function preloadIntake(extra: Record<string, unknown> = {}) {
           ...extra,
         },
       },
+      geo: {
+        geoData: { lat: 49.2827, lng: -123.1207 },
+      },
     },
   };
 }
 
 describe("IntakeCard signature pads", () => {
+  const intakeStep: Step = {
+    name: "intake",
+  };
+
   it("renders both signature pads with their date inputs and clear buttons", () => {
     renderWithProviders(
-      <IntakeCard registerNext={vi.fn()} nav={vi.fn()} />,
+      <IntakeCard step={intakeStep} registerNext={vi.fn()} nav={vi.fn()} />,
       preloadIntake(),
     );
 
@@ -125,7 +133,7 @@ describe("IntakeCard signature pads", () => {
 
   it("auto-fills the EA date when the EA signature is drawn", async () => {
     renderWithProviders(
-      <IntakeCard registerNext={vi.fn()} nav={vi.fn()} />,
+      <IntakeCard step={intakeStep} registerNext={vi.fn()} nav={vi.fn()} />,
       preloadIntake(),
     );
 
@@ -138,7 +146,7 @@ describe("IntakeCard signature pads", () => {
 
   it("does not overwrite a manually-entered EA date", async () => {
     renderWithProviders(
-      <IntakeCard registerNext={vi.fn()} nav={vi.fn()} />,
+      <IntakeCard step={intakeStep} registerNext={vi.fn()} nav={vi.fn()} />,
       preloadIntake(),
     );
 
@@ -153,7 +161,7 @@ describe("IntakeCard signature pads", () => {
 
   it("clearing the EA signature clears its date and shows the required error", async () => {
     renderWithProviders(
-      <IntakeCard registerNext={vi.fn()} nav={vi.fn()} />,
+      <IntakeCard step={intakeStep} registerNext={vi.fn()} nav={vi.fn()} />,
       preloadIntake(),
     );
 
@@ -176,7 +184,7 @@ describe("IntakeCard signature pads", () => {
     const nav = vi.fn();
 
     const { store } = renderWithProviders(
-      <IntakeCard registerNext={registerNext} nav={nav} />,
+      <IntakeCard step={intakeStep} registerNext={registerNext} nav={nav} />,
       preloadIntake(REQUIRED_TEXT),
     );
 
@@ -206,7 +214,7 @@ describe("IntakeCard signature pads", () => {
     const nav = vi.fn();
 
     const { store } = renderWithProviders(
-      <IntakeCard registerNext={registerNext} nav={nav} />,
+      <IntakeCard step={intakeStep} registerNext={registerNext} nav={nav} />,
       preloadIntake(REQUIRED_TEXT),
     );
 
@@ -226,7 +234,7 @@ describe("IntakeCard signature pads", () => {
   it("restores a persisted signature into the canvas on remount", () => {
     const SAVED = "data:image/png;base64,SAVED";
     renderWithProviders(
-      <IntakeCard registerNext={vi.fn()} nav={vi.fn()} />,
+      <IntakeCard step={intakeStep} registerNext={vi.fn()} nav={vi.fn()} />,
       preloadIntake({ ea_signature: SAVED }),
     );
 
@@ -242,7 +250,7 @@ describe("IntakeCard signature pads", () => {
 
   it("has no axe violations in the empty default state", async () => {
     const { container } = renderWithProviders(
-      <IntakeCard registerNext={vi.fn()} nav={vi.fn()} />,
+      <IntakeCard step={intakeStep} registerNext={vi.fn()} nav={vi.fn()} />,
       preloadIntake(),
     );
     expect(await axe(container)).toHaveNoViolations();
@@ -250,7 +258,7 @@ describe("IntakeCard signature pads", () => {
 
   it("the card-level Clear button wipes both canvases and dates", async () => {
     renderWithProviders(
-      <IntakeCard registerNext={vi.fn()} nav={vi.fn()} />,
+      <IntakeCard step={intakeStep} registerNext={vi.fn()} nav={vi.fn()} />,
       preloadIntake(),
     );
 

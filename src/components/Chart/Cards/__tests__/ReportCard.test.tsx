@@ -60,12 +60,6 @@ describe("ReportCard tests", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders an edit link back to /flow/summary", () => {
-    renderWithProviders(<ReportCard />);
-    const link = screen.getByRole("link", { name: /edit the summary/i });
-    expect(link).toHaveAttribute("href", "/flow/summary");
-  });
-
   it("shows generating state while report is being created", () => {
     renderWithProviders(<ReportCard />, {
       preloadedState: {
@@ -139,7 +133,9 @@ describe("ReportCard tests", () => {
   });
 
   it("transitions to generating state on Generate Report click", async () => {
-    globalThis.fetch = vi.fn<typeof fetch>(() => new Promise<Response>(() => {})); // never resolves
+    globalThis.fetch = vi.fn<typeof fetch>(
+      () => new Promise<Response>(() => {}),
+    ); // never resolves
 
     const { store } = renderWithProviders(<ReportCard />);
     await act(async () => {
@@ -170,7 +166,7 @@ describe("ReportCard tests", () => {
     await userEvent.click(screen.getByRole("button", { name: /Regenerate/ }));
 
     expect(
-      screen.getByRole("link", { name: /edit the summary/i }),
+      screen.getByRole("button", { name: /edit the summary/i }),
     ).toBeInTheDocument();
   });
 
