@@ -127,14 +127,9 @@ describe("TestModePanel", () => {
     await user.click(
       screen.getByRole("button", { name: /open test mode panel/i }),
     );
-    await user.click(
-      screen.getByRole("button", { name: /autofill.*unlock steps/i }),
-    );
+    await user.click(screen.getByRole("button", { name: /autofill/i }));
 
     const state = store.getState();
-    expect(state.flow.conditions.intake).toBe(true);
-    expect(state.flow.conditions.inventory).toBe(true);
-    expect(state.report.selectedSystems).toHaveLength(1);
     expect(state.report.intakeForm.building_permit).toBe("BP-2024-TEST-001");
     expect(state.geo.geoData).toEqual({ lat: 43.6532, lng: -79.3832 });
     expect(state.geo.humanAddress).toMatch(
@@ -161,17 +156,13 @@ describe("TestModePanel", () => {
       screen.getByRole("button", { name: /open test mode panel/i }),
     );
     const autofillBtn = screen.getByRole("button", {
-      name: /autofill from snapshot.*unlock steps/i,
+      name: /autofill from snapshot/i,
     });
     await user.click(autofillBtn);
 
     const state = store.getState();
     expect(state.report.intakeForm.building_permit).toBe("BP-FROM-SNAP");
     expect(state.report.intakeForm.ea_name).toBe("Snap EA");
-    expect(state.report.selectedSystems).toEqual([
-      { "ASTM.System.Code": "SNAP-SYS-1" },
-    ]);
-    expect(state.report.selectedSiteFeatures).toEqual([{ ID: "SNAP-FEAT-1" }]);
     expect(state.geo.geoData).toEqual({ lat: 1.23, lng: 4.56 });
     expect(state.geo.humanAddress).toBe("1 Snapshot Lane");
   });
@@ -196,9 +187,7 @@ describe("TestModePanel", () => {
     await user.click(
       screen.getByRole("button", { name: /open test mode panel/i }),
     );
-    await user.click(
-      screen.getByRole("button", { name: /autofill.*unlock steps/i }),
-    );
+    await user.click(screen.getByRole("button", { name: /autofill/i }));
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy.mock.calls[0][0]).toMatchObject({

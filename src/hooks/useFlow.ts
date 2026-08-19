@@ -1,3 +1,4 @@
+import { StepCardName } from "@/components/Chart/StepRenderer";
 import { useEffect } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -73,9 +74,7 @@ function useFlow(initialSteps: Step[] = []) {
   }
 
   // Returns step names blocking navigation to `name`. Empty array on success.
-  function jumpTo(
-    name: "intake" | "inventory" | "summary" | "report",
-  ): string[] {
+  function jumpTo(name: StepCardName): string[] {
     const blockingSteps: string[] = [];
     let prevStep: Step | undefined = steps.find((s) => s.next === name);
     while (prevStep) {

@@ -6,8 +6,8 @@ import {
 } from "@/components/ui/card";
 import useFlow from "@/hooks/useFlow";
 import useMedia from "@/hooks/useMedia";
-import type { Step } from "@/steps";
 import type { RootState } from "@/state/store";
+import type { Step } from "@/steps";
 import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
@@ -81,14 +81,16 @@ function StepperFlow({ steps = [] }: Readonly<Props>) {
               ))}
               <Route
                 path="/finish"
-                element={
-                  <FinishCard onBackToReport={() => jumpTo("report")} />
-                }
+                element={<FinishCard onBackToReport={() => jumpTo("report")} />}
               />
               <Route
                 path="/*"
                 element={
-                  <StepRenderer step={steps[0]} registerNext={registerNext} />
+                  <StepRenderer
+                    step={steps[0]}
+                    registerNext={registerNext}
+                    nav={nav}
+                  />
                 }
               />
             </Routes>
