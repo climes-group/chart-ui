@@ -42,7 +42,6 @@ export type IntakeFormApi = ReactFormExtendedApi<
 const PROJECT_REQUIRED = [
   "project_address",
   "municipality",
-  "postal_code",
   "unit_model_type",
   "total_primary_units",
 ];

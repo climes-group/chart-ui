@@ -359,7 +359,7 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
           name="postal_code"
           validators={{
             onBlur: ({ value }: { value: string }) =>
-              /^[A-Z]\d[A-Z] \d[A-Z]\d$/i.test(value)
+              !value || /^[A-Z]\d[A-Z] \d[A-Z]\d$/i.test(value)
                 ? undefined
                 : t("validators.postalFormat"),
           }}
@@ -369,9 +369,9 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
               label={t("intake.fields.postalCode")}
               fullWidth
               variant="outlined"
-              required
               value={field.state.value}
               onBlur={field.handleBlur}
+              placeholder="A1A 1A1"
               onChange={(e) => field.handleChange(e.target.value)}
               error={
                 field.state.meta.isTouched && !!field.state.meta.errors.length
