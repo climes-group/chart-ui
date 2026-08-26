@@ -166,6 +166,7 @@
   "inventory.systems.heading": "Systems",
   "inventory.siteFeatures.heading": "Site Features",
   "inventory.systems.loadError": "Error loading systems: {message}",
+  "inventory.selectOnly": "Select only those that apply",
 
   "summary.heading": "Summary",
   "summary.edit": "Edit",

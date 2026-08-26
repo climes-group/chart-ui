@@ -48,6 +48,7 @@ export default function SiteFeaturesSection({
         <h2 className="heading-card" ref={headingRef} tabIndex={-1}>
           {t("inventory.siteFeatures.heading")}
         </h2>
+
         {selectedFeatureCodes.size > 0 && (
           <button
             type="button"
