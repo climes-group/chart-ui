@@ -1,3 +1,9 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useTranslation } from "@/i18n";
 import {
   getSystemCodeFor,
@@ -28,7 +34,7 @@ export default function SystemsSection({
   onClearAll,
   onClearClassification,
 }: Readonly<Props>) {
-  const { t } = useTranslation();
+  const { locale, t } = useTranslation();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const listboxRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -52,6 +58,7 @@ export default function SystemsSection({
         </h2>
         {selectedSystemCodes.size > 0 && (
           <button
+            type="button"
             onClick={() => {
               onClearAll();
               headingRef.current?.focus();
@@ -75,6 +82,7 @@ export default function SystemsSection({
 
           return (
             <button
+              type="button"
               key={service}
               onClick={() => onServiceChange(service)}
               className={cn(
@@ -119,6 +127,7 @@ export default function SystemsSection({
                 </h3>
                 {selectedCount > 0 && (
                   <button
+                    type="button"
                     onClick={() => {
                       onClearClassification(classification)();
                       listboxRefs.current[classification]?.focus();
@@ -133,34 +142,68 @@ export default function SystemsSection({
                   </button>
                 )}
               </div>
-              <div
-                role="listbox"
-                aria-multiselectable="true"
-                aria-label={sanitizeName(classification)}
-                onKeyDown={handleListboxKeyDown}
-                tabIndex={-1}
-                ref={(el) => {
-                  listboxRefs.current[classification] = el;
-                }}
-                className="flex flex-wrap gap-2"
-              >
-                {systemsInClass.map((system, i) => {
-                  const code = getSystemCodeFor(system);
-                  return (
-                    <SelectionPill
-                      key={code}
-                      name={sanitizeName(system["ASTM.System.Name"] as string)}
-                      code={
-                        (system["ASTM.System.Code"] as string) ??
-                        (system["ASTM.Code"] as string)
-                      }
-                      isSelected={selectedSystemCodes.has(code)}
-                      onToggle={() => onToggle(system)}
-                      tabIndex={i === 0 ? 0 : -1}
-                    />
-                  );
-                })}
-              </div>
+              <TooltipProvider>
+                <div
+                  role="listbox"
+                  aria-multiselectable="true"
+                  aria-label={sanitizeName(classification)}
+                  onKeyDown={handleListboxKeyDown}
+                  tabIndex={-1}
+                  ref={(el) => {
+                    listboxRefs.current[classification] = el;
+                  }}
+                  className="flex flex-wrap gap-2"
+                >
+                  {systemsInClass.map((system, i) => {
+                    const code = getSystemCodeFor(system);
+                    const description =
+                      (((locale as string) === "fr-CA"
+                        ? (system["DescriptionFr"] as string)
+                        : (system["Description"] as string)) ||
+                        (system["Description"] as string)) ??
+                      "";
+
+                    if (!description) {
+                      return (
+                        <SelectionPill
+                          key={code}
+                          name={sanitizeName(
+                            system["ASTM.System.Name"] as string,
+                          )}
+                          code={
+                            (system["ASTM.System.Code"] as string) ??
+                            (system["ASTM.Code"] as string)
+                          }
+                          isSelected={selectedSystemCodes.has(code)}
+                          onToggle={() => onToggle(system)}
+                          tabIndex={i === 0 ? 0 : -1}
+                        />
+                      );
+                    }
+
+                    return (
+                      <Tooltip key={code}>
+                        <TooltipTrigger asChild>
+                          <SelectionPill
+                            key={code}
+                            name={sanitizeName(
+                              system["ASTM.System.Name"] as string,
+                            )}
+                            code={
+                              (system["ASTM.System.Code"] as string) ??
+                              (system["ASTM.Code"] as string)
+                            }
+                            isSelected={selectedSystemCodes.has(code)}
+                            onToggle={() => onToggle(system)}
+                            tabIndex={i === 0 ? 0 : -1}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>{description}</TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
+                </div>
+              </TooltipProvider>
             </div>
           );
         })}

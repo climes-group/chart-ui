@@ -50,6 +50,7 @@ export default function SiteFeaturesSection({
         </h2>
         {selectedFeatureCodes.size > 0 && (
           <button
+            type="button"
             onClick={() => {
               onClearAll();
               headingRef.current?.focus();
@@ -72,6 +73,7 @@ export default function SiteFeaturesSection({
 
           return (
             <button
+              type="button"
               key={category}
               onClick={() => onCategoryChange(category)}
               className={cn(
