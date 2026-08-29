@@ -23,6 +23,7 @@ type Props = { steps?: Step[] };
 
 function StepperFlow({ steps = [] }: Readonly<Props>) {
   const errorMessage = useSelector((s: RootState) => s.flow.error);
+  const reportStatus = useSelector((s: RootState) => s.report.reportStatus);
   const [isSmallDevice] = useMedia();
   const { currentStep, next, back, jumpTo, isStepLocked } = useFlow(steps);
   const nextRef = useRef(next);
@@ -106,6 +107,7 @@ function StepperFlow({ steps = [] }: Readonly<Props>) {
                 errorMessage={errorMessage}
                 onBack={back}
                 onNext={handleNext}
+                reportStatus={reportStatus}
               />
             ) : (
               <DesktopControls
@@ -113,6 +115,7 @@ function StepperFlow({ steps = [] }: Readonly<Props>) {
                 errorMessage={errorMessage}
                 onBack={back}
                 onNext={handleNext}
+                reportStatus={reportStatus}
               />
             )}
           </CardFooter>
