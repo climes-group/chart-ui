@@ -11,6 +11,9 @@ import { Navigate } from "react-router-dom";
 type Report = {
   name: string;
   created?: string;
+  timezone?: string;
+  created_utc?: string;
+  project_address?: string;
 };
 
 type ConfirmDialogProps = {
@@ -255,6 +258,11 @@ function SavedReports() {
                         date: formatGenerated(report.created),
                       })}
                     </p>
+                    {report.project_address && (
+                      <p className="body-muted truncate text-sm">
+                        {report.project_address}
+                      </p>
+                    )}
                   </div>
                   <div className="flex shrink-0 gap-2">
                     <Button
