@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate, useTranslation } from "@/i18n";
 import type { RootState } from "@/state/store";
+import { getUserTimezone } from "@/utils/timezone";
 import { Download, FileText, Loader2, Trash2 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useSelector } from "react-redux";
@@ -80,10 +81,14 @@ function SavedReports() {
     if (!token) return;
 
     setStatus("loading");
+
+    const userTimezone = getUserTimezone();
+    
     fetch(`${import.meta.env.VITE_API_HOST}/reports`, {
       headers: {
         ...(token && { "X-ID-Token": `Bearer ${token}` }),
         ...(authProvider && { "X-Auth-Provider": authProvider }),
+        "X-User-Timezone": userTimezone,
       },
     })
       .then((res) => {
@@ -92,7 +97,7 @@ function SavedReports() {
       })
       .then((data) => {
         const items = Array.isArray(data?.data) ? (data.data as Report[]) : [];
-        setReports(items);
+        setReports(items.sort((a, b) => (b.created || "").localeCompare(a.created || "")));
         setStatus("ready");
       })
       .catch(() => setStatus("error"));
