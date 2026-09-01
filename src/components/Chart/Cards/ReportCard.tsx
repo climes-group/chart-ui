@@ -7,6 +7,7 @@ import { useDebugMode } from "@/components/TestMode/TestModeContext";
 import { Button } from "@/components/ui/button";
 import useFlow from "@/hooks/useFlow";
 import { useTranslation } from "@/i18n";
+import { getUserTimezone } from "@/utils/timezone";
 import {
   getFeatureKeyFor,
   getSystemCodeFor,
@@ -192,12 +193,14 @@ export default function ReportCard() {
     const startTime = Date.now();
 
     try {
+      const userTimezone = getUserTimezone();
       const result = await fetch(
         `${import.meta.env.VITE_API_HOST}/generate_report`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "X-User-Timezone": userTimezone,
             ...(token && { "X-ID-Token": `Bearer ${token}` }),
             ...(authProvider && { "X-Auth-Provider": authProvider }),
           },

@@ -118,6 +118,7 @@ type ControlsProps = {
   errorMessage?: string | null;
   onBack: () => void;
   onNext: () => void;
+  reportStatus?: string;
 };
 
 export function DesktopControls({
@@ -125,9 +126,14 @@ export function DesktopControls({
   errorMessage,
   onBack,
   onNext,
+  reportStatus,
 }: Readonly<ControlsProps>) {
   const { t } = useTranslation();
+  const isReportStep = currentStep?.name === "report";
+  const reportAttempted = reportStatus && reportStatus !== "not_generated";
+  const showFinish = !currentStep?.next && (!isReportStep || reportAttempted);
   const nextLabel = currentStep?.next ? t("common.next") : t("common.finish");
+  
   return (
     <div className="flex w-full items-center justify-between">
       <Button variant="outline" disabled={!currentStep?.prev} onClick={onBack}>
@@ -141,14 +147,16 @@ export function DesktopControls({
             {errorMessage}
           </span>
         )}
-        <Button
-          disabled={!currentStep}
-          onClick={onNext}
-          className="disabled:opacity-50"
-        >
-          {nextLabel}
-          <ArrowRightIcon className="size-4" />
-        </Button>
+        {showFinish || currentStep?.next ? (
+          <Button
+            disabled={!currentStep}
+            onClick={onNext}
+            className="disabled:opacity-50"
+          >
+            {nextLabel}
+            <ArrowRightIcon className="size-4" />
+          </Button>
+        ) : null}
       </div>
     </div>
   );
@@ -162,9 +170,14 @@ export function MobileControls({
   errorMessage,
   onBack,
   onNext,
+  reportStatus,
 }: MobileControlsProps) {
   const { t } = useTranslation();
+  const isReportStep = currentStep?.name === "report";
+  const reportAttempted = reportStatus && reportStatus !== "not_generated";
+  const showFinish = !currentStep?.next && (!isReportStep || reportAttempted);
   const nextLabel = currentStep?.next ? t("common.next") : t("common.finish");
+  
   return (
     <div className="flex w-full items-center justify-between">
       <Button
@@ -197,16 +210,18 @@ export function MobileControls({
         </div>
       )}
 
-      <Button
-        disabled={!currentStep}
-        onClick={onNext}
-        size={currentStep?.next ? "icon" : "default"}
-        className="disabled:opacity-50"
-        aria-label={nextLabel}
-      >
-        {!currentStep?.next && t("common.finish")}
-        <ArrowRightIcon className="size-4" />
-      </Button>
+      {showFinish || currentStep?.next ? (
+        <Button
+          disabled={!currentStep}
+          onClick={onNext}
+          size={currentStep?.next ? "icon" : "default"}
+          className="disabled:opacity-50"
+          aria-label={nextLabel}
+        >
+          {!currentStep?.next && t("common.finish")}
+          <ArrowRightIcon className="size-4" />
+        </Button>
+      ) : null}
     </div>
   );
 }

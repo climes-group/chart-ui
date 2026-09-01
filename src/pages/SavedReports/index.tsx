@@ -5,6 +5,7 @@ import { resetAppState } from "@/state/actions/resetAppState";
 import { useAppDispatch, type RootState } from "@/state/store";
 import steps from "@/steps";
 import { Download, FileText, Loader2, RotateCcw, Trash2 } from "lucide-react";
+import { getUserTimezone } from "@/utils/timezone";
 import { useEffect, useState, type ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -12,6 +13,9 @@ import { Navigate, useNavigate } from "react-router-dom";
 type Report = {
   name: string;
   created?: string;
+  timezone?: string;
+  created_utc?: string;
+  project_address?: string;
 };
 
 type ConfirmDialogProps = {
@@ -90,10 +94,14 @@ function SavedReports() {
     if (!token) return;
 
     setStatus("loading");
+
+    const userTimezone = getUserTimezone();
+    
     fetch(`${import.meta.env.VITE_API_HOST}/reports`, {
       headers: {
         ...(token && { "X-ID-Token": `Bearer ${token}` }),
         ...(authProvider && { "X-Auth-Provider": authProvider }),
+        "X-User-Timezone": userTimezone,
       },
     })
       .then((res) => {
@@ -102,7 +110,7 @@ function SavedReports() {
       })
       .then((data) => {
         const items = Array.isArray(data?.data) ? (data.data as Report[]) : [];
-        setReports(items);
+        setReports(items.sort((a, b) => (b.created || "").localeCompare(a.created || "")));
         setStatus("ready");
       })
       .catch(() => setStatus("error"));
@@ -260,6 +268,11 @@ function SavedReports() {
                         date: formatGenerated(report.created),
                       })}
                     </p>
+                    {report.project_address && (
+                      <p className="body-muted truncate text-sm">
+                        {report.project_address}
+                      </p>
+                    )}
                   </div>
                   <div className="flex shrink-0 gap-2">
                     <Button
