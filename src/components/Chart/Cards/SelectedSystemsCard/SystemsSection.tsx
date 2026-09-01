@@ -73,7 +73,11 @@ export default function SystemsSection({
           </button>
         )}
       </div>
-
+      <p>
+        <em className="text-muted-foreground text-sm">
+          {t("inventory.selectOnly")}
+        </em>
+      </p>
       <div className="border-golden-accent/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
         {serviceNames.map((service) => {
           const selectedCount = systems
