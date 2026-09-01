@@ -1,3 +1,4 @@
+import { useOfflineMode } from "@/components/TestMode/TestModeContext";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
 import { resetAppState } from "@/state/actions/resetAppState";
@@ -14,12 +15,13 @@ export default function SplashCard() {
   const profileData = useSelector((state: RootState) => state.user.profile);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isOfflineMode = useOfflineMode();
 
   const handleGetStarted = () => {
-    if (!profileData) {
+    if (!profileData && !isOfflineMode) {
       dispatch(setLoginModalOpen(true));
     } else {
-      prefetchRefData();
+      prefetchRefData(isOfflineMode);
       dispatch(resetAppState(steps));
       navigate("/flow/intake");
     }

@@ -1,6 +1,8 @@
 import {
   useDebugMode,
+  useOfflineMode,
   useSetDebugMode,
+  useSetOfflineMode,
   useTestMode,
 } from "@/components/TestMode/TestModeContext";
 import { meetCondition, setTheme } from "@/state/slices/flowReducer";
@@ -10,7 +12,6 @@ import type { RootState } from "@/state/store";
 import { Bug, Wrench, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 import { SNAPSHOT_EVENT, loadSnapshot, type Snapshot } from "./snapshot";
 
 const TEST_INTAKE: Partial<IntakeForm> & Record<string, unknown> = {
@@ -59,8 +60,9 @@ export default function TestModePanel() {
   const dispatch = useDispatch();
   const theme = useSelector((state: RootState) => state.flow.theme);
   const debugMode = useDebugMode();
+  const offlineMode = useOfflineMode();
   const setDebugMode = useSetDebugMode();
-  const { pathname } = useLocation();
+  const setOfflineMode = useSetOfflineMode();
 
   const [isOpen, setIsOpen] = useState<boolean>(
     () => localStorage.getItem(PANEL_OPEN_KEY) === "true",
@@ -77,7 +79,7 @@ export default function TestModePanel() {
     return () => globalThis.removeEventListener(SNAPSHOT_EVENT, onChange);
   }, []);
 
-  if (!isTestMode || pathname === "/") return null;
+  if (!isTestMode) return null;
 
   const handleAutofill = () => {
     const snap = loadSnapshot();
@@ -146,6 +148,7 @@ export default function TestModePanel() {
             <span className="text-muted-foreground mr-1 text-xs">Theme:</span>
             {[1].map((t) => (
               <button
+                type="button"
                 key={t}
                 onClick={() => dispatch(setTheme(t))}
                 className={[
@@ -177,6 +180,23 @@ export default function TestModePanel() {
           </button>
 
           <button
+            type="button"
+            role="switch"
+            aria-checked={offlineMode}
+            onClick={() => setOfflineMode(!offlineMode)}
+            className={[
+              "flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+              offlineMode
+                ? "bg-coral text-white"
+                : "bg-muted text-muted-foreground hover:bg-muted/80",
+            ].join(" ")}
+          >
+            <Bug className="size-3.5" />
+            Offline mode {offlineMode ? "on" : "off"}
+          </button>
+
+          <button
+            type="button"
             onClick={handleAutofill}
             className="bg-golden-accent/20 text-warm-brown hover:bg-golden-accent/40 rounded-full px-3 py-1.5 text-left text-xs font-medium transition-colors"
           >

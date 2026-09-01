@@ -1,0 +1,142 @@
+[
+  {
+    "Category": "Geology",
+    "ID": "PyriticSoil",
+    "Site.Feature.Name": "Pyritic Soil",
+    "Feature.Presence": false,
+    "Description": "Building located on pyritic shales"
+  },
+  {
+    "Category": "Topography",
+    "ID": "CoastExposure",
+    "Site.Feature.Name": "Coastal Exposure",
+    "Feature.Presence": false,
+    "Description": "Building located within 1km of the coastline"
+  },
+  {
+    "Category": "Topography",
+    "ID": "RiverExposure",
+    "Site.Feature.Name": "River Exposure",
+    "Feature.Presence": false,
+    "Description": "Building located within mixed riparian zone (<500m from a river)"
+  },
+  {
+    "Category": "Topography",
+    "ID": "SlopeExp",
+    "Site.Feature.Name": "Slope Exposure",
+    "Feature.Presence": false,
+    "Description": "Building located on a slope"
+  },
+  {
+    "Category": "Geology",
+    "ID": "OrganicSoil",
+    "Site.Feature.Name": "Organic Soil Type",
+    "Feature.Presence": false,
+    "Description": "Building located on organic soil types"
+  },
+  {
+    "Category": "Geology",
+    "ID": "ClaySoil",
+    "Site.Feature.Name": "Clay Soil Type",
+    "Feature.Presence": false,
+    "Description": "Building located on clay soil types"
+  },
+  {
+    "Category": "Geology",
+    "ID": "Thermokarst",
+    "Site.Feature.Name": "Thermokarst Soil Type",
+    "Feature.Presence": false,
+    "Description": "Building located on thermokarst soil types"
+  },
+  {
+    "Category": "Geology",
+    "ID": "Karst",
+    "Site.Feature.Name": "Limestone Karst",
+    "Feature.Presence": false,
+    "Description": "Building located on a limestone"
+  },
+  {
+    "Category": "Geology",
+    "ID": "Permafrost",
+    "Site.Feature.Name": "Permafrost Exposure",
+    "Feature.Presence": false,
+    "Description": "Building located on a permafrost"
+  },
+  {
+    "Category": "Topography",
+    "ID": "MountainExp",
+    "Site.Feature.Name": "Mountainous Exposure",
+    "Feature.Presence": false,
+    "Description": "Building located on a mountain"
+  },
+  {
+    "Category": "Topography",
+    "ID": "LowTerrain",
+    "Site.Feature.Name": "Low Lying Terrain",
+    "Feature.Presence": false,
+    "Description": "Building located on low lying terrains"
+  },
+  {
+    "Category": "Site",
+    "ID": "AdjBuilding",
+    "Site.Feature.Name": "Adjacent Buildings",
+    "Feature.Presence": false,
+    "Description": "Built structures within 7.5m of building"
+  },
+  {
+    "Category": "Landscape",
+    "ID": "SigTree",
+    "Site.Feature.Name": "Significant Trees",
+    "Feature.Presence": false,
+    "Description": "Large trees within 7.5m of building"
+  },
+  {
+    "Category": "Landscape",
+    "ID": "ConTree",
+    "Site.Feature.Name": "Coniferous Trees",
+    "Feature.Presence": false,
+    "Description": "Coniferous trees within 7.5m of building"
+  },
+  {
+    "Category": "Landscape",
+    "ID": "DecTree",
+    "Site.Feature.Name": "Deciduous Trees",
+    "Feature.Presence": false,
+    "Description": "Deciduous trees within 7.5m of building"
+  },
+  {
+    "Category": "Geology",
+    "ID": "SandySoil",
+    "Site.Feature.Name": "Sandy Soil Type",
+    "Feature.Presence": false,
+    "Description": "Building located on predominantly sandy soil types"
+  },
+  {
+    "Category": "Climate",
+    "ID": "Xhail",
+    "Site.Feature.Name": "Extreme Hail",
+    "Feature.Presence": false,
+    "Description": "Building located in area with known extreme hail events"
+  },
+  {
+    "Category": "Landscape",
+    "ID": "WUI",
+    "Site.Feature.Name": "Wildland Urban Interface and Intermix Zone",
+    "Feature.Presence": false,
+    "Description": "Building located within the wildland urban interface"
+  },
+  {
+    "Category": "Landscape",
+    "ID": "WUIProx",
+    "Site.Feature.Name": "Proximity to Wildland Urban Interface Zone",
+    "Feature.Presence": false,
+    "Description": "Building located within 2km of wildland urban interface zone"
+  },
+  {
+    "Category": "Landscape",
+    "ID": "Zone0Landscape",
+    "Site.Feature.Name": "Zone 0 Landscaping",
+    "Feature.Presence": false,
+    "Description": "Plantings, brush, mulch, or combustible fences/decks within 1m of building"
+  }
+]

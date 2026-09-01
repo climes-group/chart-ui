@@ -48,6 +48,7 @@ export default function SiteFeaturesSection({
         <h2 className="heading-card" ref={headingRef} tabIndex={-1}>
           {t("inventory.siteFeatures.heading")}
         </h2>
+
         {selectedFeatureCodes.size > 0 && (
           <button
             type="button"
@@ -62,6 +63,11 @@ export default function SiteFeaturesSection({
           </button>
         )}
       </div>
+      <p>
+        <em className="text-muted-foreground text-sm">
+          {t("inventory.selectOnly")}
+        </em>
+      </p>
 
       <div className="border-golden-accent/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
         {categoryNames.map((category) => {

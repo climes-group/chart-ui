@@ -131,6 +131,7 @@ function ReportContext({
       </div>
       <div className="border-warm-gold/30 flex justify-start border-t pt-2.5">
         <button
+          type="button"
           onClick={() => jumpTo("summary")}
           className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 rounded-md px-4 py-2 text-sm transition-colors"
         >

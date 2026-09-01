@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate, useTranslation } from "@/i18n";
-import type { RootState } from "@/state/store";
+import { resetAppState } from "@/state/actions/resetAppState";
+import { useAppDispatch, type RootState } from "@/state/store";
+import steps from "@/steps";
+import { Download, FileText, Loader2, RotateCcw, Trash2 } from "lucide-react";
 import { getUserTimezone } from "@/utils/timezone";
-import { Download, FileText, Loader2, Trash2 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 type Report = {
   name: string;
@@ -79,6 +81,14 @@ function SavedReports() {
   const [deleting, setDeleting] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [deleteAllError, setDeleteAllError] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleReset = () => {
+    dispatch(resetAppState(steps));
+    navigate("/flow/intake");
+  };
 
   useEffect(() => {
     if (!token) return;
@@ -286,6 +296,12 @@ function SavedReports() {
               ))}
             </ul>
           )}
+          <p className="body-muted mt-6 text-center">
+            <Button onClick={handleReset} variant="outline" className="mt-4">
+              <RotateCcw className="size-4" />
+              <span className="translate-y-px">{t("finish.startNew")}</span>
+            </Button>
+          </p>
         </CardContent>
       </Card>
 

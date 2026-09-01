@@ -1,4 +1,4 @@
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -34,9 +34,7 @@ export default function FinishCard({ onBackToReport }: Readonly<Props>) {
     intake?.project_address?.trim() || t("finish.fallbackAddress");
   const count = selectedSystems?.length ?? 0;
   const systemsSuffix =
-    count === 1
-      ? t("finish.summaryAfterOne")
-      : t("finish.summaryAfterOther");
+    count === 1 ? t("finish.summaryAfterOne") : t("finish.summaryAfterOther");
 
   return (
     <div className="flex flex-col items-center px-4 py-12 text-center">
@@ -73,7 +71,8 @@ export default function FinishCard({ onBackToReport }: Readonly<Props>) {
               {t("common.cancel")}
             </Button>
             <Button variant="destructive" onClick={handleReset}>
-              {t("finish.yesReset")}
+              <RotateCcw className="size-4" />
+              <span className="translate-y-px">{t("finish.yesReset")}</span>
             </Button>
           </div>
         </div>
@@ -83,7 +82,8 @@ export default function FinishCard({ onBackToReport }: Readonly<Props>) {
           variant="outline"
           className="mt-4"
         >
-          {t("finish.startNew")}
+          <RotateCcw className="size-4" />
+          <span className="translate-y-px">{t("finish.startNew")}</span>
         </Button>
       )}
     </div>
