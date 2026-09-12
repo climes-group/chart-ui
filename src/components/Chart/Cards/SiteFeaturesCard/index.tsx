@@ -5,58 +5,34 @@ import { useTranslation } from "@/i18n";
 import { meetCondition } from "@/state/slices/flowReducer";
 import {
   addSelectedFeature,
-  addSelectedSystem,
   clearSelectedFeatures,
-  clearSelectedSystems,
   getFeatureKeyFor,
-  getSystemCodeFor,
   removeSelectedFeature,
-  removeSelectedSystem,
   type FeatureRecord,
-  type SystemRecord,
 } from "@/state/slices/reportReducer";
 import type { RootState } from "@/state/store";
 import { getCachedJson } from "@/utils/prefetchRefData";
 import { useDispatch, useSelector } from "react-redux";
 import type { StepCardProps } from "../../StepRenderer";
-import SiteFeaturesSection from "./SiteFeaturesSection";
-import SystemsSection from "./SystemsSection";
-import { dedupeSiteFeatures, dedupeSystems } from "./utils";
+import SiteFeaturesSection from "../SelectedSystemsCard/SiteFeaturesSection";
+import { dedupeSiteFeatures } from "../SelectedSystemsCard/utils";
 
-export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
-  const [availableSystems, setAvailableSystems] = useState<
-    SystemRecord[] | null
-  >(null);
+export default function SiteFeaturesCard({ step }: Readonly<StepCardProps>) {
   const [availableFeatures, setAvailableFeatures] = useState<
     FeatureRecord[] | null
   >(null);
-  const [activeService, setActiveService] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const selectedSystems = useSelector(
-    (state: RootState) => state.report.selectedSystems,
-  );
   const selectedSiteFeatures = useSelector(
     (state: RootState) => state.report.selectedSiteFeatures,
   );
 
-  const selectedSystemCodes = new Set(selectedSystems.map(getSystemCodeFor));
   const selectedFeatureCodes = new Set(
     selectedSiteFeatures.map(getFeatureKeyFor),
   );
-
-  const toggleSystem = (system: SystemRecord) => {
-    const code = getSystemCodeFor(system);
-    if (!code) return;
-    if (selectedSystemCodes.has(code)) {
-      dispatch(removeSelectedSystem(code));
-    } else {
-      dispatch(addSelectedSystem(system));
-    }
-  };
 
   const toggleFeature = (feature: FeatureRecord) => {
     const code = getFeatureKeyFor(feature);
@@ -67,40 +43,6 @@ export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
       dispatch(addSelectedFeature(feature));
     }
   };
-
-  const clearForClassification = (classification: string) => () => {
-    if (!availableSystems) return;
-    availableSystems
-      .filter((s) => s["ASTM.Name"] === classification)
-      .map(getSystemCodeFor)
-      .filter((code): code is string => !!code && selectedSystemCodes.has(code))
-      .forEach((code) => dispatch(removeSelectedSystem(code)));
-  };
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const data = await getCachedJson<SystemRecord[]>(
-          `${import.meta.env.VITE_API_HOST}/codes/building_services/ref`,
-        );
-        if (cancelled) return;
-        const unique = dedupeSystems(data);
-        setAvailableSystems(unique);
-
-        const services = Array.from(
-          new Set(unique.map((s) => s.Services as string).filter(Boolean)),
-        ).sort((a, b) => a.localeCompare(b));
-
-        setActiveService(services[0] ?? null);
-      } catch (err) {
-        if (!cancelled) setError((err as Error).message);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -132,10 +74,10 @@ export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
     dispatch(
       meetCondition({
         name: step.name,
-        condition: selectedSystems.length > 0,
+        condition: selectedSiteFeatures.length > 0,
       }),
     );
-  }, [selectedSystems.length, step?.name, dispatch]);
+  }, [selectedSiteFeatures.length, step?.name, dispatch]);
 
   if (error)
     return (
@@ -146,7 +88,7 @@ export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
       </div>
     );
 
-  if (!availableSystems || !availableFeatures)
+  if (!availableFeatures)
     return (
       <div className="flex flex-col gap-5">
         <Skeleton className="h-6 w-44 rounded" />
@@ -171,33 +113,11 @@ export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
             ))}
           </div>
         </div>
-        <div className="space-y-2.5">
-          <Skeleton className="h-3 w-28 rounded" />
-          <div className="flex flex-wrap gap-2">
-            {[108, 76, 130, 92].map((w, i) => (
-              <Skeleton
-                key={`${w}-${i}`}
-                className="h-8 rounded-md"
-                style={{ width: w }}
-              />
-            ))}
-          </div>
-        </div>
       </div>
     );
 
   return (
     <div>
-      <SystemsSection
-        systems={availableSystems}
-        activeService={activeService}
-        onServiceChange={setActiveService}
-        selectedSystemCodes={selectedSystemCodes}
-        onToggle={toggleSystem}
-        onClearAll={() => dispatch(clearSelectedSystems())}
-        onClearClassification={clearForClassification}
-      />
-
       <SiteFeaturesSection
         features={availableFeatures}
         activeCategory={activeCategory}

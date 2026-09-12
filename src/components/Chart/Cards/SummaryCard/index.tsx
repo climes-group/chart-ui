@@ -251,8 +251,6 @@ function SummaryCard() {
 
   return (
     <div className="space-y-4">
-      <h2 className="heading-card">{t("summary.heading")}</h2>
-
       <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
         <SectionHeader
           title={t("summary.section.project")}
@@ -298,7 +296,7 @@ function SummaryCard() {
                 })
               : t("summary.section.systems")
           }
-          editTo="inventory"
+          editTo="systems"
           editLabel={t("summary.editSystems")}
         />
         {validSelectedSystems.length === 0 ? (
@@ -317,7 +315,7 @@ function SummaryCard() {
                 })
               : t("summary.section.features")
           }
-          editTo="inventory"
+          editTo="features"
           editLabel={t("summary.editFeatures")}
         />
         {validSelectedSiteFeatures.length === 0 ? (

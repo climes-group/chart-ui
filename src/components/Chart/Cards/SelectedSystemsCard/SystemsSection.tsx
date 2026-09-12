@@ -35,7 +35,6 @@ export default function SystemsSection({
   onClearClassification,
 }: Readonly<Props>) {
   const { locale, t } = useTranslation();
-  const headingRef = useRef<HTMLHeadingElement>(null);
   const listboxRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const serviceNames = [
@@ -53,15 +52,14 @@ export default function SystemsSection({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="heading-card" ref={headingRef} tabIndex={-1}>
-          {t("inventory.systems.heading")}
-        </h2>
+        <em className="text-muted-foreground text-sm">
+          {t("inventory.selectOnly")}
+        </em>
         {selectedSystemCodes.size > 0 && (
           <button
             type="button"
             onClick={() => {
               onClearAll();
-              headingRef.current?.focus();
             }}
             aria-label={t("common.clearAllSelected", {
               count: selectedSystemCodes.size,
@@ -73,11 +71,6 @@ export default function SystemsSection({
           </button>
         )}
       </div>
-      <p>
-        <em className="text-muted-foreground text-sm">
-          {t("inventory.selectOnly")}
-        </em>
-      </p>
       <div className="border-golden-accent/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
         {serviceNames.map((service) => {
           const selectedCount = systems

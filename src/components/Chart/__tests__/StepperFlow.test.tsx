@@ -92,10 +92,10 @@ describe("StepperFlow tests", () => {
   it("marks a future step as locked when its preceding condition is unmet", async () => {
     mockedUseMedia.mockReturnValue([false, false, false, false]);
     renderWithProviders(<StepperFlow steps={steps} />);
-    // intake has leaveCondition and starts false → applicableSystems (Inventory) should be locked
+    // intake has leaveCondition and starts false → Building Systems should be locked
     await waitFor(() => {
       expect(
-        screen.getByRole("button", { name: /Inventory/i }),
+        screen.getByRole("button", { name: /Building Systems/i }),
       ).toHaveAttribute("data-locked", "true");
     });
   });
@@ -116,7 +116,7 @@ describe("StepperFlow tests", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("button", { name: /Inventory/i }),
+        screen.getByRole("button", { name: /Building Systems/i }),
       ).toHaveAttribute("data-locked", "true");
     });
 
@@ -126,7 +126,7 @@ describe("StepperFlow tests", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("button", { name: /Inventory/i }),
+        screen.getByRole("button", { name: /Building Systems/i }),
       ).not.toHaveAttribute("data-locked");
     });
   });
@@ -137,11 +137,13 @@ describe("StepperFlow tests", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("button", { name: /Inventory/i }),
+        screen.getByRole("button", { name: /Building Systems/i }),
       ).toHaveAttribute("data-locked", "true");
     });
 
-    await userEvent.click(screen.getByRole("button", { name: /Inventory/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /Building Systems/i }),
+    );
 
     // intake is the blocker — it should be pulsing
     expect(screen.getByRole("button", { name: /Intake/i })).toHaveAttribute(

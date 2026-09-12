@@ -7,7 +7,6 @@ import { useDebugMode } from "@/components/TestMode/TestModeContext";
 import { Button } from "@/components/ui/button";
 import useFlow from "@/hooks/useFlow";
 import { useTranslation } from "@/i18n";
-import { getUserTimezone } from "@/utils/timezone";
 import {
   getFeatureKeyFor,
   getSystemCodeFor,
@@ -19,6 +18,7 @@ import {
   type IntakeForm,
 } from "@/state/slices/reportReducer";
 import type { RootState } from "@/state/store";
+import { getUserTimezone } from "@/utils/timezone";
 import {
   AlertTriangle,
   Bug,
@@ -252,9 +252,9 @@ export default function ReportCard() {
 
   return (
     <>
-      <h2 className="heading-card mb-5">{t("report.heading")}</h2>
-
       <div className="flex flex-col gap-5">
+        <em className="text-muted-foreground text-sm">{t("report.intro")}</em>
+
         {/* Primary action row */}
         <div className="flex flex-wrap items-center gap-3">
           <Button
@@ -323,8 +323,6 @@ export default function ReportCard() {
         {/* Status panel */}
         {reportStatus === "not_generated" && (
           <div className="space-y-4">
-            <p className="body-muted">{t("report.intro")}</p>
-
             <ReportContext
               humanAddress={humanAddress}
               intakeForm={intakeForm}

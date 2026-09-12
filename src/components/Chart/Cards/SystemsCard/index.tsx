@@ -4,34 +4,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/i18n";
 import { meetCondition } from "@/state/slices/flowReducer";
 import {
-  addSelectedFeature,
   addSelectedSystem,
-  clearSelectedFeatures,
   clearSelectedSystems,
-  getFeatureKeyFor,
   getSystemCodeFor,
-  removeSelectedFeature,
   removeSelectedSystem,
-  type FeatureRecord,
   type SystemRecord,
 } from "@/state/slices/reportReducer";
 import type { RootState } from "@/state/store";
 import { getCachedJson } from "@/utils/prefetchRefData";
 import { useDispatch, useSelector } from "react-redux";
 import type { StepCardProps } from "../../StepRenderer";
-import SiteFeaturesSection from "./SiteFeaturesSection";
-import SystemsSection from "./SystemsSection";
-import { dedupeSiteFeatures, dedupeSystems } from "./utils";
+import SystemsSection from "../SelectedSystemsCard/SystemsSection";
+import { dedupeSystems } from "../SelectedSystemsCard/utils";
 
-export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
+export default function SystemsCard({ step }: Readonly<StepCardProps>) {
   const [availableSystems, setAvailableSystems] = useState<
     SystemRecord[] | null
   >(null);
-  const [availableFeatures, setAvailableFeatures] = useState<
-    FeatureRecord[] | null
-  >(null);
   const [activeService, setActiveService] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const { t } = useTranslation();
@@ -39,14 +29,8 @@ export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
   const selectedSystems = useSelector(
     (state: RootState) => state.report.selectedSystems,
   );
-  const selectedSiteFeatures = useSelector(
-    (state: RootState) => state.report.selectedSiteFeatures,
-  );
 
   const selectedSystemCodes = new Set(selectedSystems.map(getSystemCodeFor));
-  const selectedFeatureCodes = new Set(
-    selectedSiteFeatures.map(getFeatureKeyFor),
-  );
 
   const toggleSystem = (system: SystemRecord) => {
     const code = getSystemCodeFor(system);
@@ -55,16 +39,6 @@ export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
       dispatch(removeSelectedSystem(code));
     } else {
       dispatch(addSelectedSystem(system));
-    }
-  };
-
-  const toggleFeature = (feature: FeatureRecord) => {
-    const code = getFeatureKeyFor(feature);
-    if (!code) return;
-    if (selectedFeatureCodes.has(code)) {
-      dispatch(removeSelectedFeature(code));
-    } else {
-      dispatch(addSelectedFeature(feature));
     }
   };
 
@@ -103,31 +77,6 @@ export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const data = await getCachedJson<FeatureRecord[]>(
-          `${import.meta.env.VITE_API_HOST}/codes/site_features/ref`,
-        );
-        if (cancelled) return;
-        const unique = dedupeSiteFeatures(data);
-        setAvailableFeatures(unique);
-
-        const categories = Array.from(
-          new Set(unique.map((f) => f.Category as string).filter(Boolean)),
-        ).sort((a, b) => a.localeCompare(b));
-
-        setActiveCategory(categories[0] ?? null);
-      } catch (err) {
-        if (!cancelled) setError((err as Error).message);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
     if (!step?.name) return;
     dispatch(
       meetCondition({
@@ -146,7 +95,7 @@ export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
       </div>
     );
 
-  if (!availableSystems || !availableFeatures)
+  if (!availableSystems)
     return (
       <div className="flex flex-col gap-5">
         <Skeleton className="h-6 w-44 rounded" />
@@ -171,18 +120,6 @@ export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
             ))}
           </div>
         </div>
-        <div className="space-y-2.5">
-          <Skeleton className="h-3 w-28 rounded" />
-          <div className="flex flex-wrap gap-2">
-            {[108, 76, 130, 92].map((w, i) => (
-              <Skeleton
-                key={`${w}-${i}`}
-                className="h-8 rounded-md"
-                style={{ width: w }}
-              />
-            ))}
-          </div>
-        </div>
       </div>
     );
 
@@ -196,15 +133,6 @@ export default function SelectedSystemsCard({ step }: Readonly<StepCardProps>) {
         onToggle={toggleSystem}
         onClearAll={() => dispatch(clearSelectedSystems())}
         onClearClassification={clearForClassification}
-      />
-
-      <SiteFeaturesSection
-        features={availableFeatures}
-        activeCategory={activeCategory}
-        onCategoryChange={setActiveCategory}
-        selectedFeatureCodes={selectedFeatureCodes}
-        onToggle={toggleFeature}
-        onClearAll={() => dispatch(clearSelectedFeatures())}
       />
     </div>
   );

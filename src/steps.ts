@@ -12,7 +12,8 @@ export type Step = {
 
 const base: { name: string; leaveCondition?: boolean }[] = [
   { name: "intake", leaveCondition: true },
-  { name: "inventory", leaveCondition: true },
+  { name: "systems", leaveCondition: true },
+  { name: "features", leaveCondition: true },
   { name: "summary" },
   { name: "report" },
 ];

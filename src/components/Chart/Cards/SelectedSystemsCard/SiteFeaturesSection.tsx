@@ -11,7 +11,6 @@ import {
 } from "@/state/slices/reportReducer";
 import { cn } from "@/utils/cn";
 import { X } from "lucide-react";
-import { useRef } from "react";
 import SelectionPill from "./SelectionPill";
 import { handleListboxKeyDown, sanitizeName } from "./utils";
 
@@ -40,21 +39,18 @@ export default function SiteFeaturesSection({
     : [];
 
   const { locale, t } = useTranslation();
-  const headingRef = useRef<HTMLHeadingElement>(null);
 
   return (
     <div>
-      <div className="mt-8 mb-4 flex items-center justify-between">
-        <h2 className="heading-card" ref={headingRef} tabIndex={-1}>
-          {t("inventory.siteFeatures.heading")}
-        </h2>
-
+      <div className="mb-4 flex items-center justify-between">
+        <em className="text-muted-foreground text-sm">
+          {t("inventory.selectOnly")}
+        </em>
         {selectedFeatureCodes.size > 0 && (
           <button
             type="button"
             onClick={() => {
               onClearAll();
-              headingRef.current?.focus();
             }}
             className="text-muted-foreground hover:text-destructive flex items-center gap-1 text-xs transition-colors"
           >
@@ -63,11 +59,6 @@ export default function SiteFeaturesSection({
           </button>
         )}
       </div>
-      <p>
-        <em className="text-muted-foreground text-sm">
-          {t("inventory.selectOnly")}
-        </em>
-      </p>
 
       <div className="border-golden-accent/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
         {categoryNames.map((category) => {
