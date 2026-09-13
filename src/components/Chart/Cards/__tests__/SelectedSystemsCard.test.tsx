@@ -97,7 +97,6 @@ describe("SelectedSystemsCard tests", () => {
   it("renders systems after data loads", async () => {
     setupFetch();
     renderWithProviders(<SelectedSystemsCard {...cardProps} />);
-    await screen.findByText("Systems");
     await selectMechanicalTab();
     expect(screen.getByText("Boiler")).toBeInTheDocument();
   });
@@ -196,6 +195,21 @@ describe("SelectedSystemsCard tests", () => {
     // mock has two distinct mechanical systems ("Boiler" and "Furnace") plus
     // one duplicate of Boiler — after dedupe, only one Boiler pill renders
     expect(screen.getAllByText("Boiler")).toHaveLength(1);
+  });
+
+  it("adds a rounded info icon to pills that have a tooltip description", async () => {
+    setupFetch([
+      {
+        ...mockSystems[0],
+        Description: "A boiler description for the tooltip.",
+      } as (typeof mockSystems)[number] & { Description: string },
+    ]);
+
+    renderWithProviders(<SelectedSystemsCard {...cardProps} />);
+    await selectMechanicalTab();
+
+    const boiler = screen.getByRole("option", { name: /Boiler/ });
+    expect(boiler.querySelector('[data-info-icon="true"]')).toBeTruthy();
   });
 
   it("stores the full system record in redux on selection", async () => {

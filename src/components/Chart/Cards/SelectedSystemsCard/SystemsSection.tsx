@@ -191,6 +191,7 @@ export default function SystemsSection({
                               (system["ASTM.Code"] as string)
                             }
                             isSelected={selectedSystemCodes.has(code)}
+                            showInfoIcon
                             onToggle={() => onToggle(system)}
                             tabIndex={i === 0 ? 0 : -1}
                           />

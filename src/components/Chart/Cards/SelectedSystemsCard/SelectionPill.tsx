@@ -1,16 +1,28 @@
 import { cn } from "@/utils/cn";
-import { Check } from "lucide-react";
+import { Check, CircleQuestionMarkIcon } from "lucide-react";
 import { forwardRef, type ButtonHTMLAttributes, type MouseEvent } from "react";
 
 type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "name"> & {
   name: string;
   code?: string;
   isSelected?: boolean;
+  showInfoIcon?: boolean;
   onToggle?: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 
 const SelectionPill = forwardRef<HTMLButtonElement, Props>(
-  ({ name, code, isSelected, onToggle, onClick, ...props }, ref) => {
+  (
+    {
+      name,
+      code,
+      isSelected,
+      showInfoIcon = false,
+      onToggle,
+      onClick,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <button
         ref={ref}
@@ -44,12 +56,13 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
 
         <span className="leading-snug">{name}</span>
 
-        {code && (
-          <span
-            aria-hidden
-            className="text-warm-brown shrink-0 font-mono text-xs"
-          >
-            {code}
+        {showInfoIcon && (
+          <span aria-hidden="true" data-info-icon="true">
+            <CircleQuestionMarkIcon
+              size="1rem"
+              strokeWidth={2}
+              color="currentColor"
+            />
           </span>
         )}
       </button>

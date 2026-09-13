@@ -157,15 +157,18 @@
   "finish.yesReset": "Yes, start over",
 
   "steps.intake": "Intake",
-  "steps.inventory": "Inventory",
+  "steps.systems": "Building Systems",
+  "steps.features": "Site Features",
   "steps.summary": "Summary",
   "steps.report": "Report",
   "steps.errors.intake": "Please complete the intake form.",
-  "steps.errors.inventory": "Please select at least one system.",
+  "steps.errors.systems": "Please select at least one system.",
+  "steps.errors.features": "Please select at least one site feature.",
 
   "inventory.systems.heading": "Systems",
   "inventory.siteFeatures.heading": "Site Features",
   "inventory.systems.loadError": "Error loading systems: {message}",
+  "inventory.siteFeatures.loadError": "Error loading site features: {message}",
   "inventory.selectOnly": "Select only those that apply",
 
   "summary.heading": "Summary",

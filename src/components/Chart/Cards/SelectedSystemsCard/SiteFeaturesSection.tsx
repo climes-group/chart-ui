@@ -135,6 +135,7 @@ export default function SiteFeaturesSection({
                     name={sanitizeName(feature["Site.Feature.Name"] as string)}
                     code={feature["ID"]}
                     isSelected={selectedFeatureCodes.has(code)}
+                    showInfoIcon
                     onToggle={() => onToggle(feature)}
                   />
                 </TooltipTrigger>
