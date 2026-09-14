@@ -5,7 +5,7 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, vi } from "vitest";
-import SelectedSystemsCard from "../SelectedSystemsCard";
+import SystemsCard from "../SystemsCard";
 
 const mockSystems = [
   {
@@ -56,7 +56,7 @@ function setupFetch(
   });
 }
 
-describe("SelectedSystemsCard tests", () => {
+describe("SystemsCard tests", () => {
   beforeEach(() => {
     localStorage.clear();
     clearRefDataCache();
@@ -82,9 +82,7 @@ describe("SelectedSystemsCard tests", () => {
     globalThis.fetch = vi.fn<typeof fetch>(
       () => new Promise<Response>(() => {}),
     ); // never resolves
-    const { container } = renderWithProviders(
-      <SelectedSystemsCard {...cardProps} />,
-    );
+    const { container } = renderWithProviders(<SystemsCard {...cardProps} />);
     expect(
       container.querySelectorAll(
         ".animate-pulse, [class*='skeleton'], [data-slot='skeleton']",
@@ -96,21 +94,21 @@ describe("SelectedSystemsCard tests", () => {
 
   it("renders systems after data loads", async () => {
     setupFetch();
-    renderWithProviders(<SelectedSystemsCard {...cardProps} />);
+    renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
     expect(screen.getByText("Boiler")).toBeInTheDocument();
   });
 
   it("renders service tabs for each unique service", async () => {
     setupFetch();
-    renderWithProviders(<SelectedSystemsCard {...cardProps} />);
+    renderWithProviders(<SystemsCard {...cardProps} />);
     await screen.findByText("Mechanical");
     expect(screen.getByText("Electrical")).toBeInTheDocument();
   });
 
   it("switches active service tab", async () => {
     setupFetch();
-    renderWithProviders(<SelectedSystemsCard {...cardProps} />);
+    renderWithProviders(<SystemsCard {...cardProps} />);
     await screen.findByText("Electrical");
 
     await userEvent.click(screen.getByRole("button", { name: "Electrical" }));
@@ -120,9 +118,7 @@ describe("SelectedSystemsCard tests", () => {
 
   it("toggles a system selection", async () => {
     setupFetch();
-    const { store } = renderWithProviders(
-      <SelectedSystemsCard {...cardProps} />,
-    );
+    const { store } = renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
     await userEvent.click(screen.getByRole("option", { name: /Boiler/ }));
@@ -133,9 +129,7 @@ describe("SelectedSystemsCard tests", () => {
 
   it("deselects a system when toggled again", async () => {
     setupFetch();
-    const { store } = renderWithProviders(
-      <SelectedSystemsCard {...cardProps} />,
-    );
+    const { store } = renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
     await userEvent.click(screen.getByRole("option", { name: /Boiler/ }));
@@ -147,9 +141,7 @@ describe("SelectedSystemsCard tests", () => {
 
   it("clears all selections with the clear all button", async () => {
     setupFetch();
-    const { store } = renderWithProviders(
-      <SelectedSystemsCard {...cardProps} />,
-    );
+    const { store } = renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
     await userEvent.click(screen.getByRole("option", { name: /Boiler/ }));
@@ -161,9 +153,7 @@ describe("SelectedSystemsCard tests", () => {
 
   it("clears selections by classification", async () => {
     setupFetch();
-    const { store } = renderWithProviders(
-      <SelectedSystemsCard {...cardProps} />,
-    );
+    const { store } = renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
     await userEvent.click(screen.getByRole("option", { name: /Boiler/ }));
@@ -180,7 +170,7 @@ describe("SelectedSystemsCard tests", () => {
       ok: false,
       json: async () => ({}),
     });
-    renderWithProviders(<SelectedSystemsCard {...cardProps} />);
+    renderWithProviders(<SystemsCard {...cardProps} />);
     await screen.findByText(/Error loading systems/);
   });
 
@@ -190,7 +180,7 @@ describe("SelectedSystemsCard tests", () => {
       { ...mockSystems[0] }, // exact duplicate
     ];
     setupFetch(withDuplicate);
-    renderWithProviders(<SelectedSystemsCard {...cardProps} />);
+    renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
     // mock has two distinct mechanical systems ("Boiler" and "Furnace") plus
     // one duplicate of Boiler — after dedupe, only one Boiler pill renders
@@ -205,7 +195,7 @@ describe("SelectedSystemsCard tests", () => {
       } as (typeof mockSystems)[number] & { Description: string },
     ]);
 
-    renderWithProviders(<SelectedSystemsCard {...cardProps} />);
+    renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
     const boiler = screen.getByRole("option", { name: /Boiler/ });
@@ -214,9 +204,7 @@ describe("SelectedSystemsCard tests", () => {
 
   it("stores the full system record in redux on selection", async () => {
     setupFetch();
-    const { store } = renderWithProviders(
-      <SelectedSystemsCard {...cardProps} />,
-    );
+    const { store } = renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
     await userEvent.click(screen.getByRole("option", { name: /Boiler/ }));
@@ -231,17 +219,13 @@ describe("SelectedSystemsCard tests", () => {
 
   it("has no axe violations in the loading state", async () => {
     global.fetch = vi.fn<typeof fetch>(() => new Promise<Response>(() => {}));
-    const { container } = renderWithProviders(
-      <SelectedSystemsCard {...cardProps} />,
-    );
+    const { container } = renderWithProviders(<SystemsCard {...cardProps} />);
     expect(await axe(container)).toHaveNoViolations();
   });
 
   it("has no axe violations after data loads", async () => {
     setupFetch();
-    const { container } = renderWithProviders(
-      <SelectedSystemsCard {...cardProps} />,
-    );
+    const { container } = renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
     expect(await axe(container)).toHaveNoViolations();
   });
@@ -250,9 +234,7 @@ describe("SelectedSystemsCard tests", () => {
     global.fetch = vi
       .fn()
       .mockResolvedValue({ ok: false, json: async () => ({}) });
-    const { container } = renderWithProviders(
-      <SelectedSystemsCard {...cardProps} />,
-    );
+    const { container } = renderWithProviders(<SystemsCard {...cardProps} />);
     await screen.findByText(/Error loading systems/);
     expect(await axe(container)).toHaveNoViolations();
   });
