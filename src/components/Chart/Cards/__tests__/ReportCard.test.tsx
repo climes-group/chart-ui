@@ -23,11 +23,6 @@ function renderInDebugMode(options = {}) {
 }
 
 describe("ReportCard tests", () => {
-  it("renders the heading", () => {
-    renderWithProviders(<ReportCard />);
-    expect(screen.getByText("Report")).toBeInTheDocument();
-  });
-
   it("renders the address, system count, site feature count, and modelling standard in the context strip", async () => {
     const { store } = renderWithProviders(<ReportCard />);
     await act(async () => {

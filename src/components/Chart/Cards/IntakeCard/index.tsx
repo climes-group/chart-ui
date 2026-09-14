@@ -120,8 +120,10 @@ export default function IntakeCard({
 
   return (
     <div>
-      <div className="mb-4 flex items-start justify-between">
-        <h2 className="heading-card">{t("intake.heading")}</h2>
+      <div className="flex justify-between">
+        <em className="text-muted-foreground text-sm">
+          {t("intake.description")}
+        </em>
         <Button
           variant="ghost"
           size="sm"
@@ -139,12 +141,6 @@ export default function IntakeCard({
           {t("common.clear")}
         </Button>
       </div>
-
-      <p>
-        <em className="text-muted-foreground text-sm">
-          {t("intake.description")}
-        </em>
-      </p>
       <form
         onSubmit={(e) => {
           e.preventDefault();

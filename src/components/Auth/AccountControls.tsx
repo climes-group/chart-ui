@@ -1,6 +1,6 @@
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
 import type { RootState } from "@/state/store";
-import { Button } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState, type MouseEvent } from "react";
@@ -33,7 +33,7 @@ function AccountControls({ logout }: Readonly<Props>) {
             aria-expanded={open ? "true" : undefined}
             onClick={handleClick}
             title={t("auth.loggedInAs", { email: String(profile.email ?? "") })}
-            variant="text"
+            variant="ghost"
             color="primary"
           >
             {String(profile.given_name ?? "")}
