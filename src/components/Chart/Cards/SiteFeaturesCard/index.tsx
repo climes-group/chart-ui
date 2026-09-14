@@ -74,7 +74,7 @@ export default function SiteFeaturesCard({ step }: Readonly<StepCardProps>) {
     dispatch(
       meetCondition({
         name: step.name,
-        condition: selectedSiteFeatures.length > 0,
+        condition: selectedSiteFeatures.length >= 0,
       }),
     );
   }, [selectedSiteFeatures.length, step?.name, dispatch]);
