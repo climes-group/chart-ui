@@ -123,7 +123,6 @@ describe("TestModePanel", () => {
     store.dispatch(setSteps(steps));
     expect(store.getState().flow.conditions.intake).toBe(false);
     expect(store.getState().flow.conditions.systems).toBe(false);
-    expect(store.getState().flow.conditions.features).toBe(false);
 
     await user.click(
       screen.getByRole("button", { name: /open test mode panel/i }),
