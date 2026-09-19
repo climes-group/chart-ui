@@ -1,6 +1,8 @@
 # Chart UI
 
-Frontend for the Climes Chart tool
+Frontend for the Climes Chart tool. See the
+[architecture overview](docs/ARCHITECTURE.md) for the application structure and
+data flow.
 
 [![PR Tests](https://github.com/climes-group/chart-ui/actions/workflows/pr-tests.yml/badge.svg)](https://github.com/climes-group/chart-ui/actions/workflows/pr-tests.yml)
 [![Firebase Deploy](https://github.com/climes-group/chart-ui/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/climes-group/chart-ui/actions/workflows/firebase-hosting-merge.yml)
@@ -80,6 +82,22 @@ npm test -- path/to/file # filter
 
 Card components include a `jest-axe` accessibility check per visual state.
 
+## CI and PR Checks
+
+Pull requests run the `PR Tests` workflow defined in
+[.github/workflows/pr-tests.yml](.github/workflows/pr-tests.yml). It triggers on
+`pull_request` and executes the project test suite with:
+
+```bash
+npm ci
+npm run test -- --run
+```
+
+The project is automatically scanned for code quality by the SonarQube bot.
+Snyk performs static application security testing (SAST) and software
+composition analysis (SCA). Results are reflected in the status badges at the
+top of this document.
+
 ## Project Structure
 
 ```
@@ -99,14 +117,10 @@ src/
 └── utils/                            cn, validators, geocode, generateReport, testing
 ```
 
-**Structure rules:**
-- Routes live in `src/pages/`.
-- Reusable UI primitives in `src/components/ui/` (lowercase, shadcn convention).
-- Feature components in `src/components/<Feature>/` (PascalCase).
-- All utilities in `src/utils/` (no `lib/` split).
-- Contexts co-locate with their primary consumer component, not a top-level
-  `context/`. Exception: `LocaleProvider` lives in `src/i18n/` alongside its
-  translate/format helpers.
+Routes live in `src/pages/`, reusable UI primitives in `src/components/ui/`,
+feature components in `src/components/`, and utilities in `src/utils/`. See the
+[architecture overview](docs/ARCHITECTURE.md) for the broader application
+structure.
 
 ## Deploy
 
