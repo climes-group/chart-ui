@@ -5,11 +5,13 @@ import {
   useSetOfflineMode,
   useTestMode,
 } from "@/components/TestMode/TestModeContext";
+import { Button } from "@/components/ui/button";
 import { meetCondition, setTheme } from "@/state/slices/flowReducer";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import { setIntakeForm, type IntakeForm } from "@/state/slices/reportReducer";
 import type { RootState } from "@/state/store";
-import { Bug, Wrench, X } from "lucide-react";
+import { useTheme } from "@/theme/ThemeProvider";
+import { Bug, Moon, Wrench, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SNAPSHOT_EVENT, loadSnapshot, type Snapshot } from "./snapshot";
@@ -63,6 +65,7 @@ export default function TestModePanel() {
   const offlineMode = useOfflineMode();
   const setDebugMode = useSetDebugMode();
   const setOfflineMode = useSetOfflineMode();
+  const { mode, setMode } = useTheme();
 
   const [isOpen, setIsOpen] = useState<boolean>(
     () => localStorage.getItem(PANEL_OPEN_KEY) === "true",
@@ -95,113 +98,113 @@ export default function TestModePanel() {
   };
 
   return (
-    <div className="fixed top-1/2 left-0 z-50 -translate-y-1/2">
+    <div className="fixed bottom-4 left-4 z-50">
       {/* Collapsed strip */}
-      <button
-        type="button"
+      <Button
+        variant="default"
+        size="icon"
         aria-label="Open test mode panel"
+        title="Test mode"
         aria-expanded={isOpen}
         onClick={() => setIsOpen(true)}
         className={[
-          "bg-teal-deep text-warm-gold hover:bg-teal-deep/90 hover:translate-x-0.5",
-          "flex w-7 flex-col items-center gap-2 rounded-r-md py-3 shadow-md",
+          "text-primary-foreground rounded-md shadow-md",
           "transition-all duration-200 ease-out",
           isOpen ? "pointer-events-none opacity-0" : "opacity-100",
         ].join(" ")}
       >
-        <Wrench className="size-3.5" />
-        <span className="rotate-180 text-[10px] font-semibold tracking-widest uppercase [writing-mode:vertical-rl]">
-          Test Mode
-        </span>
-      </button>
+        <Wrench />
+      </Button>
 
       {/* Expanded panel */}
       <div
         className={[
-          "border-border absolute top-1/2 left-0 -translate-y-1/2",
-          "w-48 overflow-hidden rounded-r-xl border border-l-0 bg-white/95 shadow-xl backdrop-blur",
+          "border-border absolute bottom-0 left-0",
+          "bg-surface w-48 overflow-hidden rounded-xl border shadow-xl backdrop-blur",
           "transition-all duration-200 ease-out",
           isOpen
             ? "translate-x-0 opacity-100"
             : "pointer-events-none -translate-x-full opacity-0",
         ].join(" ")}
       >
-        <div className="bg-teal-deep text-warm-gold flex items-center justify-between px-4 py-2">
+        <div className="bg-primary text-primary-foreground flex items-center justify-between px-4 py-2">
           <div className="flex items-center gap-2">
             <Wrench className="size-4" />
             <span className="text-xs font-semibold tracking-wide uppercase">
               Test Mode
             </span>
           </div>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="icon"
             aria-label="Close test mode panel"
             onClick={() => setIsOpen(false)}
-            className="rounded p-1 transition-colors hover:bg-white/10"
+            className="text-primary-foreground hover:bg-primary-foreground/10"
           >
             <X className="size-4" />
-          </button>
+          </Button>
         </div>
 
         <div className="flex flex-col gap-4 px-4 py-3">
+          <Button
+            variant={mode === "dark" ? "secondary" : "ghost"}
+            size="sm"
+            role="switch"
+            aria-checked={mode === "dark"}
+            onClick={() => setMode(mode === "dark" ? "light" : "dark")}
+            className="justify-start rounded-full"
+          >
+            <Moon className="size-3.5" />
+            Dark mode {mode === "dark" ? "on" : "off"} (WIP)
+          </Button>
+
           <div className="flex flex-wrap items-center gap-1">
             <span className="text-muted-foreground mr-1 text-xs">Theme:</span>
             {[1].map((t) => (
-              <button
-                type="button"
+              <Button
+                variant={theme === t ? "default" : "ghost"}
+                size="sm"
                 key={t}
                 onClick={() => dispatch(setTheme(t))}
-                className={[
-                  "rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
-                  theme === t
-                    ? "bg-teal-deep text-white"
-                    : "text-muted-foreground hover:bg-muted",
-                ].join(" ")}
+                className="rounded-full"
               >
                 {t}
-              </button>
+              </Button>
             ))}
           </div>
 
-          <button
-            type="button"
+          <Button
+            variant={debugMode ? "destructive" : "ghost"}
+            size="sm"
             role="switch"
             aria-checked={debugMode}
             onClick={() => setDebugMode(!debugMode)}
-            className={[
-              "flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-              debugMode
-                ? "bg-coral text-white"
-                : "bg-muted text-muted-foreground hover:bg-muted/80",
-            ].join(" ")}
+            className="justify-start rounded-full"
           >
             <Bug className="size-3.5" />
             Debug mode {debugMode ? "on" : "off"}
-          </button>
+          </Button>
 
-          <button
-            type="button"
+          <Button
+            variant={offlineMode ? "destructive" : "ghost"}
+            size="sm"
             role="switch"
             aria-checked={offlineMode}
             onClick={() => setOfflineMode(!offlineMode)}
-            className={[
-              "flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-              offlineMode
-                ? "bg-coral text-white"
-                : "bg-muted text-muted-foreground hover:bg-muted/80",
-            ].join(" ")}
+            className="justify-start rounded-full"
           >
             <Bug className="size-3.5" />
             Offline mode {offlineMode ? "on" : "off"}
-          </button>
+          </Button>
 
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleAutofill}
-            className="bg-golden-accent/20 text-warm-brown hover:bg-golden-accent/40 rounded-full px-3 py-1.5 text-left text-xs font-medium transition-colors"
+            className="justify-start rounded-full"
           >
             {snapshot ? "Autofill from snapshot" : "Autofill (defaults)"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

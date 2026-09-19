@@ -106,18 +106,18 @@ function ReportContext({
   const { jumpTo } = useFlow();
 
   return (
-    <div className="border-warm-gold/40 bg-warm-gold/10 space-y-3 rounded-lg border p-4">
+    <div className="border-accent/40 bg-accent/10 space-y-3 rounded-lg border p-4">
       <div className="flex items-start gap-2.5 text-sm">
         {hasLocation ? (
           <MapPin className="text-primary mt-0.5 size-4 shrink-0" />
         ) : (
-          <AlertTriangle className="text-warm-brown mt-0.5 size-4 shrink-0" />
+          <AlertTriangle className="text-warning mt-0.5 size-4 shrink-0" />
         )}
         <div className="flex-1 space-y-1">
           {hasLocation ? (
             <p className="text-foreground">{humanAddress}</p>
           ) : (
-            <p className="text-warm-brown">{t("report.context.noLocation")}</p>
+            <p className="text-warning">{t("report.context.noLocation")}</p>
           )}
           {systemLine && (
             <p className="text-muted-foreground text-xs">{systemLine}</p>
@@ -129,15 +129,16 @@ function ReportContext({
           )}
         </div>
       </div>
-      <div className="border-warm-gold/30 flex justify-start border-t pt-2.5">
-        <button
-          type="button"
+      <div className="border-accent/30 flex justify-start border-t pt-2.5">
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => jumpTo("summary")}
-          className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 rounded-md px-4 py-2 text-sm transition-colors"
+          className="text-muted-foreground hover:text-primary"
         >
           <Pencil className="size-3" />
           {t("report.context.editSummary")}
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -291,7 +292,7 @@ export default function ReportCard() {
               <Button
                 variant="link"
                 onClick={handleSaveSnapshot}
-                className="text-warm-brown hover:text-warm-brown/80 decoration-warm-gold/60 underline decoration-dashed underline-offset-4"
+                className="text-warning hover:text-warning/80 decoration-accent/60 underline decoration-dashed underline-offset-4"
               >
                 <Save />
                 {snapshotMeta
@@ -398,7 +399,7 @@ export default function ReportCard() {
                 <Button
                   variant="link"
                   onClick={() => setShowDebug(true)}
-                  className="text-warm-brown hover:text-warm-brown/80 decoration-warm-gold/60 underline decoration-dashed underline-offset-4"
+                  className="text-warning hover:text-warning/80 decoration-accent/60 underline decoration-dashed underline-offset-4"
                 >
                   <Bug />
                   {t("report.viewDebug")}

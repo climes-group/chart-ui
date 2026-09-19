@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import SelectionPill from "@/components/ui/SelectionPill";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -64,38 +65,34 @@ function SystemsSection({
           {t("inventory.selectOnly")}
         </em>
         {selectedSystemCodes.size > 0 && (
-          <button
-            type="button"
+          <Button
+            variant="muted"
+            size="sm"
             onClick={() => {
               onClearAll();
             }}
             aria-label={t("common.clearAllSelected", {
               count: selectedSystemCodes.size,
             })}
-            className="text-muted-foreground hover:text-destructive flex items-center gap-1 text-xs transition-colors"
           >
             <X className="size-3" aria-hidden />
             {t("common.clearAll", { count: selectedSystemCodes.size })}
-          </button>
+          </Button>
         )}
       </div>
-      <div className="border-golden-accent/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
+      <div className="border-secondary/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
         {serviceNames.map((service) => {
           const selectedCount = systems
             .filter((s) => s.Services === service)
             .filter((s) => selectedSystemCodes.has(getSystemCodeFor(s))).length;
 
           return (
-            <button
-              type="button"
+            <Button
+              variant={activeService === service ? "default" : "outline-muted"}
+              size="pill"
               key={service}
               onClick={() => onServiceChange(service)}
-              className={cn(
-                "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors",
-                activeService === service
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "text-muted-foreground border-border hover:text-foreground hover:border-golden-accent/60 bg-transparent",
-              )}
+              className="shrink-0 rounded-full whitespace-nowrap"
             >
               {sanitizeName(service)}
               {selectedCount > 0 && (
@@ -110,7 +107,7 @@ function SystemsSection({
                   {selectedCount}
                 </span>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -127,12 +124,13 @@ function SystemsSection({
           return (
             <div key={classification}>
               <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-teal-deep text-xs font-semibold tracking-wide uppercase">
+                <h3 className="text-primary text-xs font-semibold tracking-wide uppercase">
                   {sanitizeName(classification)}
                 </h3>
                 {selectedCount > 0 && (
-                  <button
-                    type="button"
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => {
                       onClearClassification(classification)();
                       listboxRefs.current[classification]?.focus();
@@ -141,10 +139,10 @@ function SystemsSection({
                       count: selectedCount,
                       classification: sanitizeName(classification),
                     })}
-                    className="text-muted-foreground hover:text-destructive text-xs transition-colors"
+                    className="h-auto px-0 text-xs text-muted-foreground hover:text-destructive"
                   >
                     {t("common.clearCount", { count: selectedCount })}
-                  </button>
+                  </Button>
                 )}
               </div>
               <TooltipProvider>

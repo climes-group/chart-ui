@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import SelectionPill from "@/components/ui/SelectionPill";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -60,20 +61,20 @@ function SiteFeaturesSection({
           {t("inventory.selectOnly")}
         </em>
         {selectedFeatureCodes.size > 0 && (
-          <button
-            type="button"
+          <Button
+            variant="muted"
+            size="sm"
             onClick={() => {
               onClearAll();
             }}
-            className="text-muted-foreground hover:text-destructive flex items-center gap-1 text-xs transition-colors"
           >
             <X className="size-3" />
             {t("common.clearAll", { count: selectedFeatureCodes.size })}
-          </button>
+          </Button>
         )}
       </div>
 
-      <div className="border-golden-accent/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
+      <div className="border-secondary/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
         {categoryNames.map((category) => {
           const selectedCount = features
             .filter((f) => f.Category === category)
@@ -82,16 +83,12 @@ function SiteFeaturesSection({
             ).length;
 
           return (
-            <button
-              type="button"
+            <Button
+              variant={activeCategory === category ? "default" : "outline-muted"}
+              size="pill"
               key={category}
               onClick={() => onCategoryChange(category)}
-              className={cn(
-                "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors",
-                activeCategory === category
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "text-muted-foreground border-border hover:text-foreground hover:border-golden-accent/60 bg-transparent",
-              )}
+              className="shrink-0 rounded-full whitespace-nowrap"
             >
               {sanitizeName(category)}
               {selectedCount > 0 && (
@@ -106,7 +103,7 @@ function SiteFeaturesSection({
                   {selectedCount}
                 </span>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>

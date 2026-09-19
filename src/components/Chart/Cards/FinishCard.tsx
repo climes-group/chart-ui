@@ -39,7 +39,7 @@ export default function FinishCard({ onBackToReport }: Readonly<Props>) {
   return (
     <div className="flex flex-col items-center px-4 py-12 text-center">
       <CheckCircle2
-        className="text-moss-primary mb-4 size-16"
+        className="text-success mb-4 size-16"
         strokeWidth={1.5}
         aria-hidden="true"
       />
@@ -54,13 +54,13 @@ export default function FinishCard({ onBackToReport }: Readonly<Props>) {
         {t("finish.summaryEnd")}
       </p>
       {onBackToReport && (
-        <button
-          type="button"
+        <Button
+          variant="link"
           onClick={onBackToReport}
-          className="text-primary mt-2 mb-8 text-sm underline"
+          className="mt-2 mb-8 h-auto px-0 text-sm"
         >
           {t("finish.backToReport")}
-        </button>
+        </Button>
       )}
 
       {confirmOpen ? (

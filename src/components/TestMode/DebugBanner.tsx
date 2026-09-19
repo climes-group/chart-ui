@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   useDebugMode,
   useOfflineMode,
@@ -28,14 +29,15 @@ function DebugBanner() {
             build version: <span className="text-green-300">0.0.1</span>
           </span>
         </div>
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           title="turn off debug mode"
-          className="rounded p-1 transition-colors hover:bg-white/10"
+          className="text-white hover:bg-white/10"
           onClick={() => setDebugMode(false)}
         >
           <X className="size-4" />
-        </button>
+        </Button>
       </div>
     );
   }

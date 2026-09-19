@@ -109,7 +109,7 @@ function SignaturePad({
               <div className="flex flex-col">
                 <div
                   className={cn(
-                    "relative h-40 touch-none rounded border-2 bg-white",
+                    "bg-surface relative h-40 touch-none rounded border-2",
                     hasError ? "border-destructive" : "border-muted-foreground/40",
                   )}
                 >

@@ -205,7 +205,7 @@ function SavedReports() {
     <div className="mx-auto max-w-3xl">
       <Card>
         <CardHeader className="flex flex-row items-center gap-3 pb-4">
-          <FileText className="text-teal-deep size-6 shrink-0" />
+          <FileText className="text-primary size-6 shrink-0" />
           <CardTitle className="heading-card flex-1">
             {t("savedReports.heading")}
           </CardTitle>
@@ -229,19 +229,19 @@ function SavedReports() {
           )}
 
           {downloadError && (
-            <p className="text-coral bg-coral/10 rounded-md px-3 py-2 text-sm">
+            <p className="text-destructive bg-destructive/10 rounded-md px-3 py-2 text-sm">
               {t("savedReports.downloadError", { filename: downloadError })}
             </p>
           )}
 
           {deleteAllError && (
-            <p className="text-coral bg-coral/10 mb-3 rounded-md px-3 py-2 text-sm">
+            <p className="text-destructive bg-destructive/10 mb-3 rounded-md px-3 py-2 text-sm">
               {t("savedReports.deleteAllError")}
             </p>
           )}
 
           {status === "error" && (
-            <p className="body-muted text-coral py-12 text-center">
+            <p className="body-muted text-destructive py-12 text-center">
               {t("savedReports.loadError")}
             </p>
           )}
@@ -260,7 +260,7 @@ function SavedReports() {
                   className="flex flex-col gap-1 py-4 sm:flex-row sm:items-center sm:gap-4"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-teal-deep truncate font-medium">
+                    <p className="text-primary truncate font-medium">
                       {report.name}
                     </p>
                     <p className="body-muted">
@@ -311,7 +311,7 @@ function SavedReports() {
           message={
             <>
               {t("savedReports.confirmDeleteBefore")}
-              <span className="text-charcoal font-medium">{pendingDelete}</span>
+              <span className="text-foreground font-medium">{pendingDelete}</span>
               {t("savedReports.confirmDeleteAfter")}
             </>
           }
@@ -328,7 +328,7 @@ function SavedReports() {
           message={
             <>
               {t("savedReports.confirmDeleteAllBefore")}
-              <span className="text-charcoal font-medium">
+              <span className="text-foreground font-medium">
                 {reports.length}
               </span>
               {t("savedReports.confirmDeleteAllAfter")}

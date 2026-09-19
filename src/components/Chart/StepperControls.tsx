@@ -24,7 +24,7 @@ function getStepCircleClass(
   isPulsing: boolean,
 ) {
   if (isActive || isCompleted) return "bg-primary border-primary text-primary-foreground";
-  if (isPulsing) return "bg-warm-brown border-warm-brown text-white";
+  if (isPulsing) return "bg-warning border-warning text-warning-foreground";
   return "border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60 bg-transparent";
 }
 
@@ -35,7 +35,7 @@ function getStepLabelClass(
 ) {
   if (isActive) return "text-foreground font-semibold";
   if (isCompleted) return "text-foreground";
-  if (isPulsing) return "text-warm-brown";
+  if (isPulsing) return "text-warning";
   return "text-muted-foreground group-hover:text-foreground/70";
 }
 
@@ -62,16 +62,17 @@ export function StepperHeader({
 
         return (
           <React.Fragment key={stepObj.name}>
-            <button
+            <Button
+              variant="stepper"
               onClick={() => jumpTo(stepObj.name)}
-              className="group flex shrink-0 items-center gap-2"
+              className="group shrink-0 items-center gap-2"
               data-locked={isLocked ? "true" : undefined}
               data-pulsing={isPulsing ? "true" : undefined}
             >
               <div className="relative">
                 {isPulsing && (
                   <span
-                    className="border-warm-brown absolute inset-0 animate-ping rounded-full border-2"
+                    className="border-warning absolute inset-0 animate-ping rounded-full border-2"
                     aria-hidden="true"
                   />
                 )}
@@ -96,7 +97,7 @@ export function StepperHeader({
               >
                 {stepLabel}
               </span>
-            </button>
+            </Button>
 
             {idx < steps.length - 1 && (
               <div
@@ -151,7 +152,6 @@ export function DesktopControls({
           <Button
             disabled={!currentStep}
             onClick={onNext}
-            className="disabled:opacity-50"
           >
             {nextLabel}
             <ArrowRightIcon className="size-4" />
@@ -215,7 +215,6 @@ export function MobileControls({
           disabled={!currentStep}
           onClick={onNext}
           size={currentStep?.next ? "icon" : "default"}
-          className="disabled:opacity-50"
           aria-label={nextLabel}
         >
           {!currentStep?.next && t("common.finish")}
