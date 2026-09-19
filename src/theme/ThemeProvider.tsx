@@ -1,7 +1,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useState,
@@ -26,12 +25,12 @@ function getInitialMode(): ThemeMode {
 }
 
 export function ThemeProvider({ children }: Readonly<{ children: ReactNode }>) {
-  const [mode, setModeState] = useState<ThemeMode>(getInitialMode);
+  const [mode, setMode] = useState<ThemeMode>(getInitialMode);
 
   useLayoutEffect(() => {
     const root = document.documentElement;
     if (mode === "system") {
-      root.removeAttribute("data-color-theme");
+      delete root.dataset.colorTheme;
     } else {
       root.dataset.colorTheme = mode;
     }
@@ -41,7 +40,7 @@ export function ThemeProvider({ children }: Readonly<{ children: ReactNode }>) {
   const value = useMemo(
     () => ({
       mode,
-      setMode: (nextMode: ThemeMode) => setModeState(nextMode),
+      setMode: (nextMode: ThemeMode) => setMode(nextMode),
     }),
     [mode],
   );
