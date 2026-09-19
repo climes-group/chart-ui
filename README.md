@@ -93,9 +93,10 @@ npm ci
 npm run test -- --run
 ```
 
-The project header includes a Snyk security badge linking to the repository's
-Snyk status. Snyk checks are not defined in a repository-local GitHub Actions
-workflow.
+The project is automatically scanned for code quality by the SonarQube bot.
+Snyk performs static application security testing (SAST) and software
+composition analysis (SCA). Results are reflected in the status badges at the
+top of this document.
 
 ## Project Structure
 
