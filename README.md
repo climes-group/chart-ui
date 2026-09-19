@@ -1,6 +1,8 @@
 # Chart UI
 
-Frontend for the Climes Chart tool
+Frontend for the Climes Chart tool. See the
+[architecture overview](docs/ARCHITECTURE.md) for the application structure and
+data flow.
 
 [![PR Tests](https://github.com/climes-group/chart-ui/actions/workflows/pr-tests.yml/badge.svg)](https://github.com/climes-group/chart-ui/actions/workflows/pr-tests.yml)
 [![Firebase Deploy](https://github.com/climes-group/chart-ui/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/climes-group/chart-ui/actions/workflows/firebase-hosting-merge.yml)
@@ -91,8 +93,9 @@ npm ci
 npm run test -- --run
 ```
 
-This repository also includes a Snyk security badge in the project header, which
-indicates security scanning is part of the repository’s quality checks.
+The project header includes a Snyk security badge linking to the repository's
+Snyk status. Snyk checks are not defined in a repository-local GitHub Actions
+workflow.
 
 ## Project Structure
 
@@ -113,14 +116,10 @@ src/
 └── utils/                            cn, validators, geocode, generateReport, testing
 ```
 
-**Structure rules:**
-- Routes live in `src/pages/`.
-- Reusable UI primitives in `src/components/ui/` (lowercase, shadcn convention).
-- Feature components in `src/components/<Feature>/` (PascalCase).
-- All utilities in `src/utils/` (no `lib/` split).
-- Contexts co-locate with their primary consumer component, not a top-level
-  `context/`. Exception: `LocaleProvider` lives in `src/i18n/` alongside its
-  translate/format helpers.
+Routes live in `src/pages/`, reusable UI primitives in `src/components/ui/`,
+feature components in `src/components/`, and utilities in `src/utils/`. See the
+[architecture overview](docs/ARCHITECTURE.md) for the broader application
+structure.
 
 ## Deploy
 

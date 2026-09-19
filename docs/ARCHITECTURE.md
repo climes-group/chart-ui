@@ -35,7 +35,7 @@ This document maps the current frontend architecture for the CHART tool.
 - The frontend authenticates users with OIDC; only authenticated users can access the app.
 - Google sign-in is handled through `@react-oauth/google`.
 - Microsoft sign-in is handled through MSAL and `@azure/msal-react`.
-- Identity claims are forwarded to the backend in request headers; identity will be used to manage saved reports
+- Identity claims are forwarded to the backend in request headers and support saved reports.
 - Client IDs and API configuration are supplied through Vite environment variables; see the repository README and `docs/OIDC.md`.
 
 ## API and Hosting
@@ -52,6 +52,6 @@ This document maps the current frontend architecture for the CHART tool.
 
 ## Related Documentation
 
-- [Project README](../README.md)
+- [Project README](../README.md) for setup, scripts, CI, and deployment workflows
 - [Hosting](HOSTING.md)
 - [OIDC configuration](OIDC.md)
