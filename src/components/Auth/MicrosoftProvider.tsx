@@ -1,4 +1,5 @@
 import { useTranslation } from "@/i18n";
+import { Button } from "@/components/ui/button";
 import { useMsal } from "@azure/msal-react";
 import { LoginProviderComponent } from "./providers";
 
@@ -39,15 +40,16 @@ function MicrosoftProvider({
   };
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="outline"
+      size="lg"
       onClick={handleClick}
       disabled={disabled}
-      className="focus-visible:ring-ring inline-flex w-full items-center justify-between gap-3 rounded-sm border border-1 border-[#8c8c8c] p-3 text-sm font-medium shadow-sm transition-colors hover:bg-[#f5f5f5] focus-visible:ring-1 focus-visible:outline-none disabled:opacity-50"
+      className="w-full justify-between"
     >
       <MicrosoftLogo />
       <span className="flex-grow">{label}</span>
-    </button>
+    </Button>
   );
 }
 

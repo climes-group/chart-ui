@@ -8,6 +8,7 @@ import {
 import type { ReactNode } from "react";
 import A from "./A";
 import { Button } from "@/components/ui/button";
+import SelectionPill from "@/components/ui/SelectionPill";
 
 function Design() {
   return (
@@ -22,15 +23,15 @@ function Design() {
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           {[
             { name: "Teal Deep", hex: "#224352", text: "text-white" },
-            { name: "Golden Accent", hex: "#e2b046", text: "text-teal-deep" },
+            { name: "Golden Accent", hex: "#e2b046", text: "text-primary" },
             {
               name: "Dark Gold",
               hex: "#8d6517",
               text: "text-white",
               tag: "AA",
             },
-            { name: "Warm Gold", hex: "#fadba4", text: "text-teal-deep" },
-            { name: "Linen", hex: "#f0efe3", text: "text-charcoal" },
+            { name: "Warm Gold", hex: "#fadba4", text: "text-primary" },
+            { name: "Linen", hex: "#f0efe3", text: "text-foreground" },
             { name: "Coral", hex: "#e3724f", text: "text-white" },
             {
               name: "Dark Coral",
@@ -104,6 +105,20 @@ function Design() {
         </p>
       </Section>
 
+      {/* ─── Selection pills ─── */}
+      <Section title="Selection pills">
+        <div className="flex flex-wrap items-center gap-3">
+          <SelectionPill name="Overhead Connection" />
+          <SelectionPill name="Overhead Connection" showInfoIcon />
+          <SelectionPill name="Overhead Connection" isSelected />
+          <SelectionPill
+            name="Overhead Connection"
+            isSelected
+            showInfoIcon
+          />
+        </div>
+      </Section>
+
       {/* ─── Buttons ─── */}
       <Section title="Buttons">
         <h3 className="mb-4">Variants</h3>
@@ -133,13 +148,13 @@ function Design() {
             <FileText /> Generate Report
           </Button>
           <Button variant="primary" size="sm">
-            <Download className="size-4" /> Download
+          <Download /> Download
           </Button>
           <Button variant="outline">
-            <RefreshCw className="size-4" /> Regenerate
+            <RefreshCw /> Regenerate
           </Button>
           <Button variant="destructive" size="sm">
-            <Trash2 className="size-4" /> Delete
+            <Trash2 /> Delete
           </Button>
         </div>
 

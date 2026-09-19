@@ -30,18 +30,18 @@ export default function SplashCard() {
   return (
     <section className="flex min-h-[calc(100vh-5rem)] flex-col py-8">
       <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
-        <h1 className="text-teal-deep text-5xl leading-none font-bold tracking-[0.15em] sm:text-6xl md:text-7xl lg:text-8xl">
+        <h1 className="text-primary text-5xl leading-none font-bold tracking-[0.15em] sm:text-6xl md:text-7xl lg:text-8xl">
           {t("splash.title")}
         </h1>
-        <p className="text-teal-deep/75 mt-3 max-w-sm text-sm sm:text-base">
+        <p className="text-primary/75 mt-3 max-w-sm text-sm sm:text-base">
           {t("splash.tagline")}
         </p>
-        <Button onClick={handleGetStarted} size="lg" className="mt-8 px-8">
+        <Button onClick={handleGetStarted} size="lg" className="mt-8">
           {t("splash.getStarted")}
           <ArrowRight />
         </Button>
       </div>
-      <footer className="text-charcoal/50 text-center text-xs">
+      <footer className="text-foreground/50 text-center text-xs">
         {t("splash.copyright", { year: new Date().getFullYear() })}
       </footer>
     </section>

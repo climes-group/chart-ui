@@ -5,6 +5,7 @@ import {
 } from "@/components/TestMode/TestModeContext";
 import { setSteps } from "@/state/slices/flowReducer";
 import steps from "@/steps";
+import { ThemeProvider } from "@/theme/ThemeProvider";
 import { renderWithProviders } from "@/utils/testing";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -14,9 +15,11 @@ import TestModePanel from "../TestModePanel";
 
 function renderPanel(options = {}) {
   return renderWithProviders(
-    <TestModeProvider>
-      <TestModePanel />
-    </TestModeProvider>,
+    <ThemeProvider>
+      <TestModeProvider>
+        <TestModePanel />
+      </TestModeProvider>
+    </ThemeProvider>,
     options,
   );
 }
@@ -34,6 +37,9 @@ describe("TestModePanel", () => {
     });
     expect(strip).toBeInTheDocument();
     expect(strip).toHaveAttribute("aria-expanded", "false");
+    expect(strip).toHaveAttribute("title", "Test mode");
+    expect(strip).toHaveClass("h-10", "w-10");
+    expect(strip).not.toHaveTextContent("Test Mode");
   });
 
   it("opens and closes the panel", async () => {
@@ -55,6 +61,22 @@ describe("TestModePanel", () => {
     expect(
       screen.getByRole("button", { name: /open test mode panel/i }),
     ).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("uses semantic surfaces and content colors for both themes", async () => {
+    const user = userEvent.setup();
+    renderPanel();
+
+    await user.click(
+      screen.getByRole("button", { name: /open test mode panel/i }),
+    );
+
+    const headerContent = screen.getByText("Test Mode").closest("div");
+    const header = headerContent?.parentElement;
+    const panel = header?.parentElement;
+    expect(panel).toHaveClass("bg-surface");
+    expect(panel).not.toHaveClass("bg-white/95");
+    expect(header).toHaveClass("bg-primary", "text-primary-foreground");
   });
 
   it("persists open state to localStorage", async () => {
@@ -95,10 +117,12 @@ describe("TestModePanel", () => {
     }
 
     renderWithProviders(
-      <TestModeProvider>
-        <TestModePanel />
-        <DebugReader />
-      </TestModeProvider>,
+      <ThemeProvider>
+        <TestModeProvider>
+          <TestModePanel />
+          <DebugReader />
+        </TestModeProvider>
+      </ThemeProvider>,
     );
 
     expect(screen.getByTestId("debug-reader")).toHaveTextContent("false");
@@ -114,6 +138,35 @@ describe("TestModePanel", () => {
     expect(toggle).toHaveAttribute("aria-checked", "true");
     expect(localStorage.getItem("CHART_DEBUG_MODE")).toBe("true");
     expect(screen.getByTestId("debug-reader")).toHaveTextContent("true");
+  });
+
+  it("toggles dark mode and persists the selected theme", async () => {
+    const user = userEvent.setup();
+    renderPanel();
+
+    await user.click(
+      screen.getByRole("button", { name: /open test mode panel/i }),
+    );
+    const toggle = screen.getByRole("switch", { name: /dark mode/i });
+    expect(toggle).toHaveAttribute("aria-checked", "false");
+
+    await user.click(toggle);
+
+    expect(toggle).toHaveAttribute("aria-checked", "true");
+    expect(localStorage.getItem("chart-ui-theme")).toBe("dark");
+    expect(document.documentElement).toHaveAttribute(
+      "data-color-theme",
+      "dark",
+    );
+
+    await user.click(toggle);
+
+    expect(toggle).toHaveAttribute("aria-checked", "false");
+    expect(localStorage.getItem("chart-ui-theme")).toBe("light");
+    expect(document.documentElement).toHaveAttribute(
+      "data-color-theme",
+      "light",
+    );
   });
 
   it("autofill unlocks every step gate and seeds required state", async () => {
@@ -178,10 +231,12 @@ describe("TestModePanel", () => {
     }
 
     renderWithProviders(
-      <TestModeProvider>
-        <TestModePanel />
-        <RegisterRef />
-      </TestModeProvider>,
+      <ThemeProvider>
+        <TestModeProvider>
+          <TestModePanel />
+          <RegisterRef />
+        </TestModeProvider>
+      </ThemeProvider>,
     );
 
     await user.click(

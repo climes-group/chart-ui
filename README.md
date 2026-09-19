@@ -69,6 +69,42 @@ VITE_FF_USE_GEO_API=true
 | `npm run typecheck` | `tsc --noEmit` — strict type checking   |
 | `npm run lint`      | ESLint flat config (zero warnings gate) |
 
+## Design system
+
+The application uses Tailwind CSS v4 through the Vite plugin. Design decisions
+are expressed as semantic CSS variables in [`src/index.css`](src/index.css),
+then exposed as Tailwind utilities such as `bg-background`, `text-foreground`,
+`bg-primary`, `text-muted-foreground`, and `border-border`.
+
+The semantic contract covers:
+
+- **Colour:** surfaces, content, actions, feedback, borders, focus rings, and
+  links. The existing Climes brand palette is kept as the primitive layer and
+  is not used directly by feature components.
+- **Spacing:** Tailwind's default 4px-based scale.
+- **Typography:** Avenir with semantic display, heading, body, label, and
+  caption roles.
+- **Shape and elevation:** shared radius and card/elevated shadow tokens.
+
+Theme values are selected at the document root using `data-color-theme`. The
+`ThemeProvider` currently supports `light`, `dark`, and `system` modes and
+persists the selection for future theme controls. With `system`, the browser's
+colour-scheme preference is used; only the light theme is currently exposed in
+the product UI, while the dark token set is available for incremental rollout.
+Material UI consumes the same semantic CSS variables rather than maintaining a
+second colour palette.
+
+### Buttons
+
+Product actions use [`src/components/ui/button.tsx`](src/components/ui/button.tsx)
+as the single button primitive. Use its existing semantic variants
+(`default`, `primary`, `secondary`, `outline`, `destructive`, `ghost`, and
+`link`) and sizes (`default`, `sm`, `lg`, `icon`, and `pill`) before adding
+caller-level classes. Caller classes should be limited to layout or a
+component-specific state that cannot be represented by the shared primitive.
+Option controls such as selection pills use the `option` variant and preserve
+their ARIA roles through the shared primitive.
+
 ## Testing
 
 Vitest runs in jsdom with globals enabled — no need to import `describe`,

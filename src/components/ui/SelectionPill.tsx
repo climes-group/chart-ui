@@ -1,4 +1,5 @@
 import { cn } from "@/utils/cn";
+import { Button } from "@/components/ui/button";
 import { Check, CircleQuestionMarkIcon } from "lucide-react";
 import { forwardRef, type ButtonHTMLAttributes, type MouseEvent } from "react";
 
@@ -24,7 +25,9 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
     ref,
   ) => {
     return (
-      <button
+      <Button
+        variant="option"
+        size="pill"
         ref={ref}
         role="option"
         aria-selected={isSelected}
@@ -34,30 +37,34 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
           onToggle?.(e);
         }}
         className={cn(
-          "inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-left text-sm transition-all select-none",
+          "select-none",
           isSelected
             ? "border-primary bg-primary/5 text-primary font-medium"
-            : "border-border text-foreground hover:border-golden-accent/50 hover:bg-warm-gold/10",
+            : "border-border text-foreground hover:border-secondary/50 hover:bg-accent/10",
         )}
       >
         <span
           aria-hidden="true"
           className={cn(
-            "flex size-4 shrink-0 items-center justify-center rounded-sm border-[1.5px] transition-colors",
+            "flex size-4 shrink-0 items-center justify-center rounded-sm border-[1.5px] leading-none transition-colors",
             isSelected
               ? "bg-primary border-primary"
               : "border-muted-foreground/30",
           )}
         >
           {isSelected && (
-            <Check className="size-2.5 text-white" strokeWidth={3} />
+            <Check className="text-primary-foreground size-2.5" strokeWidth={3} />
           )}
         </span>
 
-        <span className="leading-snug">{name}</span>
+        <span className="leading-none">{name}</span>
 
         {showInfoIcon && (
-          <span aria-hidden="true" data-info-icon="true">
+          <span
+            aria-hidden="true"
+            data-info-icon="true"
+            className="flex size-4 shrink-0 items-center justify-center leading-none"
+          >
             <CircleQuestionMarkIcon
               size="1rem"
               strokeWidth={2}
@@ -65,7 +72,7 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
             />
           </span>
         )}
-      </button>
+      </Button>
     );
   },
 );

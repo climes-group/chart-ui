@@ -28,6 +28,7 @@ import type {
 } from "@tanstack/form-core";
 import { LocateFixedIcon, XIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import type { Dispatch } from "redux";
 import type { IntakeFormApi } from ".";
@@ -219,7 +220,7 @@ function SiteLocationPreview({
   const geoCode = new GeoCode(geoData.lat, geoData.lng);
   return (
     <div className="space-y-3 pt-2">
-      <div className="border-golden-accent/40 bg-background flex items-center justify-between gap-4 rounded-lg border p-3">
+      <div className="border-secondary/40 bg-background flex items-center justify-between gap-4 rounded-lg border p-3">
         <div className="min-w-0">
           <p className="text-muted-foreground mb-0.5 text-xs">
             {t("intake.fields.siteLocation")}
@@ -229,17 +230,18 @@ function SiteLocationPreview({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <p className="text-warm-brown font-mono text-xs whitespace-nowrap">
+          <p className="text-warning font-mono text-xs whitespace-nowrap">
             {geoCode.str}
           </p>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onClear}
             aria-label={t("intake.fields.clearSiteLocation")}
-            className="text-muted-foreground hover:text-destructive rounded p-1 transition-colors"
+            className="text-muted-foreground hover:text-destructive"
           >
             <XIcon className="size-3.5" />
-          </button>
+          </Button>
         </div>
       </div>
       <div className="border-border overflow-hidden rounded-lg border">

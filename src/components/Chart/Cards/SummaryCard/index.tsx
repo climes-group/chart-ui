@@ -2,6 +2,7 @@ import { MapPin, Pencil } from "lucide-react";
 import { useSelector } from "react-redux";
 
 import useFlow from "@/hooks/useFlow";
+import { Button } from "@/components/ui/button";
 import { useTranslation, type TranslateFn } from "@/i18n";
 import {
   getFeatureKeyFor,
@@ -47,15 +48,17 @@ function SectionHeader({
   return (
     <div className="mb-3 flex items-center justify-between">
       <h3 className="heading-section">{title}</h3>
-      <button
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={() => jumpTo(editTo)}
         aria-label={"Jump to " + editLabel}
         title={editLabel}
-        className="text-muted-foreground hover:text-teal-deep flex items-center gap-1 rounded-md px-4 py-2 text-sm transition-colors"
+        className="text-muted-foreground hover:text-primary"
       >
         <Pencil className="size-3" />
         {t("summary.edit")}
-      </button>
+      </Button>
     </div>
   );
 }
@@ -96,10 +99,10 @@ function ServicePillList({ groups }: Readonly<ServicePillListProps>) {
 
 function SystemPill({ name, code }: Readonly<{ name: string; code?: string }>) {
   return (
-    <span className="border-teal-deep bg-teal-deep/10 text-teal-deep inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-sm font-medium">
+    <span className="border-primary bg-primary/10 text-primary inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-sm font-medium">
       <span>{name}</span>
       {code && (
-        <span className="text-warm-brown font-mono text-xs">{code}</span>
+        <span className="text-warning font-mono text-xs">{code}</span>
       )}
     </span>
   );
@@ -276,7 +279,7 @@ function SummaryCard() {
             <div>
               <p className="text-foreground text-sm">{humanAddress || "N/A"}</p>
               {geoData && (
-                <p className="text-warm-brown mt-0.5 font-mono text-xs">
+                <p className="text-warning mt-0.5 font-mono text-xs">
                   {formatLatLong(geoData.lat, geoData.lng)}
                 </p>
               )}

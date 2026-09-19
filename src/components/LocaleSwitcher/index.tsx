@@ -1,4 +1,5 @@
 import { useTranslation, type Locale } from "@/i18n";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 
 const LOCALES: { code: Locale; labelKey: string; switchKey: string }[] = [
@@ -32,8 +33,9 @@ function LocaleSwitcher({ className }: Readonly<{ className?: string }>) {
                 |
               </span>
             )}
-            <button
-              type="button"
+            <Button
+              variant="link"
+              size="sm"
               onClick={() => setLocale(option.code)}
               aria-current={isActive ? "true" : undefined}
               aria-label={t(option.switchKey)}
@@ -46,7 +48,7 @@ function LocaleSwitcher({ className }: Readonly<{ className?: string }>) {
               )}
             >
               {t(option.labelKey)}
-            </button>
+            </Button>
           </span>
         );
       })}
