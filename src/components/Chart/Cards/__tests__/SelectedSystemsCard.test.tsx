@@ -171,7 +171,9 @@ describe("SystemsCard tests", () => {
       json: async () => ({}),
     });
     renderWithProviders(<SystemsCard {...cardProps} />);
-    await screen.findByText(/Error loading systems/);
+    expect(
+      await screen.findByText(/Error loading systems/),
+    ).toBeInTheDocument();
   });
 
   it("deduplicates systems with identical keys", async () => {
