@@ -80,6 +80,20 @@ npm test -- path/to/file # filter
 
 Card components include a `jest-axe` accessibility check per visual state.
 
+## CI and PR Checks
+
+Pull requests run the `PR Tests` workflow defined in
+[.github/workflows/pr-tests.yml](.github/workflows/pr-tests.yml). It triggers on
+`pull_request` and executes the project test suite with:
+
+```bash
+npm ci
+npm run test -- --run
+```
+
+This repository also includes a Snyk security badge in the project header, which
+indicates security scanning is part of the repository’s quality checks.
+
 ## Project Structure
 
 ```
