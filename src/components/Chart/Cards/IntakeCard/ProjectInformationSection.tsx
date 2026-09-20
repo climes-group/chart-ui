@@ -1,4 +1,5 @@
 import MapView from "@/components/Map/MapView";
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import type { RootState } from "@/state/store";
@@ -16,10 +17,8 @@ import {
   FormControlLabel,
   FormGroup,
   FormLabel,
-  IconButton,
   MenuItem,
   TextField,
-  Tooltip,
 } from "@mui/material";
 import type {
   AnyFieldApi,
@@ -28,7 +27,6 @@ import type {
 } from "@tanstack/form-core";
 import { LocateFixedIcon, XIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import type { Dispatch } from "redux";
 import type { IntakeFormApi } from ".";
@@ -159,47 +157,50 @@ function ProjectAddressAutocomplete({
         );
       }}
       renderInput={(params) => (
-        <TextField
-          {...params}
-          label={t("intake.fields.projectAddress")}
-          required
-          variant="outlined"
-          fullWidth
-          onBlur={field.handleBlur}
-          error={field.state.meta.isTouched && !!field.state.meta.errors.length}
-          helperText={
-            field.state.meta.isTouched
-              ? field.state.meta.errors[0]
-              : t("intake.fields.projectAddressHelp")
-          }
-          slotProps={{
-            input: {
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {loading ? (
-                    <CircularProgress
-                      color="inherit"
-                      size={16}
-                      sx={{ mr: 0.5 }}
-                    />
-                  ) : null}
-                  <Tooltip title={t("intake.fields.useMyLocation")}>
-                    <IconButton
-                      size="small"
-                      onClick={onLocate}
-                      aria-label={t("intake.fields.useMyLocation")}
-                      sx={{ mr: -0.5 }}
-                    >
-                      <LocateFixedIcon className="size-4" />
-                    </IconButton>
-                  </Tooltip>
-                  {params.InputProps.endAdornment}
-                </>
-              ),
-            },
-          }}
-        />
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+          <TextField
+            {...params}
+            label={t("intake.fields.projectAddress")}
+            required
+            variant="outlined"
+            fullWidth
+            onBlur={field.handleBlur}
+            error={
+              field.state.meta.isTouched && !!field.state.meta.errors.length
+            }
+            helperText={
+              field.state.meta.isTouched
+                ? field.state.meta.errors[0]
+                : t("intake.fields.projectAddressHelp")
+            }
+            slotProps={{
+              input: {
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {loading ? (
+                      <CircularProgress
+                        color="inherit"
+                        size={16}
+                        sx={{ mr: 0.5 }}
+                      />
+                    ) : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              },
+            }}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onLocate}
+            className="mt-2 h-14 shrink-0 rounded-[0.75rem] sm:mt-0"
+          >
+            <LocateFixedIcon className="size-4" />
+            {t("intake.fields.useMyLocation")}
+          </Button>
+        </div>
       )}
     />
   );

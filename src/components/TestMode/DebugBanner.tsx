@@ -1,13 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { meetCondition, setTheme } from "@/state/slices/flowReducer";
+import { meetCondition } from "@/state/slices/flowReducer";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import { setIntakeForm, type IntakeForm } from "@/state/slices/reportReducer";
-import type { RootState } from "@/state/store";
-import { useTheme } from "@/theme/ThemeProvider";
-import { Bug, Moon, Wifi, WifiOff, Wrench, X } from "lucide-react";
+import { useTheme, type ThemeMode } from "@/theme/ThemeProvider";
+import { Bug, Moon, Sun, Wifi, WifiOff, Wrench, X, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   useDebugMode,
   useOfflineMode,
@@ -60,7 +59,6 @@ const PANEL_OPEN_KEY = "CHART_TEST_PANEL_OPEN";
 function DebugBanner() {
   const { isTestMode, intakeFillRef } = useTestMode();
   const dispatch = useDispatch();
-  const theme = useSelector((state: RootState) => state.flow.theme);
   const debugMode = useDebugMode();
   const offlineMode = useOfflineMode();
   const setDebugMode = useSetDebugMode();
@@ -147,15 +145,31 @@ function DebugBanner() {
           >
             {snapshot ? "Autofill from snapshot" : "Autofill (defaults)"}
           </Button>
-          <div className="flex h-full items-center gap-2 whitespace-nowrap">
-            <Moon className="size-4" />
-            <Switch
-              aria-label={`Dark mode: ${mode === "dark" ? "on" : "off"}`}
-              title={`Toggle dark mode (currently ${mode === "dark" ? "on" : "off"})`}
-              checked={mode === "dark"}
-              onCheckedChange={(checked) => setMode(checked ? "dark" : "light")}
-              className="data-[state=checked]:bg-green-500"
-            />
+          <div
+            className="flex h-full items-center gap-1 whitespace-nowrap"
+            aria-label="Color theme"
+            role="group"
+          >
+            <span className="mr-1 text-white/70">Theme:</span>
+            {(["light", "dark", "cyberpunk"] as ThemeMode[]).map((colorTheme) => (
+              <Button
+                key={colorTheme}
+                variant="ghost"
+                size="sm"
+                aria-label={colorTheme}
+                aria-pressed={mode === colorTheme}
+                title={`Use ${colorTheme} color theme`}
+                onClick={() => setMode(colorTheme)}
+                className={[
+                  "h-7 w-7 rounded-full p-0 text-white hover:bg-white/10 hover:text-white",
+                  mode === colorTheme ? "bg-white/20" : "",
+                ].join(" ")}
+              >
+                {colorTheme === "light" && <Sun className="size-4" aria-hidden="true" />}
+                {colorTheme === "dark" && <Moon className="size-4" aria-hidden="true" />}
+                {colorTheme === "cyberpunk" && <Zap className="size-4" aria-hidden="true" />}
+              </Button>
+            ))}
           </div>
           <div className="flex h-full items-center gap-2 whitespace-nowrap">
             {offlineMode ? (
@@ -180,20 +194,6 @@ function DebugBanner() {
               onCheckedChange={setDebugMode}
               className="data-[state=checked]:bg-green-500"
             />
-          </div>
-          <div className="flex h-full items-center gap-1 whitespace-nowrap">
-            <span className="text-white/70">Theme:</span>
-            {[1].map((t) => (
-              <Button
-                variant={theme === t ? "default" : "ghost"}
-                size="sm"
-                key={t}
-                onClick={() => dispatch(setTheme(t))}
-                className="h-7 rounded-full px-2 text-white hover:bg-white/10 hover:text-white"
-              >
-                {t}
-              </Button>
-            ))}
           </div>
         </div>
       </div>

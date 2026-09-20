@@ -9,6 +9,7 @@ import { prefetchRefData } from "@/utils/prefetchRefData";
 import { ArrowRight } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@/theme/ThemeProvider";
 
 export default function SplashCard() {
   const dispatch = useAppDispatch();
@@ -16,6 +17,7 @@ export default function SplashCard() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const isOfflineMode = useOfflineMode();
+  const { mode } = useTheme();
 
   const handleGetStarted = () => {
     if (!profileData && !isOfflineMode) {
@@ -30,7 +32,12 @@ export default function SplashCard() {
   return (
     <section className="flex min-h-[calc(100vh-5rem)] flex-col py-8">
       <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
-        <h1 className="text-primary text-5xl leading-none font-bold tracking-[0.15em] sm:text-6xl md:text-7xl lg:text-8xl">
+        <h1
+          className={[
+            "text-primary text-5xl leading-none font-bold tracking-[0.15em] sm:text-6xl md:text-7xl lg:text-8xl",
+            mode === "cyberpunk" ? "cyberpunk-logo" : "",
+          ].join(" ")}
+        >
           {t("splash.title")}
         </h1>
         <p className="text-primary/75 mt-3 max-w-sm text-sm sm:text-base">

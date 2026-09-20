@@ -3,7 +3,6 @@ import reducer, {
   meetCondition,
   setError,
   setSteps,
-  setTheme,
   stepBackward,
   stepForward,
 } from "../flowReducer";
@@ -13,7 +12,6 @@ const initialState = {
   currentStep: undefined,
   error: undefined,
   conditions: {},
-  theme: 1,
 };
 
 const steps = [
@@ -120,10 +118,4 @@ describe("flowReducer", () => {
     });
   });
 
-  describe("setTheme", () => {
-    it("updates the theme", () => {
-      const state = reducer(initialState, setTheme(2));
-      expect(state.theme).toBe(2);
-    });
-  });
 });

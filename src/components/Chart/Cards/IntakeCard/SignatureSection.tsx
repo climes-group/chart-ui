@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TextField } from "@mui/material";
 import type { AnyFieldApi, AnyFormState } from "@tanstack/form-core";
 import { useStore } from "@tanstack/react-form";
@@ -30,11 +30,31 @@ function SignaturePad({
 }: Readonly<PadProps>) {
   const ref = useRef<SignatureCanvas | null>(null);
   const { t } = useTranslation();
+  const [penColor, setPenColor] = useState("#224352");
   const value = useStore(
     form.store,
     (snapshot: AnyFormState) =>
       (snapshot.values as Record<string, string>)[signatureFieldName],
   );
+
+  useEffect(() => {
+    const updatePenColor = () => {
+      const probe = document.createElement("span");
+      probe.style.color = "var(--primary)";
+      document.body.appendChild(probe);
+      const resolvedColor = getComputedStyle(probe).color;
+      probe.remove();
+      setPenColor(resolvedColor || "#224352");
+    };
+
+    updatePenColor();
+    const observer = new MutationObserver(updatePenColor);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-color-theme"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (value && ref.current) {
@@ -115,6 +135,7 @@ function SignaturePad({
                 >
                   <SignatureCanvas
                     ref={ref}
+                    penColor={penColor}
                     onEnd={handleEnd}
                     canvasProps={
                       {
