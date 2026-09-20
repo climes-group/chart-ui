@@ -100,19 +100,6 @@ describe("DebugBanner", () => {
     ).toHaveAttribute("aria-expanded", "true");
   });
 
-  it("dispatches setTheme when a theme pill is clicked", async () => {
-    const user = userEvent.setup();
-    const { store } = renderPanel({
-      preloadedState: { flow: { theme: 99, steps: [], conditions: {} } },
-    });
-
-    await user.click(
-      screen.getByRole("button", { name: /toggle debug banner/i }),
-    );
-    await user.click(screen.getByRole("button", { name: "1" }));
-    expect(store.getState().flow.theme).toBe(1);
-  });
-
   it("toggles debug mode reactively across consumers", async () => {
     const user = userEvent.setup();
 
@@ -149,28 +136,29 @@ describe("DebugBanner", () => {
     );
   });
 
-  it("toggles dark mode and persists the selected theme", async () => {
+  it("selects a color theme and persists it", async () => {
     const user = userEvent.setup();
     renderPanel();
 
     await user.click(
       screen.getByRole("button", { name: /toggle debug banner/i }),
     );
-    const toggle = screen.getByRole("switch", { name: /dark mode/i });
-    expect(toggle).toHaveAttribute("aria-checked", "false");
+    const cyberpunk = screen.getByRole("button", { name: "cyberpunk" });
+    expect(cyberpunk).toHaveAttribute("aria-pressed", "false");
 
-    await user.click(toggle);
+    await user.click(cyberpunk);
 
-    expect(toggle).toHaveAttribute("aria-checked", "true");
-    expect(localStorage.getItem("chart-ui-theme")).toBe("dark");
+    expect(cyberpunk).toHaveAttribute("aria-pressed", "true");
+    expect(localStorage.getItem("chart-ui-theme")).toBe("cyberpunk");
     expect(document.documentElement).toHaveAttribute(
       "data-color-theme",
-      "dark",
+      "cyberpunk",
     );
 
-    await user.click(toggle);
+    const light = screen.getByRole("button", { name: "light" });
+    await user.click(light);
 
-    expect(toggle).toHaveAttribute("aria-checked", "false");
+    expect(light).toHaveAttribute("aria-pressed", "true");
     expect(localStorage.getItem("chart-ui-theme")).toBe("light");
     expect(document.documentElement).toHaveAttribute(
       "data-color-theme",

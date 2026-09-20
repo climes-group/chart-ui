@@ -6,7 +6,6 @@ type FlowState = {
   currentStep: Step | undefined;
   error: string | null | undefined;
   conditions: Record<string, boolean>;
-  theme: number;
 };
 
 const initialState: FlowState = {
@@ -14,16 +13,12 @@ const initialState: FlowState = {
   currentStep: undefined,
   error: undefined,
   conditions: {},
-  theme: 1,
 };
 
 export const flowSlice = createSlice({
   name: "flow",
   initialState,
   reducers: {
-    setTheme: (state, action: PayloadAction<number>) => {
-      state.theme = action.payload;
-    },
     setInitial: (state, action: PayloadAction<Step | undefined>) => {
       state.currentStep = action.payload;
     },
@@ -77,7 +72,6 @@ export const {
   meetCondition,
   setError,
   setSteps,
-  setTheme,
 } = flowSlice.actions;
 
 export default flowSlice.reducer;

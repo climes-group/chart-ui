@@ -10,14 +10,30 @@ import A from "./A";
 import { Button } from "@/components/ui/button";
 import SelectionPill from "@/components/ui/SelectionPill";
 import { Switch } from "@/components/ui/switch";
+import { useTheme, type ThemeMode } from "@/theme/ThemeProvider";
 
 function Design() {
+  const { mode, setMode } = useTheme();
   return (
     <main className="p-8 min-h-100 max-w-5xl mx-auto">
       <h1 className="mb-2">Design System</h1>
       <p className="body-muted mb-12">
         Colours, typography, and components used across the application.
       </p>
+
+      <Section title="Themes">
+        <div className="flex flex-wrap gap-3">
+          {(["light", "dark", "cyberpunk"] as ThemeMode[]).map((theme) => (
+            <Button
+              key={theme}
+              variant={mode === theme ? "default" : "outline"}
+              onClick={() => setMode(theme)}
+            >
+              {theme}
+            </Button>
+          ))}
+        </div>
+      </Section>
 
       {/* ─── Colour Palette ─── */}
       <Section title="Colours">

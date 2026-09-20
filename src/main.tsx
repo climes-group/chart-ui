@@ -151,6 +151,23 @@ function MuiThemeBridge({ children }: Readonly<{ children: React.ReactNode }>) {
               },
             },
           },
+          MuiFormLabel: {
+            styleOverrides: {
+              root: {
+                color: "var(--foreground)",
+                "&.Mui-focused": {
+                  color: "var(--primary)",
+                },
+              },
+            },
+          },
+          MuiFormControlLabel: {
+            styleOverrides: {
+              label: {
+                color: "var(--foreground)",
+              },
+            },
+          },
           MuiFormHelperText: {
             styleOverrides: {
               root: {

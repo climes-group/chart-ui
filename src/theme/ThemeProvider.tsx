@@ -7,7 +7,7 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 
-type ThemeMode = "light" | "dark" | "system";
+export type ThemeMode = "light" | "dark" | "cyberpunk" | "system";
 
 type ThemeContextValue = {
   mode: ThemeMode;
@@ -19,7 +19,10 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 function getInitialMode(): ThemeMode {
   const stored = globalThis.localStorage?.getItem(STORAGE_KEY);
-  return stored === "light" || stored === "dark" || stored === "system"
+  return stored === "light" ||
+    stored === "dark" ||
+    stored === "cyberpunk" ||
+    stored === "system"
     ? stored
     : "system";
 }

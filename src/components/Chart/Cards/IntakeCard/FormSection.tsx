@@ -75,7 +75,7 @@ export default function FormSection({
           <span
             className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium tabular-nums transition-colors ${
               complete
-                ? "bg-success/10 text-success"
+                ? "bg-success text-success-foreground"
                 : "bg-muted text-muted-foreground"
             }`}
             aria-label={t("intake.fieldsCompleted", { filled, total })}
