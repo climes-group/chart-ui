@@ -24,11 +24,7 @@ import { getCachedJson } from "@/utils/prefetchRefData";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import type { StepCardProps } from "../../StepRenderer";
-import {
-  dedupeSiteFeatures,
-  handleListboxKeyDown,
-  sanitizeName,
-} from "./utils";
+import { dedupeSiteFeatures, sanitizeName } from "./utils";
 
 function SiteFeaturesSection({
   features,
@@ -110,11 +106,8 @@ function SiteFeaturesSection({
 
       <TooltipProvider>
         <div
-          role="listbox"
-          aria-multiselectable="true"
+          role="group"
           aria-label={sanitizeName(activeCategory)}
-          onKeyDown={handleListboxKeyDown}
-          tabIndex={-1}
           className="flex flex-wrap gap-2"
         >
           {featuresForCategory.map((feature) => {

@@ -29,8 +29,7 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
         variant="option"
         size="pill"
         ref={ref}
-        role="option"
-        aria-selected={isSelected}
+        aria-pressed={isSelected}
         {...props}
         onClick={(e) => {
           onClick?.(e);

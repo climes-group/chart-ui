@@ -110,7 +110,10 @@ function SavedReports() {
       })
       .then((data) => {
         const items = Array.isArray(data?.data) ? (data.data as Report[]) : [];
-        setReports(items.sort((a, b) => (b.created || "").localeCompare(a.created || "")));
+        const sortedItems = [...items].sort((a, b) =>
+          (b.created || "").localeCompare(a.created || ""),
+        );
+        setReports(sortedItems);
         setStatus("ready");
       })
       .catch(() => setStatus("error"));

@@ -212,31 +212,36 @@ describe("useFlow", () => {
   });
 
   describe("isStepLocked", () => {
-    it("returns false for the first step (no preceding steps)", () => {
+    it.each([
+      {
+        description: "false for the first step (no preceding steps)",
+        target: "Step 1",
+        meetFirstStep: false,
+        expected: false,
+      },
+      {
+        description: "true when a preceding step has an unmet condition",
+        target: "Step 2",
+        meetFirstStep: false,
+        expected: true,
+      },
+      {
+        description: "false when all preceding conditions are met",
+        target: "Step 2",
+        meetFirstStep: true,
+        expected: false,
+      },
+    ])("$description", ({ target, meetFirstStep, expected }) => {
       const store = setupTestStore();
       const { result } = renderHook(() => useFlow(stepsWithCondition), {
         wrapper: makeWrapper(store),
       });
-      expect(result.current.isStepLocked("Step 1")).toBe(false);
-    });
-
-    it("returns true when a preceding step has an unmet condition", () => {
-      const store = setupTestStore();
-      const { result } = renderHook(() => useFlow(stepsWithCondition), {
-        wrapper: makeWrapper(store),
-      });
-      expect(result.current.isStepLocked("Step 2")).toBe(true);
-    });
-
-    it("returns false when all preceding conditions are met", () => {
-      const store = setupTestStore();
-      const { result } = renderHook(() => useFlow(stepsWithCondition), {
-        wrapper: makeWrapper(store),
-      });
-      act(() => {
-        store.dispatch(meetCondition({ name: "Step 1", condition: true }));
-      });
-      expect(result.current.isStepLocked("Step 2")).toBe(false);
+      if (meetFirstStep) {
+        act(() => {
+          store.dispatch(meetCondition({ name: "Step 1", condition: true }));
+        });
+      }
+      expect(result.current.isStepLocked(target)).toBe(expected);
     });
 
     it("returns true for a step deep in the chain when an early condition is unmet", () => {

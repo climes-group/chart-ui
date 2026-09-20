@@ -24,7 +24,7 @@ import { getCachedJson } from "@/utils/prefetchRefData";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import type { StepCardProps } from "../../StepRenderer";
-import { dedupeSystems, handleListboxKeyDown, sanitizeName } from "./utils";
+import { dedupeSystems, sanitizeName } from "./utils";
 
 function SystemsSection({
   systems,
@@ -147,11 +147,8 @@ function SystemsSection({
               </div>
               <TooltipProvider>
                 <div
-                  role="listbox"
-                  aria-multiselectable="true"
+                  role="group"
                   aria-label={sanitizeName(classification)}
-                  onKeyDown={handleListboxKeyDown}
-                  tabIndex={-1}
                   ref={(el) => {
                     listboxRefs.current[classification] = el;
                   }}
