@@ -5,10 +5,11 @@ import {
   RefreshCw,
   Trash2,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import A from "./A";
 import { Button } from "@/components/ui/button";
 import SelectionPill from "@/components/ui/SelectionPill";
+import { Switch } from "@/components/ui/switch";
 
 function Design() {
   return (
@@ -119,6 +120,14 @@ function Design() {
         </div>
       </Section>
 
+      {/* ─── Switches ─── */}
+      <Section title="Switches">
+        <div className="flex flex-wrap items-center gap-6">
+          <ShowcaseSwitch label="Off" />
+          <ShowcaseSwitch label="On" defaultChecked />
+        </div>
+      </Section>
+
       {/* ─── Buttons ─── */}
       <Section title="Buttons">
         <h3 className="mb-4">Variants</h3>
@@ -173,6 +182,23 @@ function Design() {
         </div>
       </Section>
     </main>
+  );
+}
+
+function ShowcaseSwitch({
+  label,
+  defaultChecked = false,
+}: Readonly<{ label: string; defaultChecked?: boolean }>) {
+  const [checked, setChecked] = useState(defaultChecked);
+  return (
+    <label className="flex items-center gap-2">
+      <span className="text-sm">{label}</span>
+      <Switch
+        aria-label={`${label} switch`}
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+    </label>
   );
 }
 
