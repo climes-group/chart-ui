@@ -19,6 +19,6 @@ describe("MapView tests", () => {
     // test code here
     const screen = render(<MapView geoData={mockGeoData} />);
 
-    await screen.findByText("Leaflet");
+    expect(await screen.findByText("Leaflet")).toBeInTheDocument();
   });
 });

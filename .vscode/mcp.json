@@ -1,0 +1,17 @@
+{
+  "servers": {
+    "github-dependabot": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/x/dependabot/readonly"
+    },
+
+    "sonarqube": {
+      "url": "https://api.sonarcloud.io/mcp",
+      "type": "http",
+      "headers": {
+        "Authorization": "Bearer ${env:SONAR_QUBE_TOKEN}",
+        "SONARQUBE_ORG": "climes-group"
+      }
+    }
+  }
+}

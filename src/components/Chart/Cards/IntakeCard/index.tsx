@@ -85,13 +85,10 @@ export default function IntakeCard({
 
       if (submitSucceeded.current) {
         nav();
+      } else if (form.state.errors.length > 0) {
+        dispatch(setError(form.state.errors[0].form));
       } else {
-        // get error for error map
-        if (form.state.errors.length > 0) {
-          dispatch(setError(form.state.errors[0].form));
-        } else {
-          dispatch(setError(t("intake.errorMessage")));
-        }
+        dispatch(setError(t("intake.errorMessage")));
       }
     });
     if (intakeFillRef) {

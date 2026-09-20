@@ -16,7 +16,7 @@ describe("AccountControls tests", () => {
         },
       },
     });
-    await screen.findByText("John");
+    expect(await screen.findByRole("button", { name: "John" })).toBeVisible();
   });
 
   it("should render a profile button with email as title", async () => {

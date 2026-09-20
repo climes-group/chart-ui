@@ -121,7 +121,7 @@ describe("SystemsCard tests", () => {
     const { store } = renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
-    await userEvent.click(screen.getByRole("option", { name: /Boiler/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
 
     const selected = store.getState().report.selectedSystems;
     expect(selected).toHaveLength(1);
@@ -132,10 +132,10 @@ describe("SystemsCard tests", () => {
     const { store } = renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
-    await userEvent.click(screen.getByRole("option", { name: /Boiler/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
     expect(store.getState().report.selectedSystems).toHaveLength(1);
 
-    await userEvent.click(screen.getByRole("option", { name: /Boiler/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
     expect(store.getState().report.selectedSystems).toHaveLength(0);
   });
 
@@ -144,7 +144,7 @@ describe("SystemsCard tests", () => {
     const { store } = renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
-    await userEvent.click(screen.getByRole("option", { name: /Boiler/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
     await screen.findByText(/Clear all/);
     await userEvent.click(screen.getByText(/Clear all/));
 
@@ -156,7 +156,7 @@ describe("SystemsCard tests", () => {
     const { store } = renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
-    await userEvent.click(screen.getByRole("option", { name: /Boiler/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
     await screen.findByRole("button", { name: /Clear 1 selected items in/ });
     await userEvent.click(
       screen.getByRole("button", { name: /Clear 1 selected items in/ }),
@@ -171,7 +171,9 @@ describe("SystemsCard tests", () => {
       json: async () => ({}),
     });
     renderWithProviders(<SystemsCard {...cardProps} />);
-    await screen.findByText(/Error loading systems/);
+    expect(
+      await screen.findByText(/Error loading systems/),
+    ).toBeInTheDocument();
   });
 
   it("deduplicates systems with identical keys", async () => {
@@ -198,7 +200,7 @@ describe("SystemsCard tests", () => {
     renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
-    const boiler = screen.getByRole("option", { name: /Boiler/ });
+    const boiler = screen.getByRole("button", { name: /Boiler/ });
     expect(boiler.querySelector('[data-info-icon="true"]')).toBeTruthy();
   });
 
@@ -207,7 +209,7 @@ describe("SystemsCard tests", () => {
     const { store } = renderWithProviders(<SystemsCard {...cardProps} />);
     await selectMechanicalTab();
 
-    await userEvent.click(screen.getByRole("option", { name: /Boiler/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Boiler/ }));
 
     const [stored] = store.getState().report.selectedSystems;
     expect(stored).toMatchObject({

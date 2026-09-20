@@ -31,7 +31,7 @@ export function TestModeProvider({
   children,
 }: Readonly<{ children: ReactNode }>) {
   // Holds a ref to the IntakeCard's live field-setter function.
-  // IntakeCard registers this when mounted; TestModePanel calls it on autofill.
+  // IntakeCard registers this when mounted; DebugBanner calls it on autofill.
   const intakeFillRef = useRef<IntakeFill>(null);
 
   const [debugMode, setDebugMode] = useState<boolean>(() =>

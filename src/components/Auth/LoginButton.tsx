@@ -17,7 +17,6 @@ function LoginButton({ onIdToken }: Readonly<Props>) {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
 
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleSuccess = (idToken: string | undefined) => {

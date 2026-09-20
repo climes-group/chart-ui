@@ -10,21 +10,22 @@ import { renderWithProviders } from "@/utils/testing";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
+import { useEffect } from "react";
 import { describe, expect, it } from "vitest";
-import TestModePanel from "../TestModePanel";
+import DebugBanner from "../DebugBanner";
 
 function renderPanel(options = {}) {
   return renderWithProviders(
     <ThemeProvider>
       <TestModeProvider>
-        <TestModePanel />
+        <DebugBanner />
       </TestModeProvider>
     </ThemeProvider>,
     options,
   );
 }
 
-describe("TestModePanel", () => {
+describe("DebugBanner", () => {
   beforeEach(() => {
     localStorage.clear();
     globalThis.history.pushState({}, "", "/flow/intake");
@@ -33,13 +34,13 @@ describe("TestModePanel", () => {
   it("renders the collapsed strip when test mode is on", () => {
     renderPanel();
     const strip = screen.getByRole("button", {
-      name: /open test mode panel/i,
+      name: /toggle debug banner/i,
     });
     expect(strip).toBeInTheDocument();
     expect(strip).toHaveAttribute("aria-expanded", "false");
     expect(strip).toHaveAttribute("title", "Test mode");
     expect(strip).toHaveClass("h-10", "w-10");
-    expect(strip).not.toHaveTextContent("Test Mode");
+    expect(strip).not.toHaveTextContent("Debug Banner");
   });
 
   it("opens and closes the panel", async () => {
@@ -47,36 +48,40 @@ describe("TestModePanel", () => {
     renderPanel();
 
     await user.click(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     );
     expect(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     ).toHaveAttribute("aria-expanded", "true");
-    const closeBtn = screen.getByRole("button", {
-      name: /close test mode panel/i,
+    const toggle = screen.getByRole("button", {
+      name: /toggle debug banner/i,
     });
-    expect(closeBtn).toBeInTheDocument();
+    expect(toggle.querySelector(".lucide-x")).toBeInTheDocument();
 
-    await user.click(closeBtn);
+    await user.click(toggle);
     expect(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     ).toHaveAttribute("aria-expanded", "false");
   });
 
   it("uses semantic surfaces and content colors for both themes", async () => {
     const user = userEvent.setup();
-    renderPanel();
+    const { container } = renderPanel();
 
     await user.click(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     );
 
-    const headerContent = screen.getByText("Test Mode").closest("div");
-    const header = headerContent?.parentElement;
-    const panel = header?.parentElement;
-    expect(panel).toHaveClass("bg-surface");
-    expect(panel).not.toHaveClass("bg-white/95");
-    expect(header).toHaveClass("bg-primary", "text-primary-foreground");
+    const panel = container.querySelector("div.w-max");
+    expect(panel).toHaveClass(
+      "bg-gray-600/50",
+      "text-white",
+      "rounded-md",
+      "backdrop-blur-sm",
+    );
+    expect(
+      screen.getByRole("switch", { name: /debug mode: off/i }),
+    ).toHaveAttribute("title", "Toggle debug mode (currently off)");
   });
 
   it("persists open state to localStorage", async () => {
@@ -84,14 +89,14 @@ describe("TestModePanel", () => {
     const { unmount } = renderPanel();
 
     await user.click(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     );
     expect(localStorage.getItem("CHART_TEST_PANEL_OPEN")).toBe("true");
 
     unmount();
     renderPanel();
     expect(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     ).toHaveAttribute("aria-expanded", "true");
   });
 
@@ -102,7 +107,7 @@ describe("TestModePanel", () => {
     });
 
     await user.click(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     );
     await user.click(screen.getByRole("button", { name: "1" }));
     expect(store.getState().flow.theme).toBe(1);
@@ -119,7 +124,7 @@ describe("TestModePanel", () => {
     renderWithProviders(
       <ThemeProvider>
         <TestModeProvider>
-          <TestModePanel />
+          <DebugBanner />
           <DebugReader />
         </TestModeProvider>
       </ThemeProvider>,
@@ -128,7 +133,7 @@ describe("TestModePanel", () => {
     expect(screen.getByTestId("debug-reader")).toHaveTextContent("false");
 
     await user.click(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     );
     const toggle = screen.getByRole("switch", { name: /debug mode/i });
     expect(toggle).toHaveAttribute("aria-checked", "false");
@@ -138,6 +143,10 @@ describe("TestModePanel", () => {
     expect(toggle).toHaveAttribute("aria-checked", "true");
     expect(localStorage.getItem("CHART_DEBUG_MODE")).toBe("true");
     expect(screen.getByTestId("debug-reader")).toHaveTextContent("true");
+    expect(toggle).toHaveAttribute(
+      "title",
+      "Toggle debug mode (currently on)",
+    );
   });
 
   it("toggles dark mode and persists the selected theme", async () => {
@@ -145,7 +154,7 @@ describe("TestModePanel", () => {
     renderPanel();
 
     await user.click(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     );
     const toggle = screen.getByRole("switch", { name: /dark mode/i });
     expect(toggle).toHaveAttribute("aria-checked", "false");
@@ -178,7 +187,7 @@ describe("TestModePanel", () => {
     expect(store.getState().flow.conditions.systems).toBe(false);
 
     await user.click(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     );
     await user.click(screen.getByRole("button", { name: /autofill/i }));
 
@@ -206,7 +215,7 @@ describe("TestModePanel", () => {
     const { store } = renderPanel();
 
     await user.click(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     );
     const autofillBtn = screen.getByRole("button", {
       name: /autofill from snapshot/i,
@@ -226,21 +235,23 @@ describe("TestModePanel", () => {
 
     function RegisterRef() {
       const { intakeFillRef } = useTestMode();
-      if (intakeFillRef) intakeFillRef.current = spy;
+      useEffect(() => {
+        if (intakeFillRef) intakeFillRef.current = spy;
+      }, [intakeFillRef]);
       return null;
     }
 
     renderWithProviders(
       <ThemeProvider>
         <TestModeProvider>
-          <TestModePanel />
+          <DebugBanner />
           <RegisterRef />
         </TestModeProvider>
       </ThemeProvider>,
     );
 
     await user.click(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     );
     await user.click(screen.getByRole("button", { name: /autofill/i }));
 
@@ -259,7 +270,7 @@ describe("TestModePanel", () => {
   it("has no axe violations when expanded", async () => {
     const { container } = renderPanel();
     await userEvent.click(
-      screen.getByRole("button", { name: /open test mode panel/i }),
+      screen.getByRole("button", { name: /toggle debug banner/i }),
     );
     expect(await axe(container)).toHaveNoViolations();
   });

@@ -20,6 +20,7 @@
 
 .a-link:hover::after {
   width: 50%;
+  animation: pulse-underline 3.6s infinite;
 }
 
 @keyframes pulse-underline {
@@ -32,8 +33,4 @@
   65% {
     width: 50%;
   }
-}
-
-.a-link:hover::after {
-  animation: pulse-underline 3.6s infinite;
 }
