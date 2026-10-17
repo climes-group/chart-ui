@@ -10,7 +10,6 @@ import { LoginProviderComponent } from "./providers";
 export default function GoogleButtonComponent({
   onSuccess = () => {},
   onError,
-  disabled,
 }: Readonly<LoginProviderComponent>) {
   const dispatch = useDispatch();
 
@@ -34,6 +33,7 @@ export default function GoogleButtonComponent({
         onSuccess();
       }}
       onError={() => onError?.(new Error("Google login failed"))}
+      type="standard"
       size="large"
       theme="outline"
       shape="rectangular"

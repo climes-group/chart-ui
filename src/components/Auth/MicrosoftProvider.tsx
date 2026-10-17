@@ -23,7 +23,6 @@ function MicrosoftLogo() {
 }
 
 function MicrosoftProvider({
-  onSuccess,
   onError,
   disabled,
 }: Readonly<LoginProviderComponent>) {

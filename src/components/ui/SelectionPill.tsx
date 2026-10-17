@@ -1,5 +1,5 @@
-import { cn } from "@/utils/cn";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/utils/cn";
 import { Check, CircleQuestionMarkIcon } from "lucide-react";
 import { forwardRef, type ButtonHTMLAttributes, type MouseEvent } from "react";
 
@@ -15,7 +15,7 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
   (
     {
       name,
-      code,
+      code: _code,
       isSelected,
       showInfoIcon = false,
       onToggle,
@@ -36,10 +36,10 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
           onToggle?.(e);
         }}
         className={cn(
-          "select-none",
+          "group hover:bg-muted/60 w-full min-w-0 justify-start border-transparent bg-transparent px-2 text-left select-none hover:border-transparent",
           isSelected
-            ? "border-primary bg-primary/5 text-primary font-medium"
-            : "border-border text-foreground hover:border-secondary/50 hover:bg-accent/10",
+            ? "bg-primary/5 text-primary hover:bg-primary/10 font-medium"
+            : "text-muted-foreground",
         )}
       >
         <span
@@ -52,17 +52,17 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
           )}
         >
           {isSelected && (
-            <Check className="text-primary-foreground size-2.5" strokeWidth={3} />
+            <Check className="text-primary-foreground" strokeWidth={2} />
           )}
         </span>
 
-        <span className="leading-none">{name}</span>
+        <span className="min-w-0 flex-1 truncate leading-none">{name}</span>
 
         {showInfoIcon && (
           <span
             aria-hidden="true"
             data-info-icon="true"
-            className="flex size-4 shrink-0 items-center justify-center leading-none"
+            className="text-muted-foreground/70 group-hover:text-muted-foreground flex size-4 shrink-0 items-center justify-center leading-none transition-colors"
           >
             <CircleQuestionMarkIcon
               size="1rem"
