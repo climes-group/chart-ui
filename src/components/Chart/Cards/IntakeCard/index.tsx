@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTestMode } from "@/components/TestMode/TestModeContext";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
+import { X } from "lucide-react";
 import { meetCondition, setError } from "@/state/slices/flowReducer";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import type { IntakeForm } from "@/state/slices/reportReducer";
@@ -122,10 +123,9 @@ export default function IntakeCard({
           {t("intake.description")}
         </em>
         <Button
-          variant="ghost"
+          variant="muted"
           size="sm"
           type="button"
-          className="text-muted-foreground hover:text-destructive -mt-1"
           onClick={() => {
             form.reset();
             dispatch(clearIntakeForm());
@@ -135,6 +135,7 @@ export default function IntakeCard({
             dispatch(setError(null));
           }}
         >
+          <X aria-hidden />
           {t("common.clear")}
         </Button>
       </div>

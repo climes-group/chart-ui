@@ -75,7 +75,7 @@ function SystemsSection({
               count: selectedSystemCodes.size,
             })}
           >
-            <X className="size-3" aria-hidden />
+            <X aria-hidden />
             {t("common.clearAll", { count: selectedSystemCodes.size })}
           </Button>
         )}
@@ -98,7 +98,7 @@ function SystemsSection({
               {selectedCount > 0 && (
                 <span
                   className={cn(
-                    "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1 text-xs font-semibold",
+                    "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1 text-sm font-semibold",
                     activeService === service
                       ? "bg-background text-primary"
                       : "bg-primary/10 text-primary",
@@ -124,12 +124,12 @@ function SystemsSection({
           return (
             <div key={classification}>
               <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-primary text-xs font-semibold tracking-wide uppercase">
+                <h3 className="text-primary text-sm font-semibold tracking-wide uppercase">
                   {sanitizeName(classification)}
                 </h3>
                 {selectedCount > 0 && (
                   <Button
-                    variant="ghost"
+                    variant="muted"
                     size="sm"
                     onClick={() => {
                       onClearClassification(classification)();
@@ -139,8 +139,8 @@ function SystemsSection({
                       count: selectedCount,
                       classification: sanitizeName(classification),
                     })}
-                    className="h-auto px-0 text-xs text-muted-foreground hover:text-destructive"
                   >
+                    <X aria-hidden />
                     {t("common.clearCount", { count: selectedCount })}
                   </Button>
                 )}

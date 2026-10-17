@@ -7,6 +7,7 @@ import SignatureCanvas from "react-signature-canvas";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
 import { cn } from "@/utils/cn";
+import { X } from "lucide-react";
 import type { IntakeFormApi } from ".";
 
 function todayISO() {
@@ -75,7 +76,7 @@ function SignaturePad({
 
   return (
     <div className="space-y-2">
-      <h4 className="text-sm font-medium text-foreground">{label}</h4>
+      <h4 className="font-semibold text-foreground">{label}</h4>
       <div className="flex flex-col gap-3">
         <form.Field name={dateFieldName}>
           {(field: AnyFieldApi) => (
@@ -154,17 +155,18 @@ function SignaturePad({
                       {field.state.meta.errors[0]}
                     </p>
                   ) : (
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-sm text-muted-foreground">
                       {t("intake.fields.signAbove")}
                     </span>
                   )}
                   <Button
-                    variant="ghost"
+                    variant="muted"
                     size="sm"
                     type="button"
                     onClick={handleClear}
                     data-testid={`${testId}-clear`}
                   >
+                    <X aria-hidden />
                     {t("intake.fields.clearSignature")}
                   </Button>
                 </div>

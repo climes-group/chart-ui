@@ -21,7 +21,7 @@ function LoginModal({ children }: Readonly<{ children: React.ReactNode }>) {
       <div className="flex h-screen items-center justify-center">
         <div className="bg-surface relative rounded p-8 shadow-lg">
           <div className="mb-8 flex items-center justify-between">
-            <h2 className="mb-0 text-xl font-bold">Login</h2>
+            <h2 className="mb-0 font-bold">Login</h2>
             <IconButton aria-label="close" onClick={handleClose}>
               <XIcon />
             </IconButton>

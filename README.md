@@ -82,8 +82,14 @@ The semantic contract covers:
   links. The existing Climes brand palette is kept as the primitive layer and
   is not used directly by feature components.
 - **Spacing:** Tailwind's default 4px-based scale.
-- **Typography:** Avenir with semantic display, heading, body, label, and
-  caption roles.
+- **Typography:** Google Fonts Nunito with four semantic roles: page title
+  (2rem), section heading (1.25rem), body (1rem), and compact text (0.875rem).
+  These override Tailwind's `text-2xl`, `text-xl`, `text-base`, and `text-sm`
+  utilities respectively. H1 uses the page-title role, H2 the section-heading
+  role, H3 the body role, and H4 the compact role; heading weights and semantic
+  colors distinguish levels without adding sizes. Weights 400–700 cover regular
+  copy through emphasis. The responsive splash wordmark is the only display-size
+  exception.
 - **Shape and elevation:** shared radius and card/elevated shadow tokens.
 
 Theme values are selected at the document root using `data-color-theme`. The
@@ -93,6 +99,11 @@ colour-scheme preference is used; only the light theme is currently exposed in
 the product UI, while the dark token set is available for incremental rollout.
 Material UI consumes the same semantic CSS variables rather than maintaining a
 second colour palette.
+
+Nunito is requested from Google Fonts in the document head with
+`font-display: swap`, preconnected origins, and a shared CSS/MUI font stack.
+The body applies an x-height adjustment so the Arial fallback more closely
+matches Nunito while the web font loads.
 
 ### Buttons
 

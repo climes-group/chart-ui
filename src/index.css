@@ -3,7 +3,15 @@
 @custom-variant dark (&:where([data-color-theme="dark"], [data-color-theme="dark"] *));
 
 @theme {
-  --font-sans: "AvenirLtNextPro", Helvetica, Arial, sans-serif;
+  --font-sans: "Nunito", Arial, Helvetica, sans-serif;
+  --text-sm: var(--text-compact-size);
+  --text-sm--line-height: var(--text-compact-leading);
+  --text-base: var(--text-body-size);
+  --text-base--line-height: var(--text-body-leading);
+  --text-xl: var(--text-section-heading-size);
+  --text-xl--line-height: var(--text-section-heading-leading);
+  --text-2xl: var(--text-page-title-size);
+  --text-2xl--line-height: var(--text-page-title-leading);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -37,21 +45,6 @@
   --shadow-card: var(--shadow-card-token);
   --shadow-elevated: var(--shadow-elevated-token);
 
-  --text-display: var(--text-display-size);
-  --text-display--line-height: var(--text-display-leading);
-  --text-heading-1: var(--text-heading-1-size);
-  --text-heading-1--line-height: var(--text-heading-1-leading);
-  --text-heading-2: var(--text-heading-2-size);
-  --text-heading-2--line-height: var(--text-heading-2-leading);
-  --text-heading-3: var(--text-heading-3-size);
-  --text-heading-3--line-height: var(--text-heading-3-leading);
-  --text-body: var(--text-body-size);
-  --text-body--line-height: var(--text-body-leading);
-  --text-label: var(--text-label-size);
-  --text-label--line-height: var(--text-label-leading);
-  --text-caption: var(--text-caption-size);
-  --text-caption--line-height: var(--text-caption-leading);
-
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
@@ -64,17 +57,6 @@
     from { height: var(--radix-accordion-content-height); }
     to { height: 0; }
   }
-}
-
-@font-face {
-  font-family: "AvenirLtNextPro";
-  src: url("assets/fonts/avenirLtPro.otf") format("opentype");
-}
-
-@font-face {
-  font-family: "AvenirLtNextPro";
-  src: url("assets/fonts/avenirLtProItalic.otf") format("opentype");
-  font-style: italic;
 }
 
 :root {
@@ -125,20 +107,14 @@
   --shadow-card-token: 0 1px 3px rgb(34 67 82 / 10%);
   --shadow-elevated-token: 0 6px 16px rgb(34 67 82 / 18%);
 
-  --text-display-size: 3.5rem;
-  --text-display-leading: 1;
-  --text-heading-1-size: 2rem;
-  --text-heading-1-leading: 1.2;
-  --text-heading-2-size: 1.5rem;
-  --text-heading-2-leading: 1.3;
-  --text-heading-3-size: 1.125rem;
-  --text-heading-3-leading: 1.35;
+  --text-page-title-size: 2rem;
+  --text-page-title-leading: 1.2;
+  --text-section-heading-size: 1.25rem;
+  --text-section-heading-leading: 1.3;
   --text-body-size: 1rem;
   --text-body-leading: 1.5;
-  --text-label-size: 0.875rem;
-  --text-label-leading: 1.4;
-  --text-caption-size: 0.75rem;
-  --text-caption-leading: 1.35;
+  --text-compact-size: 0.875rem;
+  --text-compact-leading: 1.4;
 }
 
 [data-color-theme="dark"] {
@@ -174,6 +150,12 @@
 
 [data-color-theme="cyberpunk"] {
   color-scheme: dark;
+  --text-page-title-size: 2.25rem;
+  --text-page-title-leading: 1;
+  --text-section-heading-size: 1.625rem;
+  --text-section-heading-leading: 1.1;
+  --text-compact-size: 0.8125rem;
+  --text-compact-leading: 1.2;
   --background: #090b16;
   --foreground: #e7f7ff;
   --surface: #11152a;
@@ -203,12 +185,6 @@
   --radius-xl-token: 0.5rem;
   --shadow-card-token: 0 0 0 1px #00f5d455, 0 0 18px #00f5d422;
   --shadow-elevated-token: 0 0 0 1px #ff2bd666, 0 0 28px #ff2bd633;
-  --text-heading-1-size: 2.25rem;
-  --text-heading-1-leading: 1;
-  --text-heading-2-size: 1.625rem;
-  --text-heading-2-leading: 1.1;
-  --text-label-size: 0.8125rem;
-  --text-label-leading: 1.2;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -249,6 +225,10 @@
   body {
     @apply bg-background text-foreground font-sans;
     margin: 0;
+    font-size: var(--text-body-size);
+    line-height: var(--text-body-leading);
+    font-size-adjust: 0.484;
+    font-synthesis: none;
   }
 
   [data-color-theme="cyberpunk"] body {
@@ -271,16 +251,40 @@
     text-shadow: 2px 0 #ff2bd666, -2px 0 #00f5d466;
   }
 
-  h1 { @apply text-heading-1 font-bold; letter-spacing: -0.02em; }
-  h2 { @apply text-heading-2 font-semibold; }
-  h3 { @apply text-heading-3 font-semibold; }
-  h4 { @apply text-body font-semibold; }
+  h1 {
+    font-size: var(--text-page-title-size);
+    line-height: var(--text-page-title-leading);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    font-size: var(--text-section-heading-size);
+    line-height: var(--text-section-heading-leading);
+    font-weight: 600;
+  }
+  h3 {
+    color: var(--primary);
+    font-size: var(--text-body-size);
+    line-height: var(--text-body-leading);
+    font-weight: 600;
+  }
+  h4 {
+    font-size: var(--text-compact-size);
+    line-height: var(--text-compact-leading);
+    font-weight: 600;
+  }
 
   p {
     color: inherit;
     text-align: left;
     margin-top: 0;
     margin-bottom: 0.5em;
+  }
+
+  pre,
+  code,
+  .font-mono {
+    font-size-adjust: none;
   }
 
   main ul,
@@ -314,26 +318,34 @@
 }
 
 @layer components {
+  .brand-title {
+    @apply text-primary font-bold leading-none tracking-[0.15em];
+    font-size: clamp(3rem, 8vw, 6rem);
+  }
+
   .heading-card {
-    @apply text-foreground font-bold;
-    font-size: var(--text-heading-2-size);
-    line-height: var(--text-heading-2-leading);
+    @apply text-foreground font-semibold tracking-tight;
+    font-size: var(--text-section-heading-size);
+    line-height: var(--text-section-heading-leading);
+    letter-spacing: -0.02em;
   }
 
   .heading-section {
     @apply text-primary font-semibold;
-    font-size: var(--text-heading-3-size);
-    line-height: var(--text-heading-3-leading);
+    font-size: var(--text-body-size);
+    line-height: var(--text-body-leading);
   }
 
   .heading-label {
     @apply text-muted-foreground font-medium tracking-wider uppercase;
-    font-size: var(--text-label-size);
-    line-height: var(--text-label-leading);
+    font-size: var(--text-compact-size);
+    line-height: var(--text-compact-leading);
   }
 
   .body-muted {
-    @apply text-muted-foreground text-body;
+    @apply text-muted-foreground;
+    font-size: var(--text-body-size);
+    line-height: var(--text-body-leading);
   }
 }
 

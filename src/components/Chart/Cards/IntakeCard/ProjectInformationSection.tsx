@@ -150,7 +150,7 @@ function ProjectAddressAutocomplete({
           };
         return (
           <li key={key} {...rest}>
-            <span style={{ fontSize: "0.875rem", lineHeight: 1.4 }}>
+            <span className="text-sm">
               {opt.address.label}
             </span>
           </li>
@@ -223,7 +223,7 @@ function SiteLocationPreview({
     <div className="space-y-3 pt-2">
       <div className="border-secondary/40 bg-background flex items-center justify-between gap-4 rounded-lg border p-3">
         <div className="min-w-0">
-          <p className="text-muted-foreground mb-0.5 text-xs">
+          <p className="text-muted-foreground mb-0.5 text-sm">
             {t("intake.fields.siteLocation")}
           </p>
           <p className="text-foreground truncate text-sm font-medium">
@@ -231,17 +231,16 @@ function SiteLocationPreview({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <p className="text-warning font-mono text-xs whitespace-nowrap">
+          <p className="text-warning font-mono text-sm whitespace-nowrap">
             {geoCode.str}
           </p>
           <Button
-            variant="ghost"
-            size="icon"
+            variant="muted"
+            size="sm"
             onClick={onClear}
             aria-label={t("intake.fields.clearSiteLocation")}
-            className="text-muted-foreground hover:text-destructive"
           >
-            <XIcon className="size-3.5" />
+            <XIcon aria-hidden />
           </Button>
         </div>
       </div>

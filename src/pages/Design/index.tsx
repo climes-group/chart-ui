@@ -68,14 +68,14 @@ function Design() {
                 className={`h-14 flex items-end p-2 ${c.text}`}
                 style={{ backgroundColor: c.hex }}
               >
-                <span className="text-[0.65rem] font-medium opacity-90">
+                <span className="text-sm font-medium opacity-90">
                   {c.hex}
                 </span>
               </div>
               <div className="px-2 py-1.5 flex items-center gap-1.5">
-                <span className="text-xs font-semibold">{c.name}</span>
+                <span className="text-sm font-semibold">{c.name}</span>
                 {c.tag && (
-                  <span className="text-[0.6rem] font-semibold bg-primary/10 text-primary px-1.5 py-0.5 rounded">
+                  <span className="text-sm font-semibold bg-primary/10 text-primary px-1.5 py-0.5 rounded">
                     {c.tag}
                   </span>
                 )}
@@ -89,27 +89,47 @@ function Design() {
       <Section title="Typography">
         <div className="space-y-4 text-left">
           <div className="flex items-baseline gap-4">
-            <h1 className="mb-0">Heading 1</h1>
-            <span className="body-muted whitespace-nowrap">2rem / 700</span>
-          </div>
-          <div className="flex items-baseline gap-4">
-            <h2 className="mb-0">Heading 2</h2>
-            <span className="body-muted whitespace-nowrap">1.5rem / 600</span>
-          </div>
-          <div className="flex items-baseline gap-4">
-            <h3 className="mb-0">Heading 3</h3>
+            <h1 className="mb-0">Page title</h1>
             <span className="body-muted whitespace-nowrap">
-              1.125rem / 600
+              2rem / 1.2 / 700
             </span>
           </div>
           <div className="flex items-baseline gap-4">
-            <h4 className="mb-0">Heading 4</h4>
-            <span className="body-muted whitespace-nowrap">1rem / 600</span>
+            <h2 className="mb-0">Section heading</h2>
+            <span className="body-muted whitespace-nowrap">
+              1.25rem / 1.3 / 600
+            </span>
+          </div>
+          <div className="flex items-baseline gap-4">
+            <h2 className="heading-card mb-0">Card / step heading</h2>
+            <span className="body-muted whitespace-nowrap">
+              1.25rem / 1.3 / 600
+            </span>
+          </div>
+          <div className="flex items-baseline gap-4">
+            <h3 className="mb-0">Form section</h3>
+            <span className="body-muted whitespace-nowrap">
+              1rem / 1.5 / 600
+            </span>
           </div>
           <div className="pt-2 border-t border-border">
-            <p className="mb-1">Body text — the default for all content.</p>
-            <p className="body-muted mb-0">
-              Muted text — secondary information and captions.
+            <div className="flex items-baseline justify-between gap-4">
+              <p className="mb-1">Body — default content.</p>
+              <span className="body-muted whitespace-nowrap">
+                1rem / 1.5 / 400
+              </span>
+            </div>
+            <div className="flex items-baseline justify-between gap-4">
+              <p className="text-sm mb-0">
+                Compact — labels and supporting information.
+              </p>
+              <span className="body-muted text-sm whitespace-nowrap">
+                0.875rem / 1.4 / 400
+              </span>
+            </div>
+            <p className="body-muted mt-4 mb-0">
+              Nunito variable (400–700), with Arial/Helvetica fallbacks. Titles,
+              section headings, body, and compact text share four size roles.
             </p>
           </div>
         </div>

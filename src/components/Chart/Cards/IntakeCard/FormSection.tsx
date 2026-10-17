@@ -73,7 +73,7 @@ export default function FormSection({
         <h3 className="heading-section m-0">{title}</h3>
         {total > 0 && (
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium tabular-nums transition-colors ${
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-sm font-medium tabular-nums transition-colors ${
               complete
                 ? "bg-success text-success-foreground"
                 : "bg-muted text-muted-foreground"

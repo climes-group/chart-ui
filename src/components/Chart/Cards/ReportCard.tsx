@@ -30,6 +30,7 @@ import {
   Pencil,
   RefreshCw,
   Save,
+  X,
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
@@ -120,10 +121,10 @@ function ReportContext({
             <p className="text-warning">{t("report.context.noLocation")}</p>
           )}
           {systemLine && (
-            <p className="text-muted-foreground text-xs">{systemLine}</p>
+            <p className="text-muted-foreground text-sm">{systemLine}</p>
           )}
           {energy.length > 0 && (
-            <p className="text-muted-foreground font-mono text-xs">
+            <p className="text-muted-foreground font-mono text-sm">
               {energy.map((e) => `${e.label} ${e.value}`).join("  ·  ")}
             </p>
           )}
@@ -302,17 +303,17 @@ export default function ReportCard() {
               {snapshotMeta && (
                 <>
                   <span
-                    className="text-muted-foreground text-xs"
+                    className="text-muted-foreground text-sm"
                     title={snapshotMeta.savedAt}
                   >
                     Saved
                   </span>
                   <Button
-                    variant="link"
+                    variant="muted"
                     size="sm"
                     onClick={handleClearSnapshot}
-                    className="text-muted-foreground hover:text-destructive"
                   >
+                    <X aria-hidden />
                     Clear
                   </Button>
                 </>
@@ -369,7 +370,7 @@ export default function ReportCard() {
                   {t("report.ready")}
                 </span>
               </div>
-              <div className="text-muted-foreground flex items-center gap-3 text-xs">
+              <div className="text-muted-foreground flex items-center gap-3 text-sm">
                 {reportGenAt && (
                   <span>{t("report.generatedAt", { time: reportGenAt })}</span>
                 )}
