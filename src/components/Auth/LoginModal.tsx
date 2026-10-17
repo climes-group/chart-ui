@@ -1,6 +1,6 @@
+import { Button } from "@/components/ui/button";
 import { setLoginModalOpen } from "@/state/slices/userReducer";
 import { RootState } from "@/state/store";
-import { IconButton } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import { XIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,10 +21,10 @@ function LoginModal({ children }: Readonly<{ children: React.ReactNode }>) {
       <div className="flex h-screen items-center justify-center">
         <div className="bg-surface relative rounded p-8 shadow-lg">
           <div className="mb-8 flex items-center justify-between">
-            <h2 className="mb-0 font-bold">Login</h2>
-            <IconButton aria-label="close" onClick={handleClose}>
+            <h2 className="mb-0">Login</h2>
+            <Button aria-label="close" variant="ghost" onClick={handleClose}>
               <XIcon />
-            </IconButton>
+            </Button>
           </div>
           {children}
         </div>

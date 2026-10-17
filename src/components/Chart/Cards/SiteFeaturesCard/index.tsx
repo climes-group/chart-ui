@@ -52,7 +52,7 @@ function SiteFeaturesSection({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex min-h-[2.25rem] items-center justify-between">
         <em className="text-muted-foreground text-sm">
           {t("inventory.selectOnly")}
         </em>
@@ -70,32 +70,32 @@ function SiteFeaturesSection({
         )}
       </div>
 
-      <div className="border-secondary/30 mb-5 flex flex-wrap gap-2 border-b pb-2">
+      <div className="border-border mb-5 flex flex-wrap gap-4 border-b">
         {categoryNames.map((category) => {
           const selectedCount = features
             .filter((f) => f.Category === category)
             .filter((f) =>
               selectedFeatureCodes.has(getFeatureKeyFor(f)),
             ).length;
+          const isActive = activeCategory === category;
 
           return (
             <Button
-              variant={activeCategory === category ? "default" : "outline-muted"}
+              variant="ghost"
               size="pill"
               key={category}
               onClick={() => onCategoryChange(category)}
-              className="shrink-0 rounded-full whitespace-nowrap"
+              aria-pressed={isActive}
+              className={cn(
+                "relative shrink-0 rounded-none bg-transparent px-1 pb-2 whitespace-nowrap shadow-none active:scale-100",
+                isActive
+                  ? "text-primary after:bg-primary after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 hover:bg-transparent"
+                  : "text-muted-foreground hover:text-foreground hover:bg-transparent",
+              )}
             >
               {sanitizeName(category)}
               {selectedCount > 0 && (
-                <span
-                  className={cn(
-                    "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1 text-sm font-semibold",
-                    activeCategory === category
-                      ? "bg-background text-primary"
-                      : "bg-primary/10 text-primary",
-                  )}
-                >
+                <span className="bg-primary/10 text-primary inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1 text-sm font-semibold">
                   {selectedCount}
                 </span>
               )}
@@ -108,7 +108,7 @@ function SiteFeaturesSection({
         <div
           role="group"
           aria-label={sanitizeName(activeCategory)}
-          className="flex flex-wrap gap-2"
+          className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"
         >
           {featuresForCategory.map((feature) => {
             const code = getFeatureKeyFor(feature);
@@ -238,13 +238,9 @@ export default function SiteFeaturesCard({ step }: Readonly<StepCardProps>) {
         </div>
         <div className="space-y-2.5">
           <Skeleton className="h-3 w-20 rounded" />
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {[96, 124, 80, 144, 100, 116].map((w, i) => (
-              <Skeleton
-                key={`${w}-${i}`}
-                className="h-8 rounded-md"
-                style={{ width: w }}
-              />
+              <Skeleton key={`${w}-${i}`} className="h-9 w-full rounded-md" />
             ))}
           </div>
         </div>
