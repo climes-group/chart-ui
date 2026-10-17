@@ -235,13 +235,12 @@ function SiteLocationPreview({
             {geoCode.str}
           </p>
           <Button
-            variant="ghost"
-            size="icon"
+            variant="muted"
+            size="sm"
             onClick={onClear}
             aria-label={t("intake.fields.clearSiteLocation")}
-            className="text-muted-foreground hover:text-destructive"
           >
-            <XIcon className="size-3.5" />
+            <XIcon aria-hidden />
           </Button>
         </div>
       </div>

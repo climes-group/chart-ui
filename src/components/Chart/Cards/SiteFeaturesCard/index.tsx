@@ -64,7 +64,7 @@ function SiteFeaturesSection({
               onClearAll();
             }}
           >
-            <X className="size-3" />
+            <X aria-hidden />
             {t("common.clearAll", { count: selectedFeatureCodes.size })}
           </Button>
         )}

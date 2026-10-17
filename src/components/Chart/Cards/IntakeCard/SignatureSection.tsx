@@ -7,6 +7,7 @@ import SignatureCanvas from "react-signature-canvas";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
 import { cn } from "@/utils/cn";
+import { X } from "lucide-react";
 import type { IntakeFormApi } from ".";
 
 function todayISO() {
@@ -159,12 +160,13 @@ function SignaturePad({
                     </span>
                   )}
                   <Button
-                    variant="ghost"
+                    variant="muted"
                     size="sm"
                     type="button"
                     onClick={handleClear}
                     data-testid={`${testId}-clear`}
                   >
+                    <X aria-hidden />
                     {t("intake.fields.clearSignature")}
                   </Button>
                 </div>

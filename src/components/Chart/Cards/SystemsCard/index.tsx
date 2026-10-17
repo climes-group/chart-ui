@@ -75,7 +75,7 @@ function SystemsSection({
               count: selectedSystemCodes.size,
             })}
           >
-            <X className="size-3" aria-hidden />
+            <X aria-hidden />
             {t("common.clearAll", { count: selectedSystemCodes.size })}
           </Button>
         )}
@@ -129,7 +129,7 @@ function SystemsSection({
                 </h3>
                 {selectedCount > 0 && (
                   <Button
-                    variant="ghost"
+                    variant="muted"
                     size="sm"
                     onClick={() => {
                       onClearClassification(classification)();
@@ -139,8 +139,8 @@ function SystemsSection({
                       count: selectedCount,
                       classification: sanitizeName(classification),
                     })}
-                    className="h-auto px-0 text-sm text-muted-foreground hover:text-destructive"
                   >
+                    <X aria-hidden />
                     {t("common.clearCount", { count: selectedCount })}
                   </Button>
                 )}

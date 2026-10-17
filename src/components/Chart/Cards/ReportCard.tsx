@@ -30,6 +30,7 @@ import {
   Pencil,
   RefreshCw,
   Save,
+  X,
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
@@ -308,11 +309,11 @@ export default function ReportCard() {
                     Saved
                   </span>
                   <Button
-                    variant="link"
+                    variant="muted"
                     size="sm"
                     onClick={handleClearSnapshot}
-                    className="text-muted-foreground hover:text-destructive"
                   >
+                    <X aria-hidden />
                     Clear
                   </Button>
                 </>
