@@ -195,14 +195,14 @@ export function MobileControls({
           <span className="text-foreground text-sm font-medium">
             {t(`steps.${currentStep.name}`)}
           </span>
-          <span className="text-muted-foreground text-xs">
+          <span className="text-muted-foreground text-sm">
             {t("flow.stepper.stepCounter", {
               current: (currentStep.id ?? 0) + 1,
               total: steps.length,
             })}
           </span>
           {errorMessage && (
-            <span className="text-destructive mt-0.5 flex items-center gap-1 text-xs">
+            <span className="text-destructive mt-0.5 flex items-center gap-1 text-sm">
               <AlertCircle className="size-3 shrink-0" />
               {errorMessage}
             </span>

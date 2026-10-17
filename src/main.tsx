@@ -74,6 +74,70 @@ const MUI_FALLBACKS = {
   destructive: "#c85a3a",
 };
 
+const MUI_TYPOGRAPHY = {
+  fontFamily: "var(--font-sans)",
+  h1: {
+    fontSize: "var(--text-page-title-size)",
+    lineHeight: "var(--text-page-title-leading)",
+    fontWeight: 700,
+  },
+  h2: {
+    fontSize: "var(--text-section-heading-size)",
+    lineHeight: "var(--text-section-heading-leading)",
+    fontWeight: 600,
+  },
+  h3: {
+    fontSize: "var(--text-body-size)",
+    lineHeight: "var(--text-body-leading)",
+    fontWeight: 600,
+  },
+  h4: {
+    fontSize: "var(--text-compact-size)",
+    lineHeight: "var(--text-compact-leading)",
+    fontWeight: 600,
+  },
+  h5: {
+    fontSize: "var(--text-compact-size)",
+    lineHeight: "var(--text-compact-leading)",
+    fontWeight: 600,
+  },
+  h6: {
+    fontSize: "var(--text-compact-size)",
+    lineHeight: "var(--text-compact-leading)",
+    fontWeight: 600,
+  },
+  body1: {
+    fontSize: "var(--text-body-size)",
+    lineHeight: "var(--text-body-leading)",
+  },
+  body2: {
+    fontSize: "var(--text-compact-size)",
+    lineHeight: "var(--text-compact-leading)",
+  },
+  subtitle1: {
+    fontSize: "var(--text-body-size)",
+    lineHeight: "var(--text-body-leading)",
+  },
+  subtitle2: {
+    fontSize: "var(--text-compact-size)",
+    lineHeight: "var(--text-compact-leading)",
+  },
+  button: {
+    fontSize: "var(--text-compact-size)",
+    lineHeight: "var(--text-compact-leading)",
+  },
+  caption: {
+    fontSize: "var(--text-compact-size)",
+    lineHeight: "var(--text-compact-leading)",
+  },
+  overline: {
+    fontSize: "var(--text-compact-size)",
+    lineHeight: "var(--text-compact-leading)",
+    letterSpacing: "0.08em",
+    textTransform: "uppercase" as const,
+  },
+};
+
 function readSemanticColor(
   name: keyof typeof MUI_FALLBACKS,
 ): string {
@@ -107,14 +171,7 @@ function MuiThemeBridge({ children }: Readonly<{ children: React.ReactNode }>) {
           secondary: { main: colors.secondary },
           error: { main: colors.destructive },
         },
-        typography: {
-          fontFamily: [
-            "AvenirLtNextPro",
-            "Helvetica",
-            "Arial",
-            "sans-serif",
-          ].join(","),
-        },
+        typography: MUI_TYPOGRAPHY,
         shape: { borderRadius: 10 },
         components: {
           MuiOutlinedInput: {

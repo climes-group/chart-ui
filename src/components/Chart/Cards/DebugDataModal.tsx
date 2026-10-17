@@ -43,7 +43,7 @@ export default function DebugDataModal({ data, onClose }: Readonly<Props>) {
           <div className="flex items-center gap-2">
             <Bug className="size-5 text-warning" />
             <CardTitle className="heading-section">Debug data</CardTitle>
-            <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-warning">
+            <span className="rounded-full bg-accent/20 px-2 py-0.5 text-sm font-bold uppercase tracking-wider text-warning">
               Debug
             </span>
           </div>
@@ -57,7 +57,7 @@ export default function DebugDataModal({ data, onClose }: Readonly<Props>) {
           </Button>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <pre className="max-h-[60vh] overflow-auto rounded-md border border-accent/30 bg-accent/5 p-3 text-xs font-mono text-foreground whitespace-pre-wrap break-all">
+          <pre className="max-h-[60vh] overflow-auto rounded-md border border-accent/30 bg-accent/5 p-3 text-sm font-mono text-foreground whitespace-pre-wrap break-all">
             {json}
           </pre>
           <div className="flex justify-end gap-2">

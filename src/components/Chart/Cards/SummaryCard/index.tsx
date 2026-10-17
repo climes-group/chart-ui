@@ -102,7 +102,7 @@ function SystemPill({ name, code }: Readonly<{ name: string; code?: string }>) {
     <span className="border-primary bg-primary/10 text-primary inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-sm font-medium">
       <span>{name}</span>
       {code && (
-        <span className="text-warning font-mono text-xs">{code}</span>
+        <span className="text-warning font-mono text-sm">{code}</span>
       )}
     </span>
   );
@@ -279,7 +279,7 @@ function SummaryCard() {
             <div>
               <p className="text-foreground text-sm">{humanAddress || "N/A"}</p>
               {geoData && (
-                <p className="text-warning mt-0.5 font-mono text-xs">
+                <p className="text-warning mt-0.5 font-mono text-sm">
                   {formatLatLong(geoData.lat, geoData.lng)}
                 </p>
               )}

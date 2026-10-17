@@ -90,7 +90,7 @@ function SiteFeaturesSection({
               {selectedCount > 0 && (
                 <span
                   className={cn(
-                    "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1 text-xs font-semibold",
+                    "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1 text-sm font-semibold",
                     activeCategory === category
                       ? "bg-background text-primary"
                       : "bg-primary/10 text-primary",

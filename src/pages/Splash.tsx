@@ -34,13 +34,13 @@ export default function SplashCard() {
       <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
         <h1
           className={[
-            "text-primary text-5xl leading-none font-bold tracking-[0.15em] sm:text-6xl md:text-7xl lg:text-8xl",
+            "brand-title",
             mode === "cyberpunk" ? "cyberpunk-logo" : "",
           ].join(" ")}
         >
           {t("splash.title")}
         </h1>
-        <p className="text-primary/75 mt-3 max-w-sm text-sm sm:text-base">
+        <p className="text-primary/75 mt-3 max-w-sm text-sm">
           {t("splash.tagline")}
         </p>
         <Button onClick={handleGetStarted} size="lg" className="mt-8">
@@ -48,7 +48,7 @@ export default function SplashCard() {
           <ArrowRight />
         </Button>
       </div>
-      <footer className="text-foreground/50 text-center text-xs">
+      <footer className="text-foreground/50 text-center text-sm">
         {t("splash.copyright", { year: new Date().getFullYear() })}
       </footer>
     </section>

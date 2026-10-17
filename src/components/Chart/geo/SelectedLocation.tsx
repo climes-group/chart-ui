@@ -21,12 +21,12 @@ function SelectedLocation({ humanAddr, geoData }: Readonly<Props>) {
       <p className="heading-label">Selected location</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
         <div>
-          <p className="text-xs text-muted-foreground mb-0.5">Address</p>
+          <p className="text-sm text-muted-foreground mb-0.5">Address</p>
           <p className="text-foreground font-medium">{humanAddr || "—"}</p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground mb-0.5">Coordinates</p>
-          <p className="text-warning font-mono text-xs">
+          <p className="text-sm text-muted-foreground mb-0.5">Coordinates</p>
+          <p className="text-warning font-mono text-sm">
             {geoCode ? geoCode.str : "—"}
           </p>
         </div>
