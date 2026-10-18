@@ -14,8 +14,8 @@ import { Route, Routes } from "react-router-dom";
 import FinishCard from "./Cards/FinishCard";
 import StepRenderer, { type StepNextFn } from "./StepRenderer";
 import {
-  DesktopControls,
-  MobileControls,
+  DesktopStepperControls,
+  MobileStepperControls,
   StepperHeader,
 } from "./StepperControls";
 
@@ -101,7 +101,7 @@ function StepperFlow({ steps = [] }: Readonly<Props>) {
         {currentStep && (
           <CardFooter>
             {isSmallDevice ? (
-              <MobileControls
+              <MobileStepperControls
                 currentStep={currentStep}
                 steps={steps}
                 errorMessage={errorMessage}
@@ -110,7 +110,7 @@ function StepperFlow({ steps = [] }: Readonly<Props>) {
                 reportStatus={reportStatus}
               />
             ) : (
-              <DesktopControls
+              <DesktopStepperControls
                 currentStep={currentStep}
                 errorMessage={errorMessage}
                 onBack={back}
