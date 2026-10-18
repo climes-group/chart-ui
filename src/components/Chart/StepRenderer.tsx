@@ -54,7 +54,11 @@ export default function StepRenderer({
 
   return (
     <>
-      <h2 ref={headingRef} tabIndex={-1} className={"heading-card mb-4"}>
+      <h2
+        ref={headingRef}
+        tabIndex={-1}
+        className="heading-card mb-4 focus-visible:outline-none"
+      >
         {headingKey ? t(headingKey) : null}
       </h2>
       <StepCard step={step} registerNext={registerNext} nav={nav} />

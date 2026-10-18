@@ -35,6 +35,7 @@ describe("StepRenderer", () => {
 
     const intakeHeading = screen.getByRole("heading", { name: "Intake" });
     expect(intakeHeading).toHaveAttribute("tabindex", "-1");
+    expect(intakeHeading).toHaveClass("focus-visible:outline-none");
 
     await waitFor(() => {
       expect(document.activeElement).toBe(intakeHeading);

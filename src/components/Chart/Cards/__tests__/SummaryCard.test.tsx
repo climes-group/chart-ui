@@ -1,4 +1,8 @@
-import { setIntakeForm } from "@/state/slices/reportReducer";
+import {
+  addSelectedFeature,
+  addSelectedSystem,
+  setIntakeForm,
+} from "@/state/slices/reportReducer";
 import { renderWithProviders } from "@/utils/testing";
 import { act, screen, within } from "@testing-library/react";
 import { axe } from "jest-axe";
@@ -7,11 +11,28 @@ import SummaryCard from "../SummaryCard";
 
 function getProjectInformationCard(): HTMLElement {
   const heading = screen.getByRole("heading", { name: "Project Information" });
-  // The h3 sits inside a SectionHeader div; the outer card is its grandparent.
+  // The heading's parent section groups the section header and its content.
   return heading.closest("div")!.parentElement as HTMLElement;
 }
 
 describe("SummaryCard — Project Information", () => {
+  it("labels each summary section as a region", () => {
+    renderWithProviders(<SummaryCard />);
+
+    expect(
+      screen.getByRole("region", { name: "Project Information" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Site Location" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Selected Systems" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Selected Site Features" }),
+    ).toBeInTheDocument();
+  });
+
   it("renders the empty state when no intake data is present", () => {
     renderWithProviders(<SummaryCard />);
     const card = getProjectInformationCard();
@@ -164,5 +185,40 @@ describe("SummaryCard — Project Information", () => {
       );
     });
     expect(await axe(container)).toHaveNoViolations();
+  });
+});
+
+describe("SummaryCard — selected item pills", () => {
+  it("uses the same item names as the selection pills without adding codes", async () => {
+    const { store } = renderWithProviders(<SummaryCard />);
+    await act(async () => {
+      store.dispatch(
+        addSelectedSystem({
+          Services: "Mechanical",
+          Classification: "Heating",
+          "ASTM.Name": "Tank-style",
+          "ASTM.System.Name": "Boiler",
+          "ASTM.System.Code": "HW-01",
+          Description: "A system description.",
+        }),
+      );
+      store.dispatch(
+        addSelectedFeature({
+          Category: "Electrical",
+          Classification: "Lighting",
+          ID: "SF-02",
+          "Site.Feature.Name": "Main Panel",
+          Description: "A feature description.",
+        }),
+      );
+    });
+
+    expect(screen.getByText("Boiler")).toBeInTheDocument();
+    expect(screen.queryByText("Tank-style")).not.toBeInTheDocument();
+    expect(screen.queryByText("HW-01")).not.toBeInTheDocument();
+    expect(screen.getByText("Main Panel")).toBeInTheDocument();
+    expect(screen.queryByText("SF-02")).not.toBeInTheDocument();
+    expect(screen.queryByText("A system description.")).not.toBeInTheDocument();
+    expect(screen.queryByText("A feature description.")).not.toBeInTheDocument();
   });
 });

@@ -56,7 +56,7 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
           )}
         </span>
 
-        <span className="min-w-0 flex-1 truncate leading-none">{name}</span>
+        <span className="min-w-0 truncate leading-none">{name}</span>
 
         {showInfoIcon && (
           <span

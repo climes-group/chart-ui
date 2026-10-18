@@ -1,8 +1,14 @@
-import { MapPin, Pencil } from "lucide-react";
+import { CircleQuestionMarkIcon, MapPin, Pencil } from "lucide-react";
 import { useSelector } from "react-redux";
 
 import useFlow from "@/hooks/useFlow";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useTranslation, type TranslateFn } from "@/i18n";
 import {
   getFeatureKeyFor,
@@ -19,35 +25,37 @@ function sanitizeName(name: string | null | undefined): string {
   return name.replaceAll("_", " ");
 }
 
-function getSystemDisplayName(system: SystemRecord): string {
-  return (
-    (system["ASTM.Name"] as string) || (system["Classification"] as string)
-  );
-}
-
-function getSiteFeatureDisplayName(feature: FeatureRecord): string {
-  return (
-    (feature["Site.Feature.Name"] as string) ||
-    (feature["Classification"] as string)
-  );
+function getDescription(
+  record: SystemRecord | FeatureRecord,
+  locale: string,
+): string {
+  const description =
+    (locale === "fr-CA"
+      ? (record["DescriptionFr"] as string)
+      : (record["Description"] as string)) || (record["Description"] as string);
+  return description ?? "";
 }
 
 type SectionHeaderProps = {
   title: string;
   editTo: string;
   editLabel: string;
+  headingId: string;
 };
 
 function SectionHeader({
   title,
   editTo,
   editLabel,
+  headingId,
 }: Readonly<SectionHeaderProps>) {
   const { t } = useTranslation();
   const { jumpTo } = useFlow();
   return (
-    <div className="mb-3 flex items-center justify-between">
-      <h3 className="heading-section">{title}</h3>
+    <div className="mb-2 flex items-center justify-between">
+      <h3 id={headingId} className="heading-section">
+        {title}
+      </h3>
       <Button
         variant="ghost"
         size="sm"
@@ -76,35 +84,59 @@ function groupByKey<T>(
 }
 
 type ServicePillListProps = {
-  groups: Record<string, { name: string; code?: string }[]>;
+  groups: Record<string, { name: string; description: string }[]>;
 };
 
 function ServicePillList({ groups }: Readonly<ServicePillListProps>) {
   const services = Object.keys(groups).sort((a, b) => a.localeCompare(b));
   return (
-    <div className="space-y-4">
-      {services.map((service) => (
-        <div key={service}>
-          <p className="heading-label mb-2">{sanitizeName(service)}</p>
-          <div className="flex flex-wrap gap-2">
-            {groups[service].map(({ name, code }) => (
-              <SystemPill key={code ?? name} name={name} code={code} />
-            ))}
+    <TooltipProvider>
+      <div className="space-y-3">
+        {services.map((service) => (
+          <div key={service}>
+            <p className="heading-label mb-1.5">{sanitizeName(service)}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {groups[service].map(({ name, description }, index) => (
+                <SummaryPill
+                  key={`${name}-${index}`}
+                  name={name}
+                  description={description}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </TooltipProvider>
   );
 }
 
-function SystemPill({ name, code }: Readonly<{ name: string; code?: string }>) {
-  return (
-    <span className="border-primary bg-primary/10 text-primary inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-sm font-medium">
-      <span>{name}</span>
-      {code && (
-        <span className="text-warning font-mono text-sm">{code}</span>
+function SummaryPill({
+  name,
+  description,
+}: Readonly<{ name: string; description: string }>) {
+  const pill = (
+    <span className="border-border bg-muted/40 text-foreground inline-flex max-w-full items-center gap-1.5 rounded-md border px-2 py-1 text-sm">
+      <span className="min-w-0 break-words">{name}</span>
+      {description && (
+        <CircleQuestionMarkIcon
+          aria-hidden="true"
+          className="text-muted-foreground size-4 shrink-0"
+          strokeWidth={2}
+        />
       )}
     </span>
+  );
+
+  if (!description) return pill;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span tabIndex={0}>{pill}</span>
+      </TooltipTrigger>
+      <TooltipContent>{description}</TooltipContent>
+    </Tooltip>
   );
 }
 
@@ -162,15 +194,15 @@ function ProjectInformation({ intake }: Readonly<{ intake: IntakeForm }>) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {headline && <p className="text-foreground text-sm">{headline}</p>}
 
       {standards.length > 0 && (
         <div>
-          <p className="heading-label mb-2">
+          <p className="heading-label mb-1.5">
             {t("intake.fields.modellingStandard")}
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {standards.map((s) => (
               <SystemPill key={s} name={s} />
             ))}
@@ -179,7 +211,7 @@ function ProjectInformation({ intake }: Readonly<{ intake: IntakeForm }>) {
       )}
 
       {(planLine || permit || pid) && (
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {planLine && <p className="body-muted">{planLine}</p>}
           {permit && (
             <p className="body-muted">
@@ -195,6 +227,14 @@ function ProjectInformation({ intake }: Readonly<{ intake: IntakeForm }>) {
   );
 }
 
+function SystemPill({ name }: Readonly<{ name: string }>) {
+  return (
+    <span className="border-primary bg-primary/10 text-primary inline-flex items-center rounded-md border px-2.5 py-1 text-sm font-medium">
+      {name}
+    </span>
+  );
+}
+
 function SummaryCard() {
   const selectedSystems = useSelector(
     (state: RootState) => state.report.selectedSystems,
@@ -206,7 +246,7 @@ function SummaryCard() {
     (state: RootState) => state.geo,
   );
   const intakeForm = useSelector((state: RootState) => state.report.intakeForm);
-  const { t } = useTranslation();
+  const { locale, t } = useTranslation();
 
   const hasIntakeData =
     intakeForm &&
@@ -231,8 +271,8 @@ function SummaryCard() {
     ).map(([k, systems]) => [
       k,
       systems.map((s) => ({
-        name: sanitizeName(getSystemDisplayName(s)),
-        code: getSystemCodeFor(s),
+        name: sanitizeName(s["ASTM.System.Name"] as string),
+        description: getDescription(s, locale as string),
       })),
     ]),
   );
@@ -246,32 +286,40 @@ function SummaryCard() {
     ).map(([k, features]) => [
       k,
       features.map((f) => ({
-        name: sanitizeName(getSiteFeatureDisplayName(f)),
-        code: getFeatureKeyFor(f),
+        name: sanitizeName(f["Site.Feature.Name"] as string),
+        description: getDescription(f, locale as string),
       })),
     ]),
   );
 
   return (
-    <div className="space-y-4">
-      <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
+    <div className="divide-border overflow-hidden rounded-lg border bg-card divide-y">
+      <section
+        aria-labelledby="summary-project-heading"
+        className="p-3 sm:p-4 md:p-5"
+      >
         <SectionHeader
           title={t("summary.section.project")}
           editTo="intake"
           editLabel={t("summary.editProject")}
+          headingId="summary-project-heading"
         />
         {hasIntakeData ? (
           <ProjectInformation intake={intakeForm} />
         ) : (
           <p className="body-muted">{t("summary.empty.project")}</p>
         )}
-      </div>
+      </section>
 
-      <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
+      <section
+        aria-labelledby="summary-location-heading"
+        className="p-3 sm:p-4 md:p-5"
+      >
         <SectionHeader
           title={t("summary.section.location")}
           editTo="intake"
           editLabel={t("summary.editProject")}
+          headingId="summary-location-heading"
         />
         {humanAddress || geoData ? (
           <div className="flex items-start gap-2">
@@ -279,7 +327,7 @@ function SummaryCard() {
             <div>
               <p className="text-foreground text-sm">{humanAddress || "N/A"}</p>
               {geoData && (
-                <p className="text-warning mt-0.5 font-mono text-sm">
+                <p className="text-muted-foreground mt-0.5 font-mono text-xs">
                   {formatLatLong(geoData.lat, geoData.lng)}
                 </p>
               )}
@@ -288,9 +336,12 @@ function SummaryCard() {
         ) : (
           <p className="body-muted">{t("summary.empty.location")}</p>
         )}
-      </div>
+      </section>
 
-      <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
+      <section
+        aria-labelledby="summary-systems-heading"
+        className="p-3 sm:p-4 md:p-5"
+      >
         <SectionHeader
           title={
             validSelectedSystems.length > 0
@@ -301,15 +352,19 @@ function SummaryCard() {
           }
           editTo="systems"
           editLabel={t("summary.editSystems")}
+          headingId="summary-systems-heading"
         />
         {validSelectedSystems.length === 0 ? (
           <p className="body-muted">{t("summary.empty.systems")}</p>
         ) : (
           <ServicePillList groups={systemGroups} />
         )}
-      </div>
+      </section>
 
-      <div className="border-border border-l-primary rounded-lg border border-l-4 p-4">
+      <section
+        aria-labelledby="summary-features-heading"
+        className="p-3 sm:p-4 md:p-5"
+      >
         <SectionHeader
           title={
             validSelectedSiteFeatures.length > 0
@@ -320,13 +375,14 @@ function SummaryCard() {
           }
           editTo="features"
           editLabel={t("summary.editFeatures")}
+          headingId="summary-features-heading"
         />
         {validSelectedSiteFeatures.length === 0 ? (
           <p className="body-muted">{t("summary.empty.features")}</p>
         ) : (
           <ServicePillList groups={featureGroups} />
         )}
-      </div>
+      </section>
     </div>
   );
 }
