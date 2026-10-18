@@ -45,7 +45,7 @@ export function StepperHeader({
   const { t } = useTranslation();
 
   return (
-    <div className="flex w-full items-center px-2 py-5">
+    <div className="flex w-full items-center">
       {steps.map((stepObj, idx) => {
         const isCompleted =
           currentStep && (currentStep.id ?? 0) > (stepObj.id ?? 0);
@@ -56,49 +56,39 @@ export function StepperHeader({
         const stepLabel = t(`steps.${stepObj.name}`);
 
         return (
-          <React.Fragment key={stepObj.name}>
-            <Button
-              variant="stepper"
-              onClick={() => jumpTo(stepObj.name)}
-              className="group shrink-0"
-              data-locked={isLocked ? "true" : undefined}
-              data-pulsing={isPulsing ? "true" : undefined}
-            >
-              <div className="relative">
-                {isPulsing && (
-                  <span
-                    className="border-warning absolute inset-0 animate-ping rounded-full border-2"
-                    aria-hidden="true"
-                  />
-                )}
-                <div
-                  className={cn(
-                    "flex size-8 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all",
-                    getStepCircleClass(isActive, isCompleted, isPulsing),
-                  )}
-                >
-                  {isCompleted ? <Check strokeWidth={2.5} /> : idx + 1}
-                </div>
-              </div>
-              <span
-                className={cn(
-                  "text-sm transition-colors",
-                  getStepLabelClass(isActive, isCompleted, isPulsing),
-                )}
-              >
-                {stepLabel}
-              </span>
-            </Button>
-
-            {idx < steps.length - 1 && (
+          <Button
+            key={stepObj.name}
+            variant="stepper"
+            onClick={() => jumpTo(stepObj.name)}
+            className="group min-w-0 flex-1 justify-center gap-1"
+            data-locked={isLocked ? "true" : undefined}
+            data-pulsing={isPulsing ? "true" : undefined}
+          >
+            <div className="relative shrink-0">
+              {isPulsing && (
+                <span
+                  className="border-warning absolute inset-0 animate-ping rounded-full border-2"
+                  aria-hidden="true"
+                />
+              )}
               <div
                 className={cn(
-                  "mx-3 h-px flex-1",
-                  isCompleted ? "bg-primary/40" : "bg-border",
+                  "flex size-8 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all",
+                  getStepCircleClass(isActive, isCompleted, isPulsing),
                 )}
-              />
-            )}
-          </React.Fragment>
+              >
+                {isCompleted ? <Check strokeWidth={2.5} /> : idx + 1}
+              </div>
+            </div>
+            <span
+              className={cn(
+                "text-center text-xs leading-tight whitespace-normal transition-colors lg:text-sm lg:whitespace-nowrap",
+                getStepLabelClass(isActive, isCompleted, isPulsing),
+              )}
+            >
+              {stepLabel}
+            </span>
+          </Button>
         );
       })}
     </div>

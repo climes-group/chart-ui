@@ -53,7 +53,7 @@ function StepperFlow({ steps = [] }: Readonly<Props>) {
   return (
     <Card className="w-full max-w-screen-lg flex-auto">
       {!isSmallDevice && (
-        <CardHeader className="from-linen-bkg border-border/50 border-b bg-gradient-to-b to-transparent">
+        <CardHeader className="from-linen-bkg border-border/50 border-b bg-gradient-to-b to-transparent px-4 py-3 md:px-8">
           <StepperHeader
             steps={steps}
             currentStep={currentStep}
