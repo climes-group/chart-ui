@@ -23,10 +23,17 @@ describe("StepperFlow tests", () => {
   });
 
   it("renders the stepper with step labels", () => {
-    const { getAllByText } = renderWithProviders(<StepperFlow steps={steps} />);
+    const { container, getAllByText } = renderWithProviders(
+      <StepperFlow steps={steps} />,
+    );
     expect(getAllByText("Intake").length).toBeGreaterThan(0);
     expect(screen.queryByText("Summary")).not.toBeInTheDocument();
     expect(screen.getByText("Report")).toBeInTheDocument();
+    expect(container.querySelector(".max-w-screen-lg")).toHaveClass(
+      "border-0",
+      "shadow-none",
+    );
+    expect(container.querySelector(".bg-gradient-to-b")).not.toBeInTheDocument();
   });
 
   it("moves persisted summary-step sessions to the report step", async () => {

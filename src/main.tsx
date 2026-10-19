@@ -178,15 +178,24 @@ function MuiThemeBridge({ children }: Readonly<{ children: React.ReactNode }>) {
             styleOverrides: {
               root: {
                 color: "var(--foreground)",
-                backgroundColor: "var(--surface)",
+                backgroundColor: "transparent",
+                borderRadius: 0,
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "var(--input)",
+                  border: 0,
+                  borderBottom: "1px solid var(--input)",
+                  borderRadius: 0,
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "var(--foreground)",
+                  borderBottomColor: "var(--foreground)",
                 },
                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "var(--ring)",
+                  borderBottom: "2px solid var(--ring)",
+                },
+                "&.Mui-error .MuiOutlinedInput-notchedOutline, &.Mui-error:hover .MuiOutlinedInput-notchedOutline": {
+                  borderBottomColor: "var(--destructive)",
+                },
+                "&.Mui-error.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderBottom: "2px solid var(--destructive)",
                 },
               },
               input: {

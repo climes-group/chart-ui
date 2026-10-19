@@ -130,8 +130,8 @@ function SignaturePad({
               <div className="flex flex-col">
                 <div
                   className={cn(
-                    "bg-surface relative h-40 touch-none rounded border-2",
-                    hasError ? "border-destructive" : "border-muted-foreground/40",
+                    "bg-surface relative h-40 touch-none overflow-hidden rounded-md border",
+                    hasError ? "border-destructive" : "border-input",
                   )}
                 >
                   <SignatureCanvas
