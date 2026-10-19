@@ -5,7 +5,6 @@ import type { Step } from "@/steps";
 import IntakeCard from "./Cards/IntakeCard";
 import ReportCard from "./Cards/ReportCard";
 import SiteFeaturesCard from "./Cards/SiteFeaturesCard";
-import SummaryCard from "./Cards/SummaryCard";
 import SystemsCard from "./Cards/SystemsCard";
 
 export type StepNextFn = () => void | Promise<void>;
@@ -20,7 +19,6 @@ const STEP_CARDS: Record<string, ComponentType<StepCardProps>> = {
   intake: IntakeCard,
   systems: SystemsCard,
   features: SiteFeaturesCard,
-  summary: SummaryCard,
   report: ReportCard,
 };
 
@@ -28,7 +26,6 @@ const STEP_CARD_HEADING_KEYS: Record<string, string> = {
   intake: "intake.heading",
   systems: "inventory.systems.heading",
   features: "inventory.siteFeatures.heading",
-  summary: "summary.heading",
   report: "report.heading",
 };
 

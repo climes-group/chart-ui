@@ -1,4 +1,4 @@
-import { StepCardName } from "@/components/Chart/StepRenderer";
+import type { StepCardName } from "@/components/Chart/StepRenderer";
 import { useEffect } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import {
   setSteps,
   stepBackward,
   stepForward,
+  syncSteps,
 } from "../state/slices/flowReducer";
 import type { RootState } from "../state/store";
 import type { Step } from "../steps";
@@ -22,17 +23,41 @@ function useFlow(initialSteps: Step[] = []) {
   const stepsInitialized = useSelector(
     (s: RootState) => s.flow.steps.length > 0,
   );
-
-  useEffect(() => {
-    if (initialSteps.length > 0 && !stepsInitialized) {
-      dispatch(setSteps(initialSteps));
-    }
-  }, [initialSteps, stepsInitialized, dispatch]);
-
   const currentStep = useSelector((s: RootState) => s.flow.currentStep);
   const conditions = useSelector((s: RootState) => s.flow.conditions);
   const steps = useSelector((s: RootState) => s.flow.steps);
   const error = useSelector((s: RootState) => s.flow.error);
+  const stepsNeedSync =
+    stepsInitialized &&
+    (steps.length !== initialSteps.length ||
+      steps.some((step, index) => step.name !== initialSteps[index]?.name));
+
+  useEffect(() => {
+    if (initialSteps.length === 0) return;
+    if (!stepsInitialized) {
+      dispatch(setSteps(initialSteps));
+    } else if (stepsNeedSync) {
+      const currentName = currentStep?.name;
+      const removedStepNext = steps.find(
+        (step) => step.name === currentName,
+      )?.next;
+      const destination =
+        initialSteps.find((step) => step.name === currentName) ??
+        initialSteps.find((step) => step.name === removedStepNext) ??
+        initialSteps[0];
+
+      dispatch(syncSteps(initialSteps));
+      navigate(`/flow/${destination.name}`, { replace: true });
+    }
+  }, [
+    currentStep?.name,
+    dispatch,
+    initialSteps,
+    navigate,
+    steps,
+    stepsInitialized,
+    stepsNeedSync,
+  ]);
 
   // Returns true if any step preceding stepName has an unmet leaveCondition.
   function isStepLocked(stepName: string): boolean {

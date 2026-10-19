@@ -10,9 +10,6 @@ vi.mock("../Cards/SystemsCard", () => ({
 vi.mock("../Cards/SiteFeaturesCard", () => ({
   default: () => <div>SiteFeaturesCard</div>,
 }));
-vi.mock("../Cards/SummaryCard", () => ({
-  default: () => <div>SummaryCard</div>,
-}));
 vi.mock("../Cards/ReportCard", () => ({
   default: () => <div>ReportCard</div>,
 }));

@@ -5,6 +5,7 @@ import reducer, {
   setSteps,
   stepBackward,
   stepForward,
+  syncSteps,
 } from "../flowReducer";
 
 const initialState = {
@@ -35,6 +36,31 @@ describe("flowReducer", () => {
       const state = reducer(initialState, setSteps(steps));
       expect(state.steps).toEqual(steps);
       expect(state.currentStep).toEqual(steps[0]);
+    });
+
+    describe("syncSteps", () => {
+      it("preserves the current step and conditions when the workflow changes", () => {
+        const oldSteps = [
+          { name: "step-1", next: "removed", prev: null, leaveCondition: true },
+          { name: "removed", next: "step-2", prev: "step-1" },
+          { name: "step-2", next: null, prev: "removed" },
+        ];
+        const newSteps = [
+          { name: "step-1", next: "step-2", prev: null, leaveCondition: true },
+          { name: "step-2", next: null, prev: "step-1" },
+        ];
+        const initial = reducer(initialState, setSteps(oldSteps));
+        const progressed = reducer(
+          reducer(initial, meetCondition({ name: "step-1" })),
+          jumpToStep("removed"),
+        );
+
+        const synced = reducer(progressed, syncSteps(newSteps));
+
+        expect(synced.steps).toEqual(newSteps);
+        expect(synced.currentStep).toEqual(newSteps[1]);
+        expect(synced.conditions).toEqual({ "step-1": true });
+      });
     });
 
     it("clears error when steps are set", () => {
@@ -94,7 +120,10 @@ describe("flowReducer", () => {
 
     it("marks a condition as explicitly false", () => {
       const s1 = reducer(initialState, setSteps(stepsWithCondition));
-      const s2 = reducer(s1, meetCondition({ name: "step-1", condition: false }));
+      const s2 = reducer(
+        s1,
+        meetCondition({ name: "step-1", condition: false }),
+      );
       expect(s2.conditions["step-1"]).toBe(false);
     });
 
@@ -117,5 +146,4 @@ describe("flowReducer", () => {
       expect(s2.error).toBeUndefined();
     });
   });
-
 });

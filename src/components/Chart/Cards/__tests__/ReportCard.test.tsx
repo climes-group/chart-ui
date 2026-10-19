@@ -23,7 +23,7 @@ function renderInDebugMode(options = {}) {
 }
 
 describe("ReportCard tests", () => {
-  it("renders the address, system count, site feature count, and modelling standard in the context strip", async () => {
+  it("renders the address, input counts, and modelling standard in the review section", async () => {
     const { store } = renderWithProviders(<ReportCard />);
     await act(async () => {
       store.dispatch(setHumanAddress("123 Main St, Vancouver"));
@@ -33,9 +33,9 @@ describe("ReportCard tests", () => {
       store.dispatch(setIntakeForm({ modelling_standard: ["EnerGuide"] }));
     });
     expect(screen.getByText("123 Main St, Vancouver")).toBeInTheDocument();
-    expect(
-      screen.getByText(/2 systems.*1 site feature.*EnerGuide/),
-    ).toBeInTheDocument();
+    expect(screen.getByText("2 systems")).toBeInTheDocument();
+    expect(screen.getByText("1 site feature")).toBeInTheDocument();
+    expect(screen.getByText("EnerGuide")).toBeInTheDocument();
   });
 
   it("renders MEUI / TEDI / GHGI from intakeForm", async () => {
@@ -53,6 +53,18 @@ describe("ReportCard tests", () => {
     expect(
       screen.getByText(/No location set — generation may fail/),
     ).toBeInTheDocument();
+  });
+
+  it.each([
+    ["Edit intake", "/flow/intake"],
+    ["Edit systems", "/flow/systems"],
+    ["Edit site features", "/flow/features"],
+  ])("jumps directly to the %s step", async (label, path) => {
+    renderWithProviders(<ReportCard />);
+
+    await userEvent.click(screen.getByRole("button", { name: label }));
+
+    expect(globalThis.location.pathname).toBe(path);
   });
 
   it("shows generating state while report is being created", () => {
@@ -161,7 +173,13 @@ describe("ReportCard tests", () => {
     await userEvent.click(screen.getByRole("button", { name: /Regenerate/ }));
 
     expect(
-      screen.getByRole("button", { name: /edit the summary/i }),
+      screen.getByRole("button", { name: /edit intake/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /edit systems/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /edit site features/i }),
     ).toBeInTheDocument();
   });
 

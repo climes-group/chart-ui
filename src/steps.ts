@@ -14,7 +14,6 @@ const base: { name: string; leaveCondition?: boolean }[] = [
   { name: "intake", leaveCondition: true },
   { name: "systems", leaveCondition: true },
   { name: "features", leaveCondition: false },
-  { name: "summary" },
   { name: "report" },
 ];
 
