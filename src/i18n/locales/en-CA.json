@@ -42,6 +42,8 @@
 
   "intake.section.project": "Project Information",
   "intake.section.building": "Building Information",
+  "intake.building.size": "Building size",
+  "intake.building.energyPerformance": "Energy performance",
   "intake.section.assessor": "Assessor Information",
   "intake.section.signature": "Signature",
 

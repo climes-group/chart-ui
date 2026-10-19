@@ -75,25 +75,27 @@ function SignaturePad({
   }, [value]);
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       <h4 className="font-semibold text-foreground">{label}</h4>
       <div className="flex flex-col gap-3">
-        <form.Field name={dateFieldName}>
-          {(field: AnyFieldApi) => (
-            <TextField
-              type="date"
-              label={t("intake.fields.signatureDate", { label })}
-              fullWidth
-              variant="outlined"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              slotProps={{
-                inputLabel: { shrink: true },
-                htmlInput: { "data-testid": `${testId}-date` },
-              }}
-            />
-          )}
-        </form.Field>
+        <div className="max-w-sm">
+          <form.Field name={dateFieldName}>
+            {(field: AnyFieldApi) => (
+              <TextField
+                type="date"
+                label={t("intake.fields.signatureDate", { label })}
+                fullWidth
+                variant="outlined"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                slotProps={{
+                  inputLabel: { shrink: true },
+                  htmlInput: { "data-testid": `${testId}-date` },
+                }}
+              />
+            )}
+          </form.Field>
+        </div>
 
         <form.Field
           name={signatureFieldName}
@@ -185,7 +187,7 @@ export default function SignatureSection({ form }: Readonly<Props>) {
   const { t } = useTranslation();
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <SignaturePad
           form={form}
           signatureFieldName="ea_signature"

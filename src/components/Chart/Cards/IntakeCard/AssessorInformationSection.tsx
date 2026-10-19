@@ -13,7 +13,7 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid max-w-5xl grid-cols-1 gap-x-4 gap-y-6 md:grid-cols-2">
         <form.Field
           name="ea_name"
           validators={{

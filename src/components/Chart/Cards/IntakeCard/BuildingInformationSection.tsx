@@ -7,9 +7,11 @@ type Props = { form: IntakeFormApi };
 
 export default function BuildingInformationSection({ form }: Readonly<Props>) {
   const { t } = useTranslation();
-  const fields: { name: string; label: string }[] = [
+  const buildingSizeFields: { name: string; label: string }[] = [
     { name: "heated_floor_area", label: t("intake.fields.floorArea") },
     { name: "number_of_floors", label: t("intake.fields.floors") },
+  ];
+  const energyPerformanceFields: { name: string; label: string }[] = [
     { name: "electricity_use", label: t("intake.fields.electricity") },
     { name: "fossil_fuel_use", label: t("intake.fields.fossilFuel") },
     { name: "meui", label: t("intake.fields.meui") },
@@ -17,23 +19,40 @@ export default function BuildingInformationSection({ form }: Readonly<Props>) {
     { name: "ghgi", label: t("intake.fields.ghgi") },
   ];
 
+  const renderFields = (fields: { name: string; label: string }[]) =>
+    fields.map(({ name, label }) => (
+      <form.Field key={name} name={name}>
+        {(field: AnyFieldApi) => (
+          <TextField
+            type="number"
+            label={label}
+            fullWidth
+            variant="outlined"
+            value={field.state.value}
+            onChange={(e) => field.handleChange(e.target.value)}
+          />
+        )}
+      </form.Field>
+    ));
+
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {fields.map(({ name, label }) => (
-          <form.Field key={name} name={name}>
-            {(field: AnyFieldApi) => (
-              <TextField
-                type="number"
-                label={label}
-                fullWidth
-                variant="outlined"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-            )}
-          </form.Field>
-        ))}
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <h4 className="text-sm font-semibold text-muted-foreground">
+          {t("intake.building.size")}
+        </h4>
+        <div className="grid max-w-2xl grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+          {renderFields(buildingSizeFields)}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <h4 className="text-sm font-semibold text-muted-foreground">
+          {t("intake.building.energyPerformance")}
+        </h4>
+        <div className="grid max-w-4xl grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+          {renderFields(energyPerformanceFields)}
+        </div>
       </div>
     </div>
   );
