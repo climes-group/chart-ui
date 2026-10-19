@@ -301,7 +301,7 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 md:grid-cols-2 xl:grid-cols-3">
         <form.Field name="building_permit">
           {(field: AnyFieldApi) => (
             <TextField
@@ -323,7 +323,7 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
           }}
         >
           {(field: AnyFieldApi) => (
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 xl:col-span-3">
               <ProjectAddressAutocomplete
                 field={field}
                 form={form}
@@ -387,7 +387,7 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
           )}
         </form.Field>
 
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 xl:col-span-3">
           <div className="expand-in" data-expanded={!!geoData || undefined}>
             <div>
               {geoData && (
@@ -530,7 +530,7 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
         </form.Field>
       </div>
 
-      <div className="border-border border-t pt-4">
+      <div className="pt-4">
         <form.Field name="modelling_standard">
           {(field: AnyFieldApi) => (
             <FormControl component="fieldset">
@@ -577,7 +577,7 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
                     variant="outlined"
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    sx={{ mt: 2, maxWidth: "50%" }}
+                    sx={{ mt: 2, maxWidth: 448 }}
                   />
                 )}
               </form.Field>

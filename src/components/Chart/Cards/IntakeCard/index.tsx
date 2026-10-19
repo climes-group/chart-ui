@@ -145,7 +145,7 @@ export default function IntakeCard({
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="[&>section+section]:border-accent/30 [&>section+section]:mt-6 [&>section+section]:border-t [&>section+section]:pt-6"
+        className="mt-4 space-y-10"
       >
         <FormSection
           form={form}

@@ -96,52 +96,84 @@ function ReportContext({
     featureCount === 1
       ? "report.context.features.one"
       : "report.context.features.other";
-  const systemLine = [
-    t(systemsKey, { count: systemCount }),
-    t(featuresKey, { count: featureCount }),
-    standardsLabel || null,
-  ]
-    .filter(Boolean)
-    .join("  ·  ");
-
   const { jumpTo } = useFlow();
 
   return (
-    <div className="border-accent/40 bg-accent/10 space-y-3 rounded-lg border p-4">
-      <div className="flex items-start gap-2.5 text-sm">
-        {hasLocation ? (
-          <MapPin className="text-primary mt-0.5 size-4 shrink-0" />
-        ) : (
-          <AlertTriangle className="text-warning mt-0.5 size-4 shrink-0" />
-        )}
-        <div className="flex-1 space-y-1">
-          {hasLocation ? (
-            <p className="text-foreground">{humanAddress}</p>
-          ) : (
-            <p className="text-warning">{t("report.context.noLocation")}</p>
-          )}
-          {systemLine && (
-            <p className="text-muted-foreground text-sm">{systemLine}</p>
-          )}
-          {energy.length > 0 && (
-            <p className="text-muted-foreground font-mono text-sm">
-              {energy.map((e) => `${e.label} ${e.value}`).join("  ·  ")}
+    <section
+      aria-labelledby="report-context-heading"
+      className="border-accent/40 bg-accent/10 divide-border rounded-lg border px-4"
+    >
+      <h3 id="report-context-heading" className="heading-section py-3">
+        {t("report.context.heading")}
+      </h3>
+      <div className="divide-y">
+        <div className="flex flex-wrap items-center justify-between gap-3 py-3">
+          <div className="min-w-0 flex-1 space-y-1">
+            <p className="text-foreground text-sm font-medium">
+              {t("report.context.intake")}
             </p>
-          )}
+            {hasLocation ? (
+              <p className="text-muted-foreground flex items-start gap-1.5 text-sm">
+                <MapPin className="text-primary mt-0.5 size-4 shrink-0" />
+                {humanAddress}
+              </p>
+            ) : (
+              <p className="text-warning flex items-start gap-1.5 text-sm">
+                <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+                {t("report.context.noLocation")}
+              </p>
+            )}
+            {(standardsLabel || energy.length > 0) && (
+              <p className="text-muted-foreground text-sm">
+                {[
+                  standardsLabel,
+                  energy.map((e) => `${e.label} ${e.value}`).join("  ·  "),
+                ]
+                  .filter(Boolean)
+                  .join("  ·  ")}
+              </p>
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => jumpTo("intake")}
+            className="text-muted-foreground hover:text-primary"
+          >
+            <Pencil className="size-3" />
+            {t("report.context.editIntake")}
+          </Button>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 py-3">
+          <p className="text-foreground text-sm font-medium">
+            {t(systemsKey, { count: systemCount })}
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => jumpTo("systems")}
+            className="text-muted-foreground hover:text-primary"
+          >
+            <Pencil className="size-3" />
+            {t("report.context.editSystems")}
+          </Button>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 py-3">
+          <p className="text-foreground text-sm font-medium">
+            {t(featuresKey, { count: featureCount })}
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => jumpTo("features")}
+            className="text-muted-foreground hover:text-primary"
+          >
+            <Pencil className="size-3" />
+            {t("report.context.editFeatures")}
+          </Button>
         </div>
       </div>
-      <div className="border-accent/30 flex justify-start border-t pt-2.5">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => jumpTo("summary")}
-          className="text-muted-foreground hover:text-primary"
-        >
-          <Pencil className="size-3" />
-          {t("report.context.editSummary")}
-        </Button>
-      </div>
-    </div>
+    </section>
   );
 }
 
@@ -255,7 +287,7 @@ export default function ReportCard() {
   return (
     <>
       <div className="flex flex-col gap-5">
-        <em className="text-muted-foreground text-sm">{t("report.intro")}</em>
+        <p className="text-muted-foreground text-sm">{t("report.intro")}</p>
 
         {/* Primary action row */}
         <div className="flex flex-wrap items-center gap-3">

@@ -23,8 +23,67 @@ describe("StepperFlow tests", () => {
   });
 
   it("renders the stepper with step labels", () => {
-    const { getAllByText } = renderWithProviders(<StepperFlow steps={steps} />);
+    const { container, getAllByText } = renderWithProviders(
+      <StepperFlow steps={steps} />,
+    );
     expect(getAllByText("Intake").length).toBeGreaterThan(0);
+    expect(screen.queryByText("Summary")).not.toBeInTheDocument();
+    expect(screen.getByText("Report")).toBeInTheDocument();
+    expect(container.querySelector(".max-w-screen-lg")).toHaveClass(
+      "border-0",
+      "shadow-none",
+    );
+    expect(container.querySelector(".bg-gradient-to-b")).not.toBeInTheDocument();
+  });
+
+  it("moves persisted summary-step sessions to the report step", async () => {
+    const oldSteps = [
+      {
+        id: 0,
+        name: "intake",
+        next: "systems",
+        prev: null,
+        leaveCondition: true,
+      },
+      {
+        id: 1,
+        name: "systems",
+        next: "features",
+        prev: "intake",
+        leaveCondition: true,
+      },
+      {
+        id: 2,
+        name: "features",
+        next: "summary",
+        prev: "systems",
+        leaveCondition: false,
+      },
+      { id: 3, name: "summary", next: "report", prev: "features" },
+      { id: 4, name: "report", next: null, prev: "summary" },
+    ];
+    globalThis.history.pushState({}, "", "/flow/summary");
+
+    const { store } = renderWithProviders(
+      <Routes>
+        <Route path="/flow/*" element={<StepperFlow steps={steps} />} />
+      </Routes>,
+      {
+        preloadedState: {
+          flow: {
+            steps: oldSteps,
+            currentStep: oldSteps[3],
+            error: null,
+            conditions: { intake: true, systems: true },
+          },
+        },
+      },
+    );
+
+    await waitFor(() => {
+      expect(globalThis.location.pathname).toBe("/flow/report");
+      expect(store.getState().flow.currentStep?.name).toBe("report");
+    });
   });
 
   it("renders Next button on desktop for a non-final step", () => {

@@ -1,14 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import SelectionPill from "@/components/ui/SelectionPill";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useTranslation } from "@/i18n";
 import { meetCondition } from "@/state/slices/flowReducer";
 import {
@@ -19,199 +11,11 @@ import {
   type SystemRecord,
 } from "@/state/slices/reportReducer";
 import type { RootState } from "@/state/store";
-import { cn } from "@/utils/cn";
 import { getCachedJson } from "@/utils/prefetchRefData";
-import { X } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
 import type { StepCardProps } from "../../StepRenderer";
-import { dedupeSystems, sanitizeName } from "./utils";
-
-function SystemsSection({
-  systems,
-  activeService,
-  onServiceChange,
-  selectedSystemCodes,
-  onToggle,
-  onClearAll,
-  onClearClassification,
-}: Readonly<{
-  systems: SystemRecord[];
-  activeService: string | null;
-  onServiceChange: (s: string) => void;
-  selectedSystemCodes: Set<string | undefined>;
-  onToggle: (system: SystemRecord) => void;
-  onClearAll: () => void;
-  onClearClassification: (classification: string) => () => void;
-}>) {
-  const { locale, t } = useTranslation();
-  const listboxRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
-  const serviceNames = [
-    ...new Set(systems.map((s) => s.Services as string).filter(Boolean)),
-  ].sort((a, b) => a.localeCompare(b));
-  const systemsForService = activeService
-    ? systems.filter((s) => s.Services === activeService)
-    : [];
-  const classificationNames = [
-    ...new Set(
-      systemsForService.map((s) => s["ASTM.Name"] as string).filter(Boolean),
-    ),
-  ];
-
-  return (
-    <div>
-      <div className="mb-4 flex min-h-[2.25rem] items-center justify-between">
-        <em className="text-muted-foreground text-sm">
-          {t("inventory.selectOnly")}
-        </em>
-        {selectedSystemCodes.size > 0 && (
-          <Button
-            variant="muted"
-            size="sm"
-            onClick={() => {
-              onClearAll();
-            }}
-            aria-label={t("common.clearAllSelected", {
-              count: selectedSystemCodes.size,
-            })}
-          >
-            <X aria-hidden />
-            {t("common.clearAll", { count: selectedSystemCodes.size })}
-          </Button>
-        )}
-      </div>
-      <div className="border-border mb-5 flex flex-wrap gap-4 border-b">
-        {serviceNames.map((service) => {
-          const selectedCount = systems
-            .filter((s) => s.Services === service)
-            .filter((s) => selectedSystemCodes.has(getSystemCodeFor(s))).length;
-          const isActive = activeService === service;
-
-          return (
-            <Button
-              variant="ghost"
-              size="pill"
-              key={service}
-              onClick={() => onServiceChange(service)}
-              aria-pressed={isActive}
-              className={cn(
-                "relative shrink-0 rounded-none bg-transparent px-1 pb-2 whitespace-nowrap shadow-none active:scale-100",
-                isActive
-                  ? "text-primary after:bg-primary after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 hover:bg-transparent"
-                  : "text-muted-foreground hover:text-foreground hover:bg-transparent",
-              )}
-            >
-              {sanitizeName(service)}
-              {selectedCount > 0 && (
-                <span className="bg-primary/10 text-primary inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1 text-sm font-semibold">
-                  {selectedCount}
-                </span>
-              )}
-            </Button>
-          );
-        })}
-      </div>
-
-      <div className="space-y-5">
-        {classificationNames.map((classification) => {
-          const systemsInClass = systemsForService.filter(
-            (s) => s["ASTM.Name"] === classification,
-          );
-          const selectedCount = systemsInClass.filter((s) =>
-            selectedSystemCodes.has(getSystemCodeFor(s)),
-          ).length;
-
-          return (
-            <div key={classification}>
-              <div className="mb-2 flex min-h-[2.25rem] items-center justify-between">
-                <h3 className="text-primary mb-0 text-sm font-semibold tracking-wide uppercase">
-                  {sanitizeName(classification)}
-                </h3>
-                {selectedCount > 0 && (
-                  <Button
-                    variant="muted"
-                    size="sm"
-                    onClick={() => {
-                      onClearClassification(classification)();
-                      listboxRefs.current[classification]?.focus();
-                    }}
-                    aria-label={t("common.clearClassificationSelected", {
-                      count: selectedCount,
-                      classification: sanitizeName(classification),
-                    })}
-                  >
-                    <X aria-hidden />
-                    {t("common.clearCount", { count: selectedCount })}
-                  </Button>
-                )}
-              </div>
-              <TooltipProvider>
-                <div
-                  role="group"
-                  aria-label={sanitizeName(classification)}
-                  ref={(el) => {
-                    listboxRefs.current[classification] = el;
-                  }}
-                  className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"
-                >
-                  {systemsInClass.map((system, i) => {
-                    const code = getSystemCodeFor(system);
-                    const description =
-                      (((locale as string) === "fr-CA"
-                        ? (system["DescriptionFr"] as string)
-                        : (system["Description"] as string)) ||
-                        (system["Description"] as string)) ??
-                      "";
-
-                    if (!description) {
-                      return (
-                        <SelectionPill
-                          key={code}
-                          name={sanitizeName(
-                            system["ASTM.System.Name"] as string,
-                          )}
-                          code={
-                            (system["ASTM.System.Code"] as string) ??
-                            (system["ASTM.Code"] as string)
-                          }
-                          isSelected={selectedSystemCodes.has(code)}
-                          onToggle={() => onToggle(system)}
-                          tabIndex={i === 0 ? 0 : -1}
-                        />
-                      );
-                    }
-
-                    return (
-                      <Tooltip key={code}>
-                        <TooltipTrigger asChild>
-                          <SelectionPill
-                            key={code}
-                            name={sanitizeName(
-                              system["ASTM.System.Name"] as string,
-                            )}
-                            code={
-                              (system["ASTM.System.Code"] as string) ??
-                              (system["ASTM.Code"] as string)
-                            }
-                            isSelected={selectedSystemCodes.has(code)}
-                            showInfoIcon
-                            onToggle={() => onToggle(system)}
-                            tabIndex={i === 0 ? 0 : -1}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent>{description}</TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-                </div>
-              </TooltipProvider>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+import InventoryCardSkeleton from "../InventoryCardSkeleton";
+import SystemsSection from "./SystemsSection";
+import { dedupeSystems } from "./utils";
 
 export default function SystemsCard({ step }: Readonly<StepCardProps>) {
   const [availableSystems, setAvailableSystems] = useState<
@@ -238,10 +42,10 @@ export default function SystemsCard({ step }: Readonly<StepCardProps>) {
     }
   };
 
-  const clearForClassification = (classification: string) => () => {
+  const clearForClassification = (classification: string) => {
     if (!availableSystems) return;
     availableSystems
-      .filter((s) => s["ASTM.Name"] === classification)
+      .filter((system) => system["ASTM.Name"] === classification)
       .map(getSystemCodeFor)
       .filter((code): code is string => !!code && selectedSystemCodes.has(code))
       .forEach((code) => dispatch(removeSelectedSystem(code)));
@@ -259,7 +63,7 @@ export default function SystemsCard({ step }: Readonly<StepCardProps>) {
         setAvailableSystems(unique);
 
         const services = Array.from(
-          new Set(unique.map((s) => s.Services as string).filter(Boolean)),
+          new Set(unique.map((system) => system.Services as string).filter(Boolean)),
         ).sort((a, b) => a.localeCompare(b));
 
         setActiveService(services[0] ?? null);
@@ -291,29 +95,7 @@ export default function SystemsCard({ step }: Readonly<StepCardProps>) {
       </div>
     );
 
-  if (!availableSystems)
-    return (
-      <div className="flex flex-col gap-5">
-        <Skeleton className="h-6 w-44 rounded" />
-        <div className="border-border flex flex-wrap gap-2 border-b pb-3">
-          {[88, 112, 80].map((w) => (
-            <Skeleton
-              key={w}
-              className="h-9 rounded-full"
-              style={{ width: w }}
-            />
-          ))}
-        </div>
-        <div className="space-y-2.5">
-          <Skeleton className="h-3 w-20 rounded" />
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {[96, 124, 80, 144, 100, 116].map((w, i) => (
-              <Skeleton key={`${w}-${i}`} className="h-9 w-full rounded-md" />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+  if (!availableSystems) return <InventoryCardSkeleton />;
 
   return (
     <div>

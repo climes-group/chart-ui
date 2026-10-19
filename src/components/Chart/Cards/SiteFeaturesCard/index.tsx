@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import SelectionPill from "@/components/ui/SelectionPill";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useTranslation } from "@/i18n";
 import { meetCondition } from "@/state/slices/flowReducer";
 import {
@@ -19,138 +11,11 @@ import {
   type FeatureRecord,
 } from "@/state/slices/reportReducer";
 import type { RootState } from "@/state/store";
-import { cn } from "@/utils/cn";
 import { getCachedJson } from "@/utils/prefetchRefData";
-import { X } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
 import type { StepCardProps } from "../../StepRenderer";
-import { dedupeSiteFeatures, sanitizeName } from "./utils";
-
-function SiteFeaturesSection({
-  features,
-  activeCategory,
-  onCategoryChange,
-  selectedFeatureCodes,
-  onToggle,
-  onClearAll,
-}: Readonly<{
-  features: FeatureRecord[];
-  activeCategory: string | null;
-  onCategoryChange: (c: string) => void;
-  selectedFeatureCodes: Set<string | undefined>;
-  onToggle: (feature: FeatureRecord) => void;
-  onClearAll: () => void;
-}>) {
-  const categoryNames = [
-    ...new Set(features.map((f) => f.Category as string).filter(Boolean)),
-  ].sort((a, b) => a.localeCompare(b));
-  const featuresForCategory = activeCategory
-    ? features.filter((f) => f.Category === activeCategory)
-    : [];
-
-  const { locale, t } = useTranslation();
-
-  return (
-    <div>
-      <div className="mb-4 flex min-h-[2.25rem] items-center justify-between">
-        <em className="text-muted-foreground text-sm">
-          {t("inventory.selectOnly")}
-        </em>
-        {selectedFeatureCodes.size > 0 && (
-          <Button
-            variant="muted"
-            size="sm"
-            onClick={() => {
-              onClearAll();
-            }}
-          >
-            <X aria-hidden />
-            {t("common.clearAll", { count: selectedFeatureCodes.size })}
-          </Button>
-        )}
-      </div>
-
-      <div className="border-border mb-5 flex flex-wrap gap-4 border-b">
-        {categoryNames.map((category) => {
-          const selectedCount = features
-            .filter((f) => f.Category === category)
-            .filter((f) =>
-              selectedFeatureCodes.has(getFeatureKeyFor(f)),
-            ).length;
-          const isActive = activeCategory === category;
-
-          return (
-            <Button
-              variant="ghost"
-              size="pill"
-              key={category}
-              onClick={() => onCategoryChange(category)}
-              aria-pressed={isActive}
-              className={cn(
-                "relative shrink-0 rounded-none bg-transparent px-1 pb-2 whitespace-nowrap shadow-none active:scale-100",
-                isActive
-                  ? "text-primary after:bg-primary after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 hover:bg-transparent"
-                  : "text-muted-foreground hover:text-foreground hover:bg-transparent",
-              )}
-            >
-              {sanitizeName(category)}
-              {selectedCount > 0 && (
-                <span className="bg-primary/10 text-primary inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1 text-sm font-semibold">
-                  {selectedCount}
-                </span>
-              )}
-            </Button>
-          );
-        })}
-      </div>
-
-      <TooltipProvider>
-        <div
-          role="group"
-          aria-label={sanitizeName(activeCategory)}
-          className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {featuresForCategory.map((feature) => {
-            const code = getFeatureKeyFor(feature);
-            const description =
-              (((locale as string) === "fr-CA"
-                ? (feature["DescriptionFr"] as string)
-                : (feature["Description"] as string)) ||
-                (feature["Description"] as string)) ??
-              "";
-
-            if (!description) {
-              return (
-                <SelectionPill
-                  key={code}
-                  name={sanitizeName(feature["Site.Feature.Name"] as string)}
-                  code={feature["ID"]}
-                  isSelected={selectedFeatureCodes.has(code)}
-                  onToggle={() => onToggle(feature)}
-                />
-              );
-            }
-
-            return (
-              <Tooltip key={code}>
-                <TooltipTrigger asChild>
-                  <SelectionPill
-                    name={sanitizeName(feature["Site.Feature.Name"] as string)}
-                    code={feature["ID"]}
-                    isSelected={selectedFeatureCodes.has(code)}
-                    showInfoIcon
-                    onToggle={() => onToggle(feature)}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>{description}</TooltipContent>
-              </Tooltip>
-            );
-          })}
-        </div>
-      </TooltipProvider>
-    </div>
-  );
-}
+import InventoryCardSkeleton from "../InventoryCardSkeleton";
+import SiteFeaturesSection from "./SiteFeaturesSection";
+import { dedupeSiteFeatures } from "./utils";
 
 export default function SiteFeaturesCard({ step }: Readonly<StepCardProps>) {
   const [availableFeatures, setAvailableFeatures] = useState<
@@ -191,7 +56,7 @@ export default function SiteFeaturesCard({ step }: Readonly<StepCardProps>) {
         setAvailableFeatures(unique);
 
         const categories = Array.from(
-          new Set(unique.map((f) => f.Category as string).filter(Boolean)),
+          new Set(unique.map((feature) => feature.Category as string).filter(Boolean)),
         ).sort((a, b) => a.localeCompare(b));
 
         setActiveCategory(categories[0] ?? null);
@@ -223,29 +88,7 @@ export default function SiteFeaturesCard({ step }: Readonly<StepCardProps>) {
       </div>
     );
 
-  if (!availableFeatures)
-    return (
-      <div className="flex flex-col gap-5">
-        <Skeleton className="h-6 w-44 rounded" />
-        <div className="border-border flex flex-wrap gap-2 border-b pb-3">
-          {[88, 112, 80].map((w) => (
-            <Skeleton
-              key={w}
-              className="h-9 rounded-full"
-              style={{ width: w }}
-            />
-          ))}
-        </div>
-        <div className="space-y-2.5">
-          <Skeleton className="h-3 w-20 rounded" />
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {[96, 124, 80, 144, 100, 116].map((w, i) => (
-              <Skeleton key={`${w}-${i}`} className="h-9 w-full rounded-md" />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+  if (!availableFeatures) return <InventoryCardSkeleton />;
 
   return (
     <div>

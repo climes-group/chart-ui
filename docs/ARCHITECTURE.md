@@ -27,7 +27,10 @@ This document maps the current frontend architecture for the CHART tool.
 
 - Redux Toolkit owns application state under `src/state/`.
 - `redux-persist` restores selected state across sessions.
-- `src/steps.ts` defines the chart workflow steps; page and feature components render the corresponding inputs and results.
+- `src/steps.ts` defines the chart workflow steps; page and feature components
+  render the corresponding inputs and results. Users review their inputs on the
+  report step and can jump directly back to intake, systems, or site features to
+  edit them.
 - API requests use the configured API host and include the authentication and user-timezone headers expected by the backend.
 
 ## Authentication

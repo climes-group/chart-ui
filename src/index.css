@@ -350,6 +350,11 @@
 }
 
 @layer utilities {
+  [data-color-theme="cyberpunk"] .chart-flow-card,
+  [data-color-theme="cyberpunk"] .chart-flow-header {
+    background-color: transparent;
+  }
+
   .expand-in {
     display: grid;
     grid-template-rows: 0fr;
