@@ -180,7 +180,7 @@ describe("SavedReports", () => {
       screen.queryByRole("dialog", { name: /Delete all reports/ }),
     ).not.toBeInTheDocument();
     expect(screen.getByText("a.pdf")).toBeInTheDocument();
-    expect(vi.mocked(globalThis.fetch).mock.calls.length).toBe(
+    expect(vi.mocked(globalThis.fetch).mock.calls).toHaveLength(
       initialCallCount,
     );
   });

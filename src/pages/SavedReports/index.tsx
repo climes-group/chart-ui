@@ -55,7 +55,7 @@ function ConfirmDialog({
   return (
     <dialog
       ref={dialogRef}
-      className="fixed inset-0 z-50 m-auto w-[calc(100%-2rem)] max-w-sm border-0 bg-transparent p-0 backdrop:bg-black/40"
+      className="fixed inset-0 z-50 m-0 grid h-screen w-screen max-w-none place-items-center border-0 bg-transparent p-0 backdrop:bg-black/40"
       aria-modal="true"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
@@ -63,11 +63,15 @@ function ConfirmDialog({
         event.preventDefault();
         onCancel();
       }}
-      onClick={(event) => {
-        if (event.target === event.currentTarget) onCancel();
-      }}
     >
-      <Card className="w-full shadow-xl">
+      <button
+        type="button"
+        aria-hidden="true"
+        tabIndex={-1}
+        className="absolute inset-0 border-0 bg-transparent p-0"
+        onClick={onCancel}
+      />
+      <Card className="relative z-10 w-[calc(100%-2rem)] max-w-sm shadow-xl">
         <CardHeader>
           <CardTitle id={titleId} className="heading-section">
             {title}

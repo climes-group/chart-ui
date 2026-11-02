@@ -30,6 +30,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { Dispatch } from "redux";
 import type { IntakeFormApi } from ".";
+import { onBlurAndSubmit } from "./fieldValidators";
 
 const MODELLING_STANDARDS = [
   "EnerGuide",
@@ -315,12 +316,9 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="project_address"
-          validators={{
-            onBlur: ({ value }: { value: string }) =>
-              value ? undefined : required,
-            onSubmit: ({ value }: { value: string }) =>
-              value ? undefined : required,
-          }}
+          validators={onBlurAndSubmit(
+            (value: string) => (value ? undefined : required),
+          )}
         >
           {(field: AnyFieldApi) => (
             <div className="md:col-span-2 xl:col-span-3">
@@ -336,12 +334,9 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="municipality"
-          validators={{
-            onBlur: ({ value }: { value: string }) =>
-              value ? undefined : required,
-            onSubmit: ({ value }: { value: string }) =>
-              value ? undefined : required,
-          }}
+          validators={onBlurAndSubmit(
+            (value: string) => (value ? undefined : required),
+          )}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -366,16 +361,12 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="postal_code"
-          validators={{
-            onBlur: ({ value }: { value: string }) =>
+          validators={onBlurAndSubmit(
+            (value: string) =>
               !value || /^[A-Z]\d[A-Z] \d[A-Z]\d$/i.test(value)
                 ? undefined
                 : t("validators.postalFormat"),
-            onSubmit: ({ value }: { value: string }) =>
-              !value || /^[A-Z]\d[A-Z] \d[A-Z]\d$/i.test(value)
-                ? undefined
-                : t("validators.postalFormat"),
-          }}
+          )}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -429,12 +420,9 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="unit_model_type"
-          validators={{
-            onBlur: ({ value }: { value: string }) =>
-              value ? undefined : required,
-            onSubmit: ({ value }: { value: string }) =>
-              value ? undefined : required,
-          }}
+          validators={onBlurAndSubmit(
+            (value: string) => (value ? undefined : required),
+          )}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -476,12 +464,10 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="total_primary_units"
-          validators={{
-            onBlur: ({ value }: { value: number | string }) =>
+          validators={onBlurAndSubmit(
+            (value: number | string) =>
               Number(value) < 1 ? t("validators.minOne") : undefined,
-            onSubmit: ({ value }: { value: number | string }) =>
-              Number(value) < 1 ? t("validators.minOne") : undefined,
-          }}
+          )}
         >
           {(field: AnyFieldApi) => (
             <TextField
