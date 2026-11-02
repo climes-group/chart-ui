@@ -38,6 +38,17 @@ describe("StepperFlow tests", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("identifies the active step programmatically", async () => {
+    renderWithProviders(<StepperFlow steps={steps} />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Intake/ })).toHaveAttribute(
+        "aria-current",
+        "step",
+      );
+    });
+  });
+
   it("moves persisted summary-step sessions to the report step", async () => {
     const oldSteps = [
       {

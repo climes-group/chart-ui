@@ -16,7 +16,6 @@ function OidcLogin() {
       <MicrosoftRedirectHandler />
       <LoginButton />
       <LoginModal>
-        <p>To continue, please choose a login provider:</p>
         <div className="flex flex-col gap-3">
           {LOGIN_PROVIDERS.map(({ id, name, Component, disabled }) => (
             <Component

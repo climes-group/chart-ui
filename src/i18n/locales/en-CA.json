@@ -25,6 +25,7 @@
   "auth.login": "Login",
   "auth.signInWith": "Sign in with {provider}",
   "auth.chooseProvider": "Choose a sign-in method",
+  "auth.closeLogin": "Close login dialog",
 
   "flow.stepper.stepCounter": "{current} of {total}",
   "flow.errors.default": "Please complete the required fields.",

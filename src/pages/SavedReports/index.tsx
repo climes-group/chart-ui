@@ -4,9 +4,9 @@ import { formatDate, useTranslation } from "@/i18n";
 import { resetAppState } from "@/state/actions/resetAppState";
 import { useAppDispatch, type RootState } from "@/state/store";
 import steps from "@/steps";
-import { Download, FileText, Loader2, RotateCcw, Trash2 } from "lucide-react";
 import { getUserTimezone } from "@/utils/timezone";
-import { useEffect, useState, type ReactNode } from "react";
+import { Download, FileText, Loader2, RotateCcw, Trash2 } from "lucide-react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -35,26 +35,55 @@ function ConfirmDialog({
   onConfirm,
   onCancel,
 }: Readonly<ConfirmDialogProps>) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
+  const descriptionId = useId();
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    dialog.showModal();
+    cancelButtonRef.current?.focus();
+
+    return () => {
+      if (dialog.open) dialog.close();
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
-        className="absolute inset-0 bg-black/40"
-        onClick={onCancel}
-        aria-hidden="true"
-      />
-      <Card
-        className="relative z-10 mx-4 w-full max-w-sm shadow-xl"
-        role="dialog"
-        aria-modal="true"
-        aria-label={title}
-      >
+    <dialog
+      ref={dialogRef}
+      className="fixed inset-0 z-50 m-auto w-[calc(100%-2rem)] max-w-sm border-0 bg-transparent p-0 backdrop:bg-black/40"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      aria-describedby={descriptionId}
+      onCancel={(event) => {
+        event.preventDefault();
+        onCancel();
+      }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onCancel();
+      }}
+    >
+      <Card className="w-full shadow-xl">
         <CardHeader>
-          <CardTitle className="heading-section">{title}</CardTitle>
+          <CardTitle id={titleId} className="heading-section">
+            {title}
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <p className="body-muted">{message}</p>
+          <p id={descriptionId} className="body-muted">
+            {message}
+          </p>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" size="sm" onClick={onCancel}>
+            <Button
+              ref={cancelButtonRef}
+              variant="outline"
+              size="sm"
+              onClick={onCancel}
+            >
               {cancelLabel}
             </Button>
             <Button variant="destructive" size="sm" onClick={onConfirm}>
@@ -63,7 +92,7 @@ function ConfirmDialog({
           </div>
         </CardContent>
       </Card>
-    </div>
+    </dialog>
   );
 }
 
@@ -96,7 +125,7 @@ function SavedReports() {
     setStatus("loading");
 
     const userTimezone = getUserTimezone();
-    
+
     fetch(`${import.meta.env.VITE_API_HOST}/reports`, {
       headers: {
         ...(token && { "X-ID-Token": `Bearer ${token}` }),
@@ -314,7 +343,9 @@ function SavedReports() {
           message={
             <>
               {t("savedReports.confirmDeleteBefore")}
-              <span className="text-foreground font-medium">{pendingDelete}</span>
+              <span className="text-foreground font-medium">
+                {pendingDelete}
+              </span>
               {t("savedReports.confirmDeleteAfter")}
             </>
           }

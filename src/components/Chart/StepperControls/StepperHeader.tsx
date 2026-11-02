@@ -3,7 +3,6 @@ import { useTranslation } from "@/i18n";
 import type { Step } from "@/steps";
 import { cn } from "@/utils/cn";
 import { Check } from "lucide-react";
-import React from "react";
 
 type StepperHeaderProps = {
   steps: Step[];
@@ -60,6 +59,7 @@ export function StepperHeader({
             key={stepObj.name}
             variant="stepper"
             onClick={() => jumpTo(stepObj.name)}
+            aria-current={isActive ? "step" : undefined}
             className="group min-w-0 flex-1 justify-center gap-1"
             data-locked={isLocked ? "true" : undefined}
             data-pulsing={isPulsing ? "true" : undefined}
