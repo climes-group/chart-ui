@@ -61,8 +61,8 @@ available.
 #### 1.4.4 — Resize Text
 
 At 200% text resizing, ensure users can still access all content and
-functionality without clipping or overlap, including in the stepper, inventory
-controls, and sticky intake section headings.
+functionality without clipping or overlap, including in the stepper and inventory
+controls.
 
 #### 1.4.10 — Reflow
 
@@ -115,8 +115,7 @@ document title when navigation occurs within the single-page app.
 #### 2.4.3 — Focus Order
 
 Keep keyboard focus order aligned with the visual and logical reading order,
-including when card layouts reflow or reveal conditional fields. Avoid using
-CSS reordering or positive `tabIndex` values to create a different sequence.
+including when card layouts reflow or reveal conditional fields.
 
 #### 2.4.6 — Headings and Labels
 
@@ -129,25 +128,14 @@ and report-review edit actions.
 When moving between stepper cards, focus must land somewhere visible and not be
 hidden behind sticky content.
 
-```jsx
-useEffect(() => {
-  cardHeadingRef.current?.focus();
-}, [stepName]);
-
-<h2 tabIndex={-1} ref={cardHeadingRef}>
-  {stepTitle}
-</h2>;
-```
-
 When focus moves to a card heading, ensure sticky content does not obscure it
 or the visible focus indicator.
 
 #### 2.5.8 — Target Size (Minimum)
 
-Stepper and category controls must provide targets of at least 24×24 CSS pixels
+Stepper and category controls must provide targets of at least 24×24 pixels
 or meet one of the criterion's defined exceptions. Larger targets may improve
-usability, especially on touch devices, but 44×44 pixels is not the AA
-minimum.
+usability, especially on touch devices.
 
 ### Understandable
 
@@ -155,16 +143,6 @@ minimum.
 
 Identify intake validation errors in text and associate field-specific
 messages with the relevant field.
-
-```jsx
-<label htmlFor="field">Field label</label>
-<input
-  id="field"
-  aria-invalid={hasError}
-  aria-describedby={hasError ? "field-error" : undefined}
-/>
-{hasError && <p id="field-error">{errorMessage}</p>}
-```
 
 #### 3.3.2 — Labels or Instructions
 
@@ -175,12 +153,10 @@ information or input format users need to complete them.
 
 When the correction is known, explain how to fix an identified input error.
 
-#### 3.3.4 — Error Prevention (Legal, Financial, Data)
+#### 3.3.4 — Error Prevention (Data)
 
-This criterion applies to actions that create legal commitments or financial
-transactions, modify or delete user-controllable data, or submit test
-responses. For covered actions, provide at least one safeguard: make the action
-reversible, check the submitted information and let the user correct it, or
+This criterion applies to actions that modify or delete user-controllable data.
+For these actions, provide at least one safeguard: make the action reversible, check the submitted information and let the user correct it, or
 provide a review and confirmation step. Deleting saved reports is an example
 of a user-controllable data action; report generation alone does not trigger
 this criterion.
@@ -194,9 +170,7 @@ information again.
 
 #### 3.3.8 — Accessible Authentication (Minimum)
 
-Chart UI delegates sign-in to Google or Microsoft. Do not add a cognitive
-function test to the saved-reports flow without an accessible alternative, and
-review the provider sign-in experience if it imposes such a test.
+Chart UI delegates sign-in to Google or Microsoft.
 
 ### Robust
 
@@ -212,6 +186,4 @@ interaction pattern. The stepper is separate button navigation, not a tablist.
 
 Announce asynchronous updates, including report generation, address search,
 saved-report loading, and loading the building-systems and site-features
-reference data. Reference-data requests can take longer when the API is cold;
-communicate that loading is in progress and announce completion or errors
-without moving focus unnecessarily.
+reference data.
