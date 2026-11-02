@@ -410,3 +410,12 @@
   transform: skewX(-8deg) translateX(0.12em);
   text-shadow: 7px 0 #ff2bd6, -7px 0 #00f5d4, 0 0 24px #00f5d4aa;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .cyberpunk-logo,
+  .cyberpunk-logo:hover {
+    transform: none;
+    transition: none;
+    text-shadow: 3px 0 #ff2bd6, -3px 0 #00f5d4;
+  }
+}

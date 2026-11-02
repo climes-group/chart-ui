@@ -7,6 +7,7 @@ This application is built and tested to be usable by people with disabilities, i
 - Targets **WCAG 2.2 Level AA**.
 - Changes are automatically scanned for accessibility issues before they can be merged.
 - Manually tested with assistive technology (screen readers and keyboard-only navigation) to catch what automated tools can't.
+- Respect system reduced-motion preferences for decorative animations and transitions.
 
 ## Automated Testing
 

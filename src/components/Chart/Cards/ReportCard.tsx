@@ -283,6 +283,12 @@ export default function ReportCard() {
 
   const systemCount = selectedSystems?.length ?? 0;
   const featureCount = selectedSiteFeatures?.length ?? 0;
+  let reportStatusMessage = "";
+  if (isGenerating) {
+    reportStatusMessage = t("report.building");
+  } else if (isGenerated) {
+    reportStatusMessage = t("report.ready");
+  }
 
   return (
     <>
@@ -355,7 +361,7 @@ export default function ReportCard() {
         </div>
 
         <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
-          {isGenerating ? t("report.building") : isGenerated ? t("report.ready") : ""}
+          {reportStatusMessage}
         </p>
 
         {/* Status panel */}

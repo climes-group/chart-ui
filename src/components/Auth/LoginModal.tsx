@@ -22,13 +22,13 @@ function LoginModal({ children }: Readonly<{ children: React.ReactNode }>) {
 
   return (
     <Modal open={isModalOpen} onClose={handleClose}>
-      <div
-        role="dialog"
+      <dialog
+        open
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
         tabIndex={-1}
-        className="flex h-screen items-center justify-center"
+        className="static m-0 flex h-screen w-full max-w-none items-center justify-center border-0 bg-transparent p-0 text-inherit"
       >
         <div className="bg-surface relative rounded p-8 shadow-lg">
           <div className="mb-8 flex items-center justify-between">
@@ -46,7 +46,7 @@ function LoginModal({ children }: Readonly<{ children: React.ReactNode }>) {
           <p id={descriptionId}>{t("auth.chooseProvider")}</p>
           {children}
         </div>
-      </div>
+      </dialog>
     </Modal>
   );
 }
