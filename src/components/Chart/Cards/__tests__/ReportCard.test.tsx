@@ -80,7 +80,10 @@ describe("ReportCard tests", () => {
         },
       },
     });
-    expect(screen.getByText(/Building your report/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Building your report/, { selector: "span" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Building your report");
     expect(screen.getByRole("button", { name: /Generating/ })).toBeDisabled();
   });
 
@@ -97,7 +100,10 @@ describe("ReportCard tests", () => {
         },
       },
     });
-    expect(screen.getByText("Report ready")).toBeInTheDocument();
+    expect(
+      screen.getByText("Report ready", { selector: "span" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Report ready");
     expect(
       screen.getByRole("button", { name: /Download PDF/ }),
     ).toBeInTheDocument();
@@ -136,6 +142,9 @@ describe("ReportCard tests", () => {
       },
     });
     expect(screen.getByText("Report generation failed")).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent(
+     "Report generation failed",
+    );
     expect(screen.getByRole("button", { name: /Retry/ })).toBeInTheDocument();
   });
 
@@ -153,7 +162,12 @@ describe("ReportCard tests", () => {
       screen.getByRole("button", { name: /Generate Report/ }),
     );
 
-    expect(screen.getByText(/Building your report/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Building your report/, { selector: "span" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Building your report",
+    );
   });
 
   it("transitions back to not_generated when Regenerate is clicked", async () => {

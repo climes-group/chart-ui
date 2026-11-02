@@ -354,6 +354,10 @@ export default function ReportCard() {
           )}
         </div>
 
+        <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {isGenerating ? t("report.building") : isGenerated ? t("report.ready") : ""}
+        </p>
+
         {/* Status panel */}
         {reportStatus === "not_generated" && (
           <div className="space-y-4">
@@ -377,10 +381,12 @@ export default function ReportCard() {
           <div className="border-destructive/30 bg-destructive/5 flex items-start gap-3 rounded-lg border p-4">
             <XCircle className="text-destructive mt-0.5 size-5 shrink-0" />
             <div className="flex flex-col gap-2">
-              <p className="text-destructive text-sm font-medium">
-                {t("report.failed")}
-              </p>
-              <p className="body-muted">{t("report.failedHelp")}</p>
+              <div role="alert" aria-atomic="true">
+                <p className="text-destructive text-sm font-medium">
+                  {t("report.failed")}
+                </p>
+                <p className="body-muted">{t("report.failedHelp")}</p>
+              </div>
               <Button
                 onClick={handleGenerateReport}
                 variant="outline"
