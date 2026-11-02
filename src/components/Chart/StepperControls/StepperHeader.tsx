@@ -21,7 +21,7 @@ function getStepCircleClass(
   if (isActive || isCompleted)
     return "bg-primary border-primary text-primary-foreground";
   if (isPulsing) return "bg-warning border-warning text-warning-foreground";
-  return "border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60 bg-transparent";
+  return "border-input text-muted-foreground group-hover:border-muted-foreground/60 bg-transparent";
 }
 
 function getStepLabelClass(

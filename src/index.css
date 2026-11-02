@@ -90,8 +90,8 @@
   --muted-foreground: color-mix(in srgb, var(--brand-charcoal) 70%, white);
   --destructive: var(--brand-coral-dark);
   --destructive-foreground: #ffffff;
-  --border: color-mix(in srgb, var(--brand-teal) 18%, white);
-  --input: color-mix(in srgb, var(--brand-teal) 28%, white);
+  --border: color-mix(in srgb, var(--brand-teal) 65%, white);
+  --input: color-mix(in srgb, var(--brand-teal) 70%, white);
   --ring: var(--brand-gold-dark);
   --link: var(--brand-teal);
   --link-hover: var(--brand-gold-dark);
