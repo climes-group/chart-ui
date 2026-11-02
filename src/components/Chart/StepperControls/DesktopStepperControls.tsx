@@ -23,7 +23,10 @@ export function DesktopStepperControls({
       </Button>
       <div className="flex items-center gap-3">
         {currentStep && errorMessage && (
-          <span className="text-destructive flex items-center gap-1.5 text-sm">
+          <span
+            role="alert"
+            className="text-destructive flex items-center gap-1.5 text-sm"
+          >
             <AlertCircle className="size-4 shrink-0" />
             {errorMessage}
           </span>

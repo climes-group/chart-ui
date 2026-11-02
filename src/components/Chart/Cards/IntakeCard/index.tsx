@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTestMode } from "@/components/TestMode/TestModeContext";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/i18n";
-import { X } from "lucide-react";
 import { meetCondition, setError } from "@/state/slices/flowReducer";
 import { setGeoData, setHumanAddress } from "@/state/slices/geoReducer";
 import type { IntakeForm } from "@/state/slices/reportReducer";
@@ -16,6 +15,7 @@ import {
 import { RootState } from "@/state/store";
 import type { AnyFieldMetaBase } from "@tanstack/form-core";
 import { useForm, type ReactFormExtendedApi } from "@tanstack/react-form";
+import { X } from "lucide-react";
 import type { StepCardProps } from "../../StepRenderer";
 import AssessorInformationSection from "./AssessorInformationSection";
 import BuildingInformationSection from "./BuildingInformationSection";
@@ -32,7 +32,7 @@ export type IntakeFormApi = ReactFormExtendedApi<
   undefined,
   undefined,
   undefined,
-  undefined,
+  () => { form: string } | undefined,
   undefined,
   undefined,
   undefined,
@@ -40,14 +40,29 @@ export type IntakeFormApi = ReactFormExtendedApi<
   unknown
 >;
 
-const PROJECT_REQUIRED = [
+const PROJECT_REQUIRED: (keyof IntakeForm)[] = [
   "project_address",
   "municipality",
   "unit_model_type",
   "total_primary_units",
 ];
-const ASSESSOR_REQUIRED = ["ea_name", "ea_number", "ea_phone", "ea_business"];
-const SIGNATURE_REQUIRED = ["ea_signature", "builder_signature"];
+const ASSESSOR_REQUIRED: (keyof IntakeForm)[] = [
+  "ea_name",
+  "ea_number",
+  "ea_phone",
+  "ea_business",
+];
+const SIGNATURE_REQUIRED: (keyof IntakeForm)[] = [
+  "ea_signature",
+  "builder_signature",
+];
+const VALIDATED_FIELDS: (keyof IntakeForm)[] = [
+  ...PROJECT_REQUIRED,
+  ...ASSESSOR_REQUIRED,
+  ...SIGNATURE_REQUIRED,
+  "postal_code",
+  "builder_phone",
+];
 
 export default function IntakeCard({
   registerNext,
@@ -57,6 +72,7 @@ export default function IntakeCard({
   const { intakeFillRef } = useTestMode();
   const { t } = useTranslation();
   const submitSucceeded = useRef(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const savedForm = useSelector(selectIntakeForm);
   const geoData = useSelector((state: RootState) => state.geo.geoData);
 
@@ -86,10 +102,18 @@ export default function IntakeCard({
 
       if (submitSucceeded.current) {
         nav();
-      } else if (form.state.errors.length > 0) {
-        dispatch(setError(form.state.errors[0].form));
       } else {
-        dispatch(setError(t("intake.errorMessage")));
+        VALIDATED_FIELDS.forEach((name) => {
+          form.setFieldMeta(name, (prev) => ({ ...prev, isTouched: true }));
+        });
+        dispatch(
+          setError(form.state.errors[0]?.form ?? t("intake.errorMessage")),
+        );
+        requestAnimationFrame(() => {
+          formRef.current
+            ?.querySelector<HTMLElement>('[aria-invalid="true"]')
+            ?.focus();
+        });
       }
     });
     if (intakeFillRef) {
@@ -140,6 +164,7 @@ export default function IntakeCard({
         </Button>
       </div>
       <form
+        ref={formRef}
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();

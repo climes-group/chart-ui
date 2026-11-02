@@ -19,6 +19,8 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
           validators={{
             onBlur: ({ value }: { value: string }) =>
               value ? undefined : required,
+            onSubmit: ({ value }: { value: string }) =>
+              value ? undefined : required,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -31,8 +33,12 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
               }
             />
           )}
@@ -42,6 +48,8 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
           name="ea_number"
           validators={{
             onBlur: ({ value }: { value: string }) =>
+              value ? undefined : required,
+            onSubmit: ({ value }: { value: string }) =>
               value ? undefined : required,
           }}
         >
@@ -55,8 +63,12 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
               }
             />
           )}
@@ -66,6 +78,11 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
           name="ea_phone"
           validators={{
             onBlur: ({ value }: { value: string }) => {
+              if (!value) return required;
+              if (!isValidPhone(value)) return phoneFormat;
+              return undefined;
+            },
+            onSubmit: ({ value }: { value: string }) => {
               if (!value) return required;
               if (!isValidPhone(value)) return phoneFormat;
               return undefined;
@@ -83,8 +100,7 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
               }
               helperText={
                 field.state.meta.isTouched && field.state.meta.errors.length
@@ -100,6 +116,8 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
           validators={{
             onBlur: ({ value }: { value: string }) =>
               value ? undefined : required,
+            onSubmit: ({ value }: { value: string }) =>
+              value ? undefined : required,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -112,8 +130,12 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
               }
             />
           )}
@@ -151,6 +173,8 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
               if (!isValidPhone(value)) return phoneFormat;
               return undefined;
             },
+            onSubmit: ({ value }: { value: string }) =>
+              value && !isValidPhone(value) ? phoneFormat : undefined,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -163,8 +187,7 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
               }
               helperText={
                 field.state.meta.isTouched && field.state.meta.errors.length

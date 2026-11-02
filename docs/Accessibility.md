@@ -90,7 +90,8 @@ controls do not clip, overlap, or lose functionality.
 Inventory descriptions must be available when their control receives keyboard
 focus, remain visible while the pointer moves over the description, and be
 dismissible without moving focus or the pointer. Ensure touch users can access
-the same description without relying on hover.
+the same description without relying on hover. Touch users currently have no
+separate way to reveal inventory descriptions.
 
 ### Operable
 

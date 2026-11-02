@@ -1,5 +1,5 @@
 import useMedia from "@/hooks/useMedia";
-import { meetCondition } from "@/state/slices/flowReducer";
+import { meetCondition, setError } from "@/state/slices/flowReducer";
 import steps from "@/steps";
 import { renderWithProviders } from "@/utils/testing";
 import { act, screen, waitFor } from "@testing-library/react";
@@ -33,7 +33,9 @@ describe("StepperFlow tests", () => {
       "border-0",
       "shadow-none",
     );
-    expect(container.querySelector(".bg-gradient-to-b")).not.toBeInTheDocument();
+    expect(
+      container.querySelector(".bg-gradient-to-b"),
+    ).not.toBeInTheDocument();
   });
 
   it("moves persisted summary-step sessions to the report step", async () => {
@@ -103,6 +105,38 @@ describe("StepperFlow tests", () => {
     ];
     const { getByRole } = renderWithProviders(<StepperFlow steps={oneStep} />);
     expect(getByRole("button", { name: /Finish/ })).toBeInTheDocument();
+  });
+
+  it("announces desktop step validation errors", async () => {
+    mockedUseMedia.mockReturnValue([false, false, false, false]);
+    const { container, store } = renderWithProviders(
+      <StepperFlow steps={steps} />,
+    );
+
+    act(() => {
+      store.dispatch(setError("Please complete the intake form."));
+    });
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Please complete the intake form.",
+    );
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("announces mobile step validation errors", async () => {
+    mockedUseMedia.mockReturnValue([true, false, false, false]);
+    const { container, store } = renderWithProviders(
+      <StepperFlow steps={steps} />,
+    );
+
+    act(() => {
+      store.dispatch(setError("Please complete the intake form."));
+    });
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Please complete the intake form.",
+    );
+    expect(await axe(container)).toHaveNoViolations();
   });
 
   it("shows the FinishCard after finishing the last step", async () => {

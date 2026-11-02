@@ -150,9 +150,7 @@ function ProjectAddressAutocomplete({
           };
         return (
           <li key={key} {...rest}>
-            <span className="text-sm">
-              {opt.address.label}
-            </span>
+            <span className="text-sm">{opt.address.label}</span>
           </li>
         );
       }}
@@ -320,6 +318,8 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
           validators={{
             onBlur: ({ value }: { value: string }) =>
               value ? undefined : required,
+            onSubmit: ({ value }: { value: string }) =>
+              value ? undefined : required,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -339,6 +339,8 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
           validators={{
             onBlur: ({ value }: { value: string }) =>
               value ? undefined : required,
+            onSubmit: ({ value }: { value: string }) =>
+              value ? undefined : required,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -353,6 +355,11 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
               error={
                 field.state.meta.isTouched && !!field.state.meta.errors.length
               }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
+              }
             />
           )}
         </form.Field>
@@ -361,6 +368,10 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
           name="postal_code"
           validators={{
             onBlur: ({ value }: { value: string }) =>
+              !value || /^[A-Z]\d[A-Z] \d[A-Z]\d$/i.test(value)
+                ? undefined
+                : t("validators.postalFormat"),
+            onSubmit: ({ value }: { value: string }) =>
               !value || /^[A-Z]\d[A-Z] \d[A-Z]\d$/i.test(value)
                 ? undefined
                 : t("validators.postalFormat"),
@@ -421,6 +432,8 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
           validators={{
             onBlur: ({ value }: { value: string }) =>
               value ? undefined : required,
+            onSubmit: ({ value }: { value: string }) =>
+              value ? undefined : required,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -435,6 +448,11 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
               onChange={(e) => field.handleChange(e.target.value)}
               error={
                 field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
               }
             >
               {[
@@ -461,6 +479,8 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
           validators={{
             onBlur: ({ value }: { value: number | string }) =>
               Number(value) < 1 ? t("validators.minOne") : undefined,
+            onSubmit: ({ value }: { value: number | string }) =>
+              Number(value) < 1 ? t("validators.minOne") : undefined,
           }}
         >
           {(field: AnyFieldApi) => (
@@ -473,6 +493,14 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
               value={field.state.value}
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
+              error={
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
+              }
             />
           )}
         </form.Field>

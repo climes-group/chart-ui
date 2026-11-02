@@ -102,7 +102,7 @@
   "intake.fields.signAbove": "Sign above",
   "intake.fields.clearSignature": "Clear signature",
 
-  "validators.required": "Required",
+  "validators.required": "This field is required.",
   "validators.signatureRequired": "Signature required",
   "validators.phoneFormat": "Format: 555-555-0100",
   "validators.postalFormat": "Format: A1A 1A1",
