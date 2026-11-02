@@ -43,7 +43,10 @@ export function MobileStepperControls({
             })}
           </span>
           {errorMessage && (
-            <span className="text-destructive mt-0.5 flex items-center gap-1 text-sm">
+            <span
+              role="alert"
+              className="text-destructive mt-0.5 flex items-center gap-1 text-sm"
+            >
               <AlertCircle className="size-3 shrink-0" />
               {errorMessage}
             </span>

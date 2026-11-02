@@ -129,7 +129,7 @@ function DebugBanner() {
       <div
         className={[
           "md:w-max md:max-w-[calc(100vw-5rem)]",
-          "h-10 w-max max-w-[calc(100vw-2rem)] overflow-hidden rounded-md border border-white/25 bg-gray-600/50 text-sm text-white shadow-xl backdrop-blur-sm",
+          "h-10 w-max max-w-[calc(100vw-2rem)] overflow-hidden rounded-md border border-white/25 bg-gray-700 text-sm text-white shadow-xl backdrop-blur-sm",
           "transition-all duration-200 ease-out",
           isOpen
             ? "translate-x-0 opacity-100"
@@ -150,7 +150,7 @@ function DebugBanner() {
             aria-label="Color theme"
             role="group"
           >
-            <span className="mr-1 text-white/70">Theme:</span>
+            <span className="mr-1 text-white">Theme:</span>
             {(["light", "dark", "cyberpunk"] as ThemeMode[]).map((colorTheme) => (
               <Button
                 key={colorTheme}

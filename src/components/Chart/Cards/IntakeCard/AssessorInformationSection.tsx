@@ -3,6 +3,7 @@ import { isValidPhone } from "@/utils/validators";
 import { TextField } from "@mui/material";
 import { type AnyFieldApi } from "@tanstack/form-core";
 import type { IntakeFormApi } from ".";
+import { onBlurAndSubmit } from "./fieldValidators";
 
 type Props = { form: IntakeFormApi };
 
@@ -16,10 +17,9 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
       <div className="grid max-w-5xl grid-cols-1 gap-x-4 gap-y-6 md:grid-cols-2">
         <form.Field
           name="ea_name"
-          validators={{
-            onBlur: ({ value }: { value: string }) =>
-              value ? undefined : required,
-          }}
+          validators={onBlurAndSubmit(
+            (value: string) => (value ? undefined : required),
+          )}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -31,8 +31,12 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
               }
             />
           )}
@@ -40,10 +44,9 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="ea_number"
-          validators={{
-            onBlur: ({ value }: { value: string }) =>
-              value ? undefined : required,
-          }}
+          validators={onBlurAndSubmit(
+            (value: string) => (value ? undefined : required),
+          )}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -55,8 +58,12 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
               }
             />
           )}
@@ -64,13 +71,11 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="ea_phone"
-          validators={{
-            onBlur: ({ value }: { value: string }) => {
-              if (!value) return required;
-              if (!isValidPhone(value)) return phoneFormat;
-              return undefined;
-            },
-          }}
+          validators={onBlurAndSubmit((value: string) => {
+            if (!value) return required;
+            if (!isValidPhone(value)) return phoneFormat;
+            return undefined;
+          })}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -83,8 +88,7 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
               }
               helperText={
                 field.state.meta.isTouched && field.state.meta.errors.length
@@ -97,10 +101,9 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="ea_business"
-          validators={{
-            onBlur: ({ value }: { value: string }) =>
-              value ? undefined : required,
-          }}
+          validators={onBlurAndSubmit(
+            (value: string) => (value ? undefined : required),
+          )}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -112,8 +115,12 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
               }
             />
           )}
@@ -145,13 +152,11 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="builder_phone"
-          validators={{
-            onBlur: ({ value }: { value: string }) => {
-              if (!value) return undefined;
-              if (!isValidPhone(value)) return phoneFormat;
-              return undefined;
-            },
-          }}
+          validators={onBlurAndSubmit((value: string) => {
+            if (!value) return undefined;
+            if (!isValidPhone(value)) return phoneFormat;
+            return undefined;
+          })}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -163,8 +168,7 @@ export default function AssessorInformationSection({ form }: Readonly<Props>) {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               error={
-                field.state.meta.isTouched &&
-                !!field.state.meta.errors.length
+                field.state.meta.isTouched && !!field.state.meta.errors.length
               }
               helperText={
                 field.state.meta.isTouched && field.state.meta.errors.length

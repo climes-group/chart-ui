@@ -74,10 +74,13 @@ describe("DebugBanner", () => {
 
     const panel = container.querySelector("div.w-max");
     expect(panel).toHaveClass(
-      "bg-gray-600/50",
+      "bg-gray-700",
       "text-white",
       "rounded-md",
       "backdrop-blur-sm",
+    );
+    expect(container.querySelector(".mr-1.text-white")).toHaveTextContent(
+      "Theme:",
     );
     expect(
       screen.getByRole("switch", { name: /debug mode: off/i }),

@@ -206,6 +206,44 @@ describe("IntakeCard signature pads", () => {
     });
   });
 
+  it("shows field-specific errors and focuses the first invalid field on submit", async () => {
+    let nextFn: (() => void | Promise<void>) | undefined;
+    const registerNext = (fn: (() => void | Promise<void>) | null) => {
+      nextFn = fn ?? undefined;
+    };
+
+    const { container } = renderWithProviders(
+      <IntakeCard
+        step={intakeStep}
+        registerNext={registerNext}
+        nav={vi.fn()}
+      />,
+      preloadIntake(),
+    );
+
+    await act(async () => {
+      await nextFn!();
+    });
+
+    const projectAddress = screen.getByRole("combobox", {
+      name: "Project Address",
+    });
+    const municipality = screen.getByRole("textbox", {
+      name: "Municipality / District",
+    });
+
+    await waitFor(() => {
+      expect(document.activeElement).toBe(projectAddress);
+      expect(projectAddress).toHaveAttribute("aria-invalid", "true");
+      expect(municipality).toHaveAttribute("aria-invalid", "true");
+    });
+    expect(
+      screen.getAllByText("This field is required.").length,
+    ).toBeGreaterThan(0);
+    expect(municipality).toHaveAttribute("aria-describedby");
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
   it("allows proceed once both signatures are drawn", async () => {
     let nextFn: (() => void | Promise<void>) | undefined;
     const registerNext = (fn: (() => void | Promise<void>) | null) => {

@@ -46,9 +46,7 @@ const SelectionPill = forwardRef<HTMLButtonElement, Props>(
           aria-hidden="true"
           className={cn(
             "flex size-4 shrink-0 items-center justify-center rounded-sm border-[1.5px] leading-none transition-colors",
-            isSelected
-              ? "bg-primary border-primary"
-              : "border-muted-foreground/30",
+            isSelected ? "bg-primary border-primary" : "border-input",
           )}
         >
           {isSelected && (

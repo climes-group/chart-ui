@@ -1,16 +1,26 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import OidcLogin from "./components/Auth/OidcLogin";
 import DebugBanner from "./components/TestMode/DebugBanner";
 import { TestModeProvider } from "./components/TestMode/TestModeContext";
 import { useIdleTimeout } from "./hooks/useIdleTimeout";
+import { useTranslation } from "./i18n";
+import { getPageTitle } from "./utils/getPageTitle";
 
 const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
 
 function AppInner() {
+  const { pathname } = useLocation();
+  const { t } = useTranslation();
+
   useIdleTimeout(() => {
     sessionStorage.clear();
     globalThis.location.reload();
   }, IDLE_TIMEOUT_MS);
+
+  useEffect(() => {
+    document.title = getPageTitle(pathname, t);
+  }, [pathname, t]);
 
   return (
     <>

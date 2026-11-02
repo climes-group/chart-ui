@@ -54,7 +54,7 @@ export default function StepRenderer({
       <h2
         ref={headingRef}
         tabIndex={-1}
-        className="heading-card mb-4 focus-visible:outline-none"
+        className="heading-card focus-visible:ring-ring focus-visible:ring-offset-background mb-4 rounded-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       >
         {headingKey ? t(headingKey) : null}
       </h2>

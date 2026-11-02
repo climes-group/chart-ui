@@ -25,12 +25,14 @@
   "auth.login": "Login",
   "auth.signInWith": "Sign in with {provider}",
   "auth.chooseProvider": "Choose a sign-in method",
+  "auth.closeLogin": "Close login dialog",
 
   "flow.stepper.stepCounter": "{current} of {total}",
   "flow.errors.default": "Please complete the required fields.",
   "flow.errors.conditionsNotMet": "Conditions not met",
 
   "splash.title": "CHART",
+  "pageTitle.design": "Design System",
   "splash.tagline": "Charting your path to resilience",
   "splash.getStarted": "Get started",
   "splash.copyright": "© {year} Climes Group Engineering Inc.",
@@ -101,7 +103,7 @@
   "intake.fields.signAbove": "Sign above",
   "intake.fields.clearSignature": "Clear signature",
 
-  "validators.required": "Required",
+  "validators.required": "This field is required.",
   "validators.signatureRequired": "Signature required",
   "validators.phoneFormat": "Format: 555-555-0100",
   "validators.postalFormat": "Format: A1A 1A1",

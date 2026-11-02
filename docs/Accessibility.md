@@ -7,6 +7,7 @@ This application is built and tested to be usable by people with disabilities, i
 - Targets **WCAG 2.2 Level AA**.
 - Changes are automatically scanned for accessibility issues before they can be merged.
 - Manually tested with assistive technology (screen readers and keyboard-only navigation) to catch what automated tools can't.
+- Respect system reduced-motion preferences for decorative animations and transitions.
 
 ## Automated Testing
 
@@ -32,346 +33,158 @@ This application is built and tested to be usable by people with disabilities, i
 
 ## WCAG 2.2 AA Checklist — Chart UI
 
-### 2.4.7 / 2.4.11 — Focus Visible & Focus Not Obscured
+### Perceivable
 
-When moving between stepper cards, focus must land somewhere visible and not be hidden behind a sticky header/footer.
+#### 1.1.1 — Non-text Content
 
-**Bad**
+Provide text alternatives for meaningful images and icons, and hide decorative
+icons from assistive technology. Ensure the selected-location map has an
+equivalent textual address and coordinate summary.
 
-```jsx
-function goToNextStep() {
-  setStep(step + 1);
-  // focus stays on the old "Next" button, which unmounts —
-  // focus is lost to <body>, screen reader users lose their place
-}
-```
+#### 1.3.1 — Info and Relationships
 
-**Good**
+Ensure that form labels, grouped controls, section headings, and other visual
+relationships are also represented programmatically.
 
-```jsx
-function goToNextStep() {
-  setStep(step + 1);
-}
+#### 1.4.1 — Use of Colour
 
-useEffect(() => {
-  // move focus to the new card's heading whenever the step changes
-  cardHeadingRef.current?.focus();
-}, [step]);
+Do not use colour alone to distinguish selected, completed, locked, warning, or
+error states. Provide another visual cue, such as text, shape, or an icon, and
+expose control state programmatically where applicable.
 
-<h2 tabIndex={-1} ref={cardHeadingRef}>
-  {stepTitle}
-</h2>;
-```
+#### 1.4.3 — Contrast (Minimum)
 
-Also ensure `:focus-visible` outlines aren't hidden behind a sticky progress bar (`scroll-margin-top` or offset scroll helps).
+Maintain a contrast ratio of at least 4.5:1 for normal text and 3:1 for large
+text, including muted labels and text in selected, unselected, disabled,
+loading, and error states. Check both light and dark themes where the UI is
+available.
 
----
+#### 1.4.4 — Resize Text
 
-## 2.4.3 — Focus Order
+At 200% text resizing, ensure users can still access all content and
+functionality without clipping or overlap, including in the stepper and inventory
+controls.
 
-Focus order in each card should match the visual/logical reading order — critical once cards contain conditional fields.
+#### 1.4.10 — Reflow
 
-**Bad**
+At a viewport equivalent to 320px wide (including at 400% zoom), keep
+intake fields, inventory choices, step navigation, and report content usable
+without loss of information or functionality and without two-dimensional
+scrolling, except where that layout is essential. Provide a textual location
+summary so using the map is not required to understand the selected location.
 
-```jsx
-<div style={{ display: "flex", flexDirection: "row-reverse" }}>
-  <input tabIndex={2} /> {/* visually first */}
-  <input tabIndex={1} /> {/* visually second */}
-</div>
-```
+#### 1.4.11 — Non-text Contrast
 
-**Good**
-
-```jsx
-// Let source order = visual order; use CSS (order/flex-direction) sparingly,
-// and never fight it with manual tabIndex values.
-<div className="row">
-  <input name="firstName" />
-  <input name="lastName" />
-</div>
-```
-
----
-
-## 2.5.8 — Target Size (Minimum)
-
-Stepper controls (Next/Back/dots) need at least a 24×24 CSS px hit area (or sufficient spacing).
+Ensure visual information needed to identify controls and their states has at
+least 3:1 contrast against adjacent colors. Check control boundaries,
+selection indicators, and keyboard focus indicators in the themes where the UI
+is available.
 
-**Bad**
+#### 1.4.12 — Text Spacing
 
-```jsx
-<button style={{ width: 16, height: 16, padding: 0 }} onClick={next}>
-  ›
-</button>
-```
+When users increase line, paragraph, letter, and word spacing to the WCAG
+specified values, ensure intake labels and help text, category names, and
+controls do not clip, overlap, or lose functionality.
 
-**Good**
+#### 1.4.13 — Content on Hover or Focus
 
-```jsx
-<button className="step-nav" onClick={next} aria-label="Next step">
-  ›
-</button>
-```
+Inventory descriptions must be available when their control receives keyboard
+focus, remain visible while the pointer moves over the description, and be
+dismissible without moving focus or the pointer. Ensure touch users can access
+the same description without relying on hover. Touch users currently have no
+separate way to reveal inventory descriptions.
 
-```css
-.step-nav {
-  min-width: 44px;
-  min-height: 44px;
-}
-```
+### Operable
 
----
+#### 2.1.1 — Keyboard
 
-## 2.5.7 — Dragging Movements
+All functionality must be operable using a keyboard, including changing
+inventory categories, selecting systems and site features, using step
+navigation, and opening or closing menus and dialogs. Users must not need to
+operate the map to understand or use the selected location.
 
-If the stepper progress uses a draggable slider/timeline, provide a non-drag alternative.
+#### 2.4.1 — Bypass Blocks
 
-**Bad**
+Provide a keyboard-accessible way to bypass repeated header content and move
+directly to the main area, such as a skip link.
 
-```jsx
-<Slider onDrag={handleStepDrag} /> {/* drag is the only way to jump steps */}
-```
+#### 2.4.2 — Page Titled
 
-**Good**
-
-```jsx
-<Slider onDrag={handleStepDrag} />
-<div role="group" aria-label="Jump to step">
-  {steps.map((s, i) => (
-    <button key={i} onClick={() => goToStep(i)} aria-current={i === step}>
-      {i + 1}
-    </button>
-  ))}
-</div>
-```
-
----
-
-## 4.1.2 — Name, Role, Value (custom stepper widget)
-
-If the step indicator is a custom component (not native radio/tabs), it needs the right ARIA.
-
-**Bad**
-
-```jsx
-<div className="stepper">
-  {steps.map((s, i) => (
-    <div
-      key={i}
-      className={i === step ? "active" : ""}
-      onClick={() => goToStep(i)}
-    >
-      {s.label}
-    </div>
-  ))}
-</div>
-```
-
-**Good**
-
-```jsx
-<div role="tablist" aria-label="Intake progress">
-  {steps.map((s, i) => (
-    <button
-      key={i}
-      role="tab"
-      aria-selected={i === step}
-      aria-controls={`panel-${i}`}
-      id={`tab-${i}`}
-      onClick={() => goToStep(i)}
-    >
-      {s.label}
-    </button>
-  ))}
-</div>
-<div role="tabpanel" id={`panel-${step}`} aria-labelledby={`tab-${step}`}>
-  {/* current card content */}
-</div>
-```
-
----
-
-## 3.3.2 / 1.3.1 — Labels & Programmatic Structure
+Give each route a page title that identifies its purpose, and update the
+document title when navigation occurs within the single-page app.
 
-Every intake field needs a real, associated `<label>` — placeholder text is not a label.
+#### 2.4.3 — Focus Order
 
-**Bad**
+Keep keyboard focus order aligned with the visual and logical reading order,
+including when card layouts reflow or reveal conditional fields.
 
-```jsx
-<input placeholder="Full name" onChange={handleChange} />
-```
+#### 2.4.6 — Headings and Labels
 
-**Good**
+Use headings that identify each intake section and card, and labels that
+describe the purpose of each field and control, including category selectors
+and report-review edit actions.
 
-```jsx
-<label htmlFor="fullName">Full name</label>
-<input id="fullName" name="fullName" onChange={handleChange} />
-```
-
----
-
-## 3.3.1 / 3.3.3 — Error Identification & Suggestion
+#### 2.4.7 / 2.4.11 — Focus Visible & Focus Not Obscured
 
-Validation errors on an intake card must be announced and programmatically tied to the field.
+When moving between stepper cards, focus must land somewhere visible and not be
+hidden behind sticky content.
 
-**Bad**
+When focus moves to a card heading, ensure sticky content does not obscure it
+or the visible focus indicator.
 
-```jsx
-{
-  errors.email && <span className="error-text">Invalid</span>;
-}
-<input name="email" />;
-```
+#### 2.5.8 — Target Size (Minimum)
 
-**Good**
+Stepper and category controls must provide targets of at least 24×24 pixels
+or meet one of the criterion's defined exceptions. Larger targets may improve
+usability, especially on touch devices.
 
-```jsx
-<label htmlFor="email">Email</label>
-<input
-  id="email"
-  name="email"
-  aria-invalid={!!errors.email}
-  aria-describedby={errors.email ? 'email-error' : undefined}
-/>
-{errors.email && (
-  <span id="email-error" role="alert">
-    Enter an email address in the form name@example.com
-  </span>
-)}
-```
+### Understandable
 
----
+#### 3.3.1 — Error Identification
 
-## 3.3.7 — Redundant Entry
+Identify intake validation errors in text and associate field-specific
+messages with the relevant field.
 
-Don't make the user re-enter info already captured on an earlier card (e.g., name given on Card 1, asked again on the Summary card).
+#### 3.3.2 — Labels or Instructions
 
-**Bad**
+Provide labels or instructions for intake fields, including any required
+information or input format users need to complete them.
 
-```jsx
-// Summary step re-asks for name instead of reusing it
-<input name="confirmName" placeholder="Re-enter your name" />
-```
+#### 3.3.3 — Error Suggestion
 
-**Good**
+When the correction is known, explain how to fix an identified input error.
 
-```jsx
-// Summary step displays and allows editing previously entered data,
-// pulled from shared form state — never re-collects it blind
-<dl>
-  <dt>Name</dt>
-  <dd>
-    {formState.fullName} <button onClick={() => goToStep(0)}>Edit</button>
-  </dd>
-</dl>
-```
+#### 3.3.4 — Error Prevention (Data)
 
----
+This criterion applies to actions that modify or delete user-controllable data.
+For these actions, provide at least one safeguard: make the action reversible, check the submitted information and let the user correct it, or
+provide a review and confirmation step. Deleting saved reports is an example
+of a user-controllable data action; report generation alone does not trigger
+this criterion.
 
-## 3.3.4 — Error Prevention (for data-altering / report-generating steps)
+#### 3.3.7 — Redundant Entry
 
-Generating a report is a meaningful action — let the user review and confirm before it's final, and allow correction after.
+Do not ask users to re-enter information they already provided in the flow.
+Reuse that information or let users select it. Keep the report review's links
+to edit intake, systems, and site features rather than collecting the same
+information again.
 
-**Bad**
-
-```jsx
-<button onClick={generateReportImmediately}>Continue</button>
-```
-
-**Good**
-
-```jsx
-<button onClick={() => setStep("summary")}>Review before generating</button>
-// Summary card shows all entered data with Edit links per section,
-// plus an explicit "Generate report" confirmation button
-```
-
----
-
-## 3.3.8 — Accessible Authentication (Minimum)
-
-Login for viewing saved reports must not require a cognitive function test (e.g., manually transcribing a CAPTCHA image, or solving a puzzle) with no alternative.
-
-**Bad**
-
-```jsx
-<img src="/captcha.png" alt="" />
-<input placeholder="Type the characters above" />
-```
-
-**Good**
-
-```jsx
-// Password managers/autofill supported, and either no CAPTCHA
-// or an accessible alternative (e.g. audio CAPTCHA, or a
-// "prove you're not a bot" method that doesn't rely on transcription)
-<input type="password" name="password" autoComplete="current-password" />
-```
-
----
-
-## 4.1.3 — Status Messages
-
-Report generation is often asynchronous — the loading/success/error state must be announced to screen reader users without moving focus unexpectedly.
-
-**Bad**
-
-```jsx
-{
-  isGenerating && <p>Generating report...</p>;
-}
-{
-  /* no aria-live — screen reader users get no announcement at all */
-}
-```
-
-**Good**
-
-```jsx
-<div aria-live="polite" role="status">
-  {isGenerating && "Generating your report…"}
-  {reportReady && "Report ready. Scroll down to view it."}
-  {error && "There was a problem generating your report."}
-</div>
-```
-
----
-
-## 1.4.11 — Non-text Contrast
-
-Stepper progress indicators (dots, progress bar fill, icon-only buttons) need 3:1 contrast against their background — not just text.
-
-**Bad**
-
-```css
-.step-dot.active {
-  background: #cfe8ff;
-} /* on a white background: ~1.3:1 */
-```
-
-**Good**
-
-```css
-.step-dot.active {
-  background: #0057b8;
-} /* ~5.2:1 against white */
-```
-
----
-
-## Quick reference table
-
-| SC             | Name                              | Where it bites in this app         |
-| -------------- | --------------------------------- | ---------------------------------- |
-| 2.4.7 / 2.4.11 | Focus Visible / Not Obscured      | Focus management on step change    |
-| 2.4.3          | Focus Order                       | Conditional fields inside cards    |
-| 2.5.8          | Target Size (Minimum)             | Next/Back/dot controls             |
-| 2.5.7          | Dragging Movements                | Draggable progress/timeline UI     |
-| 4.1.2          | Name, Role, Value                 | Custom stepper widget              |
-| 1.3.1 / 3.3.2  | Info & Relationships / Labels     | Intake form fields                 |
-| 3.3.1 / 3.3.3  | Error Identification / Suggestion | Field validation                   |
-| 3.3.7          | Redundant Entry                   | Summary step reusing prior answers |
-| 3.3.4          | Error Prevention                  | Confirm-before-generate flow       |
-| 3.3.8          | Accessible Authentication         | Login for saved reports            |
-| 4.1.3          | Status Messages                   | Async report generation            |
-| 1.4.11         | Non-text Contrast                 | Progress indicators, icon buttons  |
+#### 3.3.8 — Accessible Authentication (Minimum)
+
+Chart UI delegates sign-in to Google or Microsoft.
+
+### Robust
+
+#### 4.1.2 — Name, Role, Value (category selectors)
+
+The Systems and Site Features cards let users switch between categories. Ensure
+each category control has an accessible name and its selected state is exposed
+programmatically as well as visually. These controls can remain native buttons
+with toggle state; use tab semantics only if implementing the full tabs
+interaction pattern. The stepper is separate button navigation, not a tablist.
+
+#### 4.1.3 — Status Messages
+
+Announce asynchronous updates, including report generation, address search,
+saved-report loading, and loading the building-systems and site-features
+reference data.

@@ -3,7 +3,6 @@ import { useTranslation } from "@/i18n";
 import type { Step } from "@/steps";
 import { cn } from "@/utils/cn";
 import { Check } from "lucide-react";
-import React from "react";
 
 type StepperHeaderProps = {
   steps: Step[];
@@ -21,7 +20,7 @@ function getStepCircleClass(
   if (isActive || isCompleted)
     return "bg-primary border-primary text-primary-foreground";
   if (isPulsing) return "bg-warning border-warning text-warning-foreground";
-  return "border-muted-foreground/30 text-muted-foreground group-hover:border-muted-foreground/60 bg-transparent";
+  return "border-input text-muted-foreground group-hover:border-muted-foreground/60 bg-transparent";
 }
 
 function getStepLabelClass(
@@ -60,6 +59,7 @@ export function StepperHeader({
             key={stepObj.name}
             variant="stepper"
             onClick={() => jumpTo(stepObj.name)}
+            aria-current={isActive ? "step" : undefined}
             className="group min-w-0 flex-1 justify-center gap-1"
             data-locked={isLocked ? "true" : undefined}
             data-pulsing={isPulsing ? "true" : undefined}

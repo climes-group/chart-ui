@@ -283,6 +283,12 @@ export default function ReportCard() {
 
   const systemCount = selectedSystems?.length ?? 0;
   const featureCount = selectedSiteFeatures?.length ?? 0;
+  let reportStatusMessage = "";
+  if (isGenerating) {
+    reportStatusMessage = t("report.building");
+  } else if (isGenerated) {
+    reportStatusMessage = t("report.ready");
+  }
 
   return (
     <>
@@ -325,7 +331,7 @@ export default function ReportCard() {
               <Button
                 variant="link"
                 onClick={handleSaveSnapshot}
-                className="text-warning hover:text-warning/80 decoration-accent/60 underline decoration-dashed underline-offset-4"
+                className="text-warning hover:text-warning decoration-accent/60 underline decoration-dashed underline-offset-4"
               >
                 <Save />
                 {snapshotMeta
@@ -354,6 +360,10 @@ export default function ReportCard() {
           )}
         </div>
 
+        <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {reportStatusMessage}
+        </p>
+
         {/* Status panel */}
         {reportStatus === "not_generated" && (
           <div className="space-y-4">
@@ -377,10 +387,12 @@ export default function ReportCard() {
           <div className="border-destructive/30 bg-destructive/5 flex items-start gap-3 rounded-lg border p-4">
             <XCircle className="text-destructive mt-0.5 size-5 shrink-0" />
             <div className="flex flex-col gap-2">
-              <p className="text-destructive text-sm font-medium">
-                {t("report.failed")}
-              </p>
-              <p className="body-muted">{t("report.failedHelp")}</p>
+              <div role="alert" aria-atomic="true">
+                <p className="text-destructive text-sm font-medium">
+                  {t("report.failed")}
+                </p>
+                <p className="body-muted">{t("report.failedHelp")}</p>
+              </div>
               <Button
                 onClick={handleGenerateReport}
                 variant="outline"
@@ -407,7 +419,7 @@ export default function ReportCard() {
                   <span>{t("report.generatedAt", { time: reportGenAt })}</span>
                 )}
                 {reportGenTime && (
-                  <span className="text-muted-foreground/60">
+                  <span className="text-muted-foreground">
                     {(reportGenTime / 1000).toFixed(1)}s
                   </span>
                 )}
@@ -432,7 +444,7 @@ export default function ReportCard() {
                 <Button
                   variant="link"
                   onClick={() => setShowDebug(true)}
-                  className="text-warning hover:text-warning/80 decoration-accent/60 underline decoration-dashed underline-offset-4"
+                  className="text-warning hover:text-warning decoration-accent/60 underline decoration-dashed underline-offset-4"
                 >
                   <Bug />
                   {t("report.viewDebug")}

@@ -30,6 +30,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { Dispatch } from "redux";
 import type { IntakeFormApi } from ".";
+import { onBlurAndSubmit } from "./fieldValidators";
 
 const MODELLING_STANDARDS = [
   "EnerGuide",
@@ -150,9 +151,7 @@ function ProjectAddressAutocomplete({
           };
         return (
           <li key={key} {...rest}>
-            <span className="text-sm">
-              {opt.address.label}
-            </span>
+            <span className="text-sm">{opt.address.label}</span>
           </li>
         );
       }}
@@ -317,10 +316,9 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="project_address"
-          validators={{
-            onBlur: ({ value }: { value: string }) =>
-              value ? undefined : required,
-          }}
+          validators={onBlurAndSubmit(
+            (value: string) => (value ? undefined : required),
+          )}
         >
           {(field: AnyFieldApi) => (
             <div className="md:col-span-2 xl:col-span-3">
@@ -336,10 +334,9 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="municipality"
-          validators={{
-            onBlur: ({ value }: { value: string }) =>
-              value ? undefined : required,
-          }}
+          validators={onBlurAndSubmit(
+            (value: string) => (value ? undefined : required),
+          )}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -353,18 +350,23 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
               error={
                 field.state.meta.isTouched && !!field.state.meta.errors.length
               }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
+              }
             />
           )}
         </form.Field>
 
         <form.Field
           name="postal_code"
-          validators={{
-            onBlur: ({ value }: { value: string }) =>
+          validators={onBlurAndSubmit(
+            (value: string) =>
               !value || /^[A-Z]\d[A-Z] \d[A-Z]\d$/i.test(value)
                 ? undefined
                 : t("validators.postalFormat"),
-          }}
+          )}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -418,10 +420,9 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="unit_model_type"
-          validators={{
-            onBlur: ({ value }: { value: string }) =>
-              value ? undefined : required,
-          }}
+          validators={onBlurAndSubmit(
+            (value: string) => (value ? undefined : required),
+          )}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -435,6 +436,11 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
               onChange={(e) => field.handleChange(e.target.value)}
               error={
                 field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
               }
             >
               {[
@@ -458,10 +464,10 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
 
         <form.Field
           name="total_primary_units"
-          validators={{
-            onBlur: ({ value }: { value: number | string }) =>
+          validators={onBlurAndSubmit(
+            (value: number | string) =>
               Number(value) < 1 ? t("validators.minOne") : undefined,
-          }}
+          )}
         >
           {(field: AnyFieldApi) => (
             <TextField
@@ -473,6 +479,14 @@ export default function ProjectInformationSection({ form }: Readonly<Props>) {
               value={field.state.value}
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
+              error={
+                field.state.meta.isTouched && !!field.state.meta.errors.length
+              }
+              helperText={
+                field.state.meta.isTouched
+                  ? field.state.meta.errors[0]
+                  : undefined
+              }
             />
           )}
         </form.Field>
