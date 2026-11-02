@@ -34,3 +34,13 @@
     width: 50%;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .a-link::after {
+    transition: none;
+  }
+
+  .a-link:hover::after {
+    animation: none;
+  }
+}

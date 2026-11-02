@@ -65,10 +65,9 @@ export default function SiteFeaturesSection({
       />
 
       <TooltipProvider>
-        <div
-          role="group"
+        <fieldset
           aria-label={sanitizeName(activeCategory)}
-          className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"
+          className="m-0 grid min-w-0 grid-cols-1 border-0 p-0 sm:grid-cols-2 lg:grid-cols-3"
         >
           {featuresForCategory.map((feature) => {
             const code = getFeatureKeyFor(feature);
@@ -83,7 +82,7 @@ export default function SiteFeaturesSection({
               />
             );
           })}
-        </div>
+        </fieldset>
       </TooltipProvider>
     </div>
   );

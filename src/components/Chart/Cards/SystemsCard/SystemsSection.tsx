@@ -32,7 +32,7 @@ export default function SystemsSection({
   onClearClassification,
 }: Readonly<SystemsSectionProps>) {
   const { locale, t } = useTranslation();
-  const listboxRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const listboxRefs = useRef<Record<string, HTMLFieldSetElement | null>>({});
 
   const serviceNames = [
     ...new Set(systems.map((system) => system.Services as string).filter(Boolean)),
@@ -116,15 +116,15 @@ export default function SystemsSection({
                 )}
               </div>
               <TooltipProvider>
-                <div
-                  role="group"
+                <fieldset
                   aria-label={sanitizeName(classification)}
+                  tabIndex={-1}
                   ref={(element) => {
                     listboxRefs.current[classification] = element;
                   }}
-                  className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"
+                  className="m-0 grid min-w-0 grid-cols-1 border-0 p-0 sm:grid-cols-2 lg:grid-cols-3"
                 >
-                  {systemsInClass.map((system, index) => {
+                  {systemsInClass.map((system) => {
                     const code = getSystemCodeFor(system);
                     return (
                       <InventoryItemPill
@@ -139,11 +139,10 @@ export default function SystemsSection({
                         isSelected={selectedSystemCodes.has(code)}
                         description={getDescription(system, locale as string)}
                         onToggle={() => onToggle(system)}
-                        tabIndex={index === 0 ? 0 : -1}
                       />
                     );
                   })}
-                </div>
+                </fieldset>
               </TooltipProvider>
             </div>
           );

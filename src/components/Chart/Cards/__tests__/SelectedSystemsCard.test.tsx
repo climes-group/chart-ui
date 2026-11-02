@@ -99,6 +99,20 @@ describe("SystemsCard tests", () => {
     expect(screen.getByText("Boiler")).toBeInTheDocument();
   });
 
+  it("tabs through every system selection pill", async () => {
+    setupFetch();
+    renderWithProviders(<SystemsCard {...cardProps} />);
+    await selectMechanicalTab();
+
+    const boiler = screen.getByRole("button", { name: /Boiler/ });
+    const furnace = screen.getByRole("button", { name: /Furnace/ });
+    boiler.focus();
+
+    await userEvent.tab();
+
+    expect(furnace).toHaveFocus();
+  });
+
   it("renders service tabs for each unique service", async () => {
     setupFetch();
     renderWithProviders(<SystemsCard {...cardProps} />);
