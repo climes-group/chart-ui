@@ -31,6 +31,7 @@
   "flow.errors.conditionsNotMet": "Conditions not met",
 
   "splash.title": "CHART",
+  "pageTitle.design": "Design System",
   "splash.tagline": "Charting your path to resilience",
   "splash.getStarted": "Get started",
   "splash.copyright": "© {year} Climes Group Engineering Inc.",
