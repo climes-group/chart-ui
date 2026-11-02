@@ -325,7 +325,7 @@ export default function ReportCard() {
               <Button
                 variant="link"
                 onClick={handleSaveSnapshot}
-                className="text-warning hover:text-warning/80 decoration-accent/60 underline decoration-dashed underline-offset-4"
+                className="text-warning hover:text-warning decoration-accent/60 underline decoration-dashed underline-offset-4"
               >
                 <Save />
                 {snapshotMeta
@@ -413,7 +413,7 @@ export default function ReportCard() {
                   <span>{t("report.generatedAt", { time: reportGenAt })}</span>
                 )}
                 {reportGenTime && (
-                  <span className="text-muted-foreground/60">
+                  <span className="text-muted-foreground">
                     {(reportGenTime / 1000).toFixed(1)}s
                   </span>
                 )}
@@ -438,7 +438,7 @@ export default function ReportCard() {
                 <Button
                   variant="link"
                   onClick={() => setShowDebug(true)}
-                  className="text-warning hover:text-warning/80 decoration-accent/60 underline decoration-dashed underline-offset-4"
+                  className="text-warning hover:text-warning decoration-accent/60 underline decoration-dashed underline-offset-4"
                 >
                   <Bug />
                   {t("report.viewDebug")}

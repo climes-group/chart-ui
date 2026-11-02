@@ -48,7 +48,7 @@ export default function SplashCard() {
           <ArrowRight />
         </Button>
       </div>
-      <footer className="text-foreground/50 text-center text-sm">
+      <footer className="text-muted-foreground text-center text-sm">
         {t("splash.copyright", { year: new Date().getFullYear() })}
       </footer>
     </section>

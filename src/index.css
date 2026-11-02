@@ -69,7 +69,7 @@
   --brand-gold-dark: #8d6517;
   --brand-gold-soft: #fadba4;
   --brand-coral: #e3724f;
-  --brand-coral-dark: #c85a3a;
+  --brand-coral-dark: #b34a2e;
   --brand-moss: #345800;
   --brand-brown: #9b592e;
   --brand-linen: #f0efe3;
@@ -87,7 +87,7 @@
   --accent: var(--brand-gold-soft);
   --accent-foreground: var(--brand-charcoal);
   --muted: color-mix(in srgb, var(--brand-linen) 70%, white);
-  --muted-foreground: color-mix(in srgb, var(--brand-charcoal) 65%, white);
+  --muted-foreground: color-mix(in srgb, var(--brand-charcoal) 70%, white);
   --destructive: var(--brand-coral-dark);
   --destructive-foreground: #ffffff;
   --border: color-mix(in srgb, var(--brand-teal) 18%, white);
@@ -163,13 +163,13 @@
   --primary: #00f5d4;
   --primary-foreground: #071018;
   --secondary: #ff2bd6;
-  --secondary-foreground: #ffffff;
+  --secondary-foreground: #071018;
   --accent: #27345c;
   --accent-foreground: #e7f7ff;
   --muted: #171d3a;
   --muted-foreground: #9bb2c8;
   --destructive: #ff3864;
-  --destructive-foreground: #ffffff;
+  --destructive-foreground: #071018;
   --border: #2c4770;
   --input: #42618d;
   --ring: #ffe66d;
