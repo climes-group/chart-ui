@@ -78,7 +78,7 @@ export default function IntakeCard({
 
   const form: IntakeFormApi = useForm({
     defaultValues: savedForm,
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       submitSucceeded.current = true;
       dispatch(setIntakeForm(value));
       dispatch(meetCondition({ name: "intake" }));

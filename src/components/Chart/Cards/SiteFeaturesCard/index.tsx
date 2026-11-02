@@ -46,7 +46,7 @@ export default function SiteFeaturesCard({ step }: Readonly<StepCardProps>) {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
+    void (async () => {
       try {
         const data = await getCachedJson<FeatureRecord[]>(
           `${import.meta.env.VITE_API_HOST}/codes/site_features/ref`,

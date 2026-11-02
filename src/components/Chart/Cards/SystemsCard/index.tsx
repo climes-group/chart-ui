@@ -53,7 +53,7 @@ export default function SystemsCard({ step }: Readonly<StepCardProps>) {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
+    void (async () => {
       try {
         const data = await getCachedJson<SystemRecord[]>(
           `${import.meta.env.VITE_API_HOST}/codes/building_services/ref`,

@@ -24,7 +24,7 @@ function isLocale(value: string | null): value is Locale {
 }
 
 function detectInitialLocale(): Locale {
-  if (typeof globalThis.window === "undefined") return DEFAULT_LOCALE;
+  if (globalThis.window === undefined) return DEFAULT_LOCALE;
   const stored = globalThis.localStorage?.getItem(STORAGE_KEY);
   if (isLocale(stored)) return stored;
   return DEFAULT_LOCALE;

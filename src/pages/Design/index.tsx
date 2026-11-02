@@ -174,9 +174,8 @@ function CategoryTabsPreview() {
   return (
     <div>
       <h3 className="mb-3">Underline tabs</h3>
-      <div
-        className="border-border flex flex-wrap gap-4 border-b"
-        role="group"
+      <fieldset
+        className="border-border m-0 flex min-w-0 flex-wrap gap-4 border-x-0 border-t-0 border-b p-0"
         aria-label="Category tab example"
       >
         {categories.map((category) => {
@@ -198,7 +197,7 @@ function CategoryTabsPreview() {
             </Button>
           );
         })}
-      </div>
+      </fieldset>
     </div>
   );
 }

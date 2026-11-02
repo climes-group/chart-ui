@@ -145,10 +145,9 @@ function DebugBanner() {
           >
             {snapshot ? "Autofill from snapshot" : "Autofill (defaults)"}
           </Button>
-          <div
-            className="flex h-full items-center gap-1 whitespace-nowrap"
+          <fieldset
+            className="m-0 flex h-full min-w-0 items-center gap-1 border-0 p-0 whitespace-nowrap"
             aria-label="Color theme"
-            role="group"
           >
             <span className="mr-1 text-white">Theme:</span>
             {(["light", "dark", "cyberpunk"] as ThemeMode[]).map((colorTheme) => (
@@ -170,7 +169,7 @@ function DebugBanner() {
                 {colorTheme === "cyberpunk" && <Zap className="size-4" aria-hidden="true" />}
               </Button>
             ))}
-          </div>
+          </fieldset>
           <div className="flex h-full items-center gap-2 whitespace-nowrap">
             {offlineMode ? (
               <Wifi className="size-4" />

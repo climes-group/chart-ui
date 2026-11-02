@@ -37,7 +37,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DebugDataModal from "./DebugDataModal";
 
-const openPdfInNewWindow = async (
+const openPdfInNewWindow = (
   result: string,
   popupBlockedMessage: string,
 ) => {
